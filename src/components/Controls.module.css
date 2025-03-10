@@ -1,0 +1,15 @@
+.parent {
+    height: 5vh;
+    -ms-transform-origin-x: 5vh;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    padding: 10px;
+    margin: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+
