@@ -3,7 +3,7 @@ import styles from "./Sidebar.module.css";
 
 function Sidebar(){
     return(
-        <div className={styles.parent}>
+        <div data-tauri-drag-region className={styles.parent}>
             <Link to="/">Home</Link>
             <Link to="/pacientes">Pacientes</Link>
             <Link to="/">Especialistas</Link>

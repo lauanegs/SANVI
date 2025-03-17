@@ -1,0 +1,23 @@
+.mainDiv {
+    border-left: 2px solid #737373;
+    margin: 5px;
+    padding: 10px;
+    background-color: #ffffff7b;
+    width: 346px;
+}
+
+.mainDiv:hover {
+    box-shadow: 5px 5px 5px #888888;
+}
+
+.P {
+    width: 216px;
+}
+
+.M {
+    width: 316px;
+}
+
+.G {
+    width: 696px;
+}
