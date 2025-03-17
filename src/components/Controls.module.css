@@ -5,11 +5,21 @@
     display: flex;
     justify-content: space-between;
     position: fixed;
-    padding: 10px;
+    padding: 0px;
     margin: 0;
     top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
+    /* backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%); */
+    overflow: hidden;
 }
 
-
+button {
+    border-radius: 16px;
+    padding: 2px;
+    margin: 4px 3px;
+    background: none;
+    border: 0;
+}

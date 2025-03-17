@@ -1,5 +1,14 @@
+import CardSimples from "../components/CardSimples";
+import Input from "../components/Input";
+
 function Home() {
-    return <h1>Teste hot reload</h1>;
+    return(
+      <div>
+
+        <CardSimples titulo="João Santos Gomes" subtitulo="123.456.789-01" texto="Info"/>
+        <Input tamanho="M" placeholder="26/02/2024"/>
+      </div>
+    )
   }
   
   export default Home;
