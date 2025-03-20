@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Controls from "./components/Controls";
-import Sidebar from "./components/Sidebar";
+import Controls from "./components/Controls/Controls";
+import Sidebar from "./components/SideBar/Sidebar";
 
 function Layout() {
 
