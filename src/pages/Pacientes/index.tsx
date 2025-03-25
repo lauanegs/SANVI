@@ -8,6 +8,7 @@ const Pacientes: React.FC = () => {
   return (
     <Container>
         <h1>Olá</h1>
+    
     </Container>
   );
 };
