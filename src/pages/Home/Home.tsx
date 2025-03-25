@@ -1,5 +1,5 @@
-import CardSimples from "../components/CardSimples/CardSimples";
-import Input from "../components/Input/Input";
+import CardSimples from "@components/CardSimples/CardSimples";
+import Input from "@components/Input/Input";
 
 function Home() {
     return(
