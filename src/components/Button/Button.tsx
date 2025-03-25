@@ -3,6 +3,7 @@ import styles from "./Button.module.css";
 type ButtonProps = {
     value: string,
     color: "normal" | "contraste" | "escuro",
+    onClick: any
 
 }
 
@@ -13,6 +14,7 @@ function Button(props : ButtonProps ) {
                     backgroundColor: style(props.color).bg,
                     color: style(props.color).font
                 }}
+            onClick={props.onClick}
     >
         {props.value}
     </button>

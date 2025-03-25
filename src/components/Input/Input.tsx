@@ -1,6 +1,6 @@
 import { IconBaseProps } from "react-icons";
 import styles from "./Input.module.css";
-
+/* to-do: Finalizar implementação */
 type Props = {
     tamanho: 'P' | 'M' | 'G',
     placeholder? : string,
