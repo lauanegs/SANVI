@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container } from './styles';
+import { HeaderGeneric } from '@components/HeaderGeneric';
 
 
 const Pacientes: React.FC = () => {
@@ -7,8 +8,7 @@ const Pacientes: React.FC = () => {
 
   return (
     <Container>
-        <h1>Olá</h1>
-    
+        <HeaderGeneric/>
     </Container>
   );
 };
