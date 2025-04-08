@@ -1,8 +1,9 @@
-import Button from "@components/Button/Button"
+import Button from "@components/GenericButton"
 import styles from "./Login.module.css"
 import logo from "@assets/logo.svg"
 import Input from "@components/Input/Input"
 import { useNavigate } from "react-router-dom"
+import GenericButton from "@components/GenericButton"
 
 
 export default function Login() {
@@ -25,7 +26,11 @@ export default function Login() {
                 <label>Senha</label>            
                 <Input tamanho="P" />
             </div>
-            <Button value="Entrar" color="normal" onClick={handleLogin} />
+            <GenericButton
+              color="PRIMARY"
+              title="Login"
+              onClick={handleLogin}
+            />
         </div>
     </div>
   )

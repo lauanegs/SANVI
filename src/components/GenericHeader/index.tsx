@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, DefaultTitle, WrapperLogo } from './styles';
 import { LogoSANVI } from '@assets/svgs/LogoSANVI';
 
