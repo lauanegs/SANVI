@@ -5,10 +5,10 @@ import Sidebar from "./components/SideBar/Sidebar";
 function Layout() {
 
   return (
-    <div className="" id="cssportal-grid" >
+    <div className="" id="cssportal" >
       <div className="" id="header" ><Controls /></div>
-      <div className="" id="sideL"><Sidebar /></div>
-      <div className="" id="main">        
+      <div id="content">
+        <div className="" id="sideL"><Sidebar /></div>
         <main className="main-content">
           <Outlet /> {/* Aqui será renderizado o conteúdo das rotas */}
         </main>

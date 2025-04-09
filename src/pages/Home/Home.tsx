@@ -1,11 +1,14 @@
-import CardSimples from "@components/CardSimples/CardSimples";
 import Input from "@components/Input/Input";
+import SimpleCard from "@components/SimpleCard";
 
 function Home() {
     return(
       <div>
-
-        <CardSimples titulo="João Santos Gomes" subtitulo="123.456.789-01" texto="Info"/>
+        <SimpleCard
+          title="João Santos Gomes"
+          subtitle="123.456.789-01"
+          info="Info"
+        />
         <Input tamanho="M" placeholder="26/02/2024"/>
       </div>
     )
