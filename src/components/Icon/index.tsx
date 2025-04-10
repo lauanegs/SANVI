@@ -1,23 +1,18 @@
+import { IconProps, LibNames } from "./types";
 import * as fa from "react-icons/fa";
 import * as md from "react-icons/md";
 import * as ai from "react-icons/ai";
-import { IconProps } from "./types";
+import * as lia from "react-icons/lia";
 
+export const libs = {
+    fa,
+    md,
+    ai,
+    lia
+}
 
-function Icon({color, iconLib, iconName, size}:IconProps){
-    let IconComponent;
-    switch(iconLib){
-        case "fa":
-            IconComponent = (fa as any)[iconName];
-            break;
-        case "md":
-            IconComponent = (md as any)[iconName];
-            break;
-        case "ai":
-            IconComponent = (ai as any)[iconName];
-            break;
-    }
-
+function Icon<T extends LibNames>({color, iconLibName, icon, size}:IconProps<T>){
+    const IconComponent = libs[iconLibName][icon] as React.ElementType;
     return(
         <IconComponent
             color={color}

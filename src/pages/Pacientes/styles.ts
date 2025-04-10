@@ -7,4 +7,5 @@ export const Container = styled.div`
 
     flex-direction: column;
     background-color: ${theme.COLORS.FUMACA_BRANCA};
+    gap: 30px;
 `;
