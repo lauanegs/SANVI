@@ -1,18 +1,32 @@
-import Button from "@components/GenericButton"
 import styles from "./Login.module.css"
 import logo from "@assets/logo.svg"
 import Input from "@components/Input/Input"
 import { useNavigate } from "react-router-dom"
 import GenericButton from "@components/GenericButton"
+import {useMutation } from "@tanstack/react-query";
+import {fetchLogin} from "@api/login";
+import {useState} from "react";
 
 
 export default function Login() {
   const navigate = useNavigate();
-  const handleLogin = () =>
-  {
-    console.log("Pressed");  
-    navigate("/home");
-  }
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const mutation = useMutation({
+      mutationFn: fetchLogin,
+      onSuccess: ( )=> { navigate("/home"); },
+      onError: (error) => { console.log("Erro: ", error); }
+  });
+
+  const handleSubmit = () => {
+      mutation.mutate({username, password});
+  };
+
+
+
+
   return (
     <div data-tauri-drag-region  className={styles.bg}>
         <div className={styles.main}>
@@ -22,15 +36,25 @@ export default function Login() {
             </div>
             <div className={styles.campos}>
                 <label>Usuário</label>
-                <Input tamanho="P" />
+                <Input type="text"
+                    tamanho="P"
+                    value={username}
+                    onChange={setUsername}/>
                 <label>Senha</label>            
-                <Input tamanho="P" />
+                <Input type="password"
+                    tamanho="P"
+                    value={password}
+                    onChange={setPassword}/>
             </div>
             <GenericButton
               color="PRIMARY"
-              title="Login"
-              onClick={handleLogin}
+              title={mutation.isPending ? 'Entrando...' : 'Entrar'}
+              onClick={handleSubmit}
             />
+            {mutation.isError && (
+                <p style={{ color: 'red' }}>
+                    {(mutation.error as Error).message}
+                </p>)}
         </div>
     </div>
   )
