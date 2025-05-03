@@ -1,0 +1,25 @@
+.fin_AlterContainer {
+    height: 100%;
+    width: 100%;
+
+    background-color: var(--fumaca-branca);
+}
+
+.fin_AlterContainer .fin_TabContainer {
+}
+
+.fin_AlterContainer .fin_ContentAlterContainer {
+}
+
+.esp_headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pad: 16px;
+}
+
+.esp_cadastroTab {
+    padding: 0px 10px 14px 0px;
+    border-bottom: 2px solid #1e87f0;
+    font-size: 12px;
+}

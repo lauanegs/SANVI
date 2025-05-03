@@ -1,41 +1,52 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter';
-  font-weight: 100;
+:root {
+    --casca-de-laranja: #ffa630;
+    --casca-de-laranja-60: #ffca83;
+    --azul-da-franca: #1e87f0;
+    --azul-da-franca-60: #78b7f6;
+    --jeans: #0060c0;
+    --cinza-escuro: #737373;
+    --platina: #d9d9d9;
+    --fumaca-branca: #f3f3f3;
+    --branco: #ffffff;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter";
+    font-weight: 100;
 }
 
 body {
-  /* background: rgb(2,0,36);
+    /* background: rgb(2,0,36);
   background: linear-gradient(80deg, rgba(2, 0, 36, 0.95) 0%, rgba(50,99,74,0.75) 35%, rgba(137,158,55,0.65) 100%); */
-  overflow: hidden;
-  height: 100%;
+    overflow: hidden;
+    height: 100%;
 }
 
 #cssportal {
-	display: flex;
-  flex: 1;
-  flex-direction: column;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 }
 #header {
-  background-image: url('./assets/ffflux-background.svg');
-  background-size: cover;
-  background-position: top;  height: 5vh; /* Pouca altura */
+    background-image: url("./assets/ffflux-background.svg");
+    background-size: cover;
+    background-position: top;
+    height: 5vh; /* Pouca altura */
 }
 #content {
-  display: flex;
-  flex-direction: row;
+    display: flex;
+    flex-direction: row;
 }
 #sideL {
-  display: flex;
-  width: 20%;
-	background-image: url('./assets/ffflux-background.svg');
-  background-size: cover;
-  background-position: left;
+    display: flex;
+    width: 20%;
+    background-image: url("./assets/ffflux-background.svg");
+    background-size: cover;
+    background-position: left;
 }
 .main-content {
-  display: flex;
-  flex: 1;
+    display: flex;
+    flex: 1;
 }
-
