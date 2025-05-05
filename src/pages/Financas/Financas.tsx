@@ -2,6 +2,9 @@ import { HeaderGeneric } from "@components/GenericHeader";
 import "./styles.css";
 import { useState } from "react";
 import GenericButton from "@components/GenericButton";
+import DashboardTab from "@components/tabs/dashboardTab/DashboardTab";
+import SaidasTab from "@components/tabs/SaidasTab/SaidasTab";
+import EntradasTab from "@components/tabs/EntradasTab/EntradasTab";
 
 enum Tab {
     DASHBOARD = "Dashboard",
@@ -18,21 +21,39 @@ function Financas() {
 
             <div className="fin_TabContainer">
                 <nav>
-                    <button onClick={() => setTabAtual(Tab.DASHBOARD)}>
-                        Dashboard
-                    </button>
-                    <button onClick={() => setTabAtual(Tab.ENTRADAS)}>
-                        Entradas
-                    </button>
-                    <button onClick={() => setTabAtual(Tab.SAIDAS)}>
-                        Saídas
-                    </button>
+                    <div className="fin_tabs">
+                        <button
+                            className="fin_tabButton"
+                            onClick={() => setTabAtual(Tab.DASHBOARD)}
+                        >
+                            Dashboard
+                        </button>
+                        <button
+                            className="fin_tabButton"
+                            onClick={() => setTabAtual(Tab.ENTRADAS)}
+                        >
+                            Entradas
+                        </button>
+                        <button
+                            className="fin_tabButton"
+                            onClick={() => setTabAtual(Tab.SAIDAS)}
+                        >
+                            Saídas
+                        </button>
+                    </div>
+
+                    <div className="fin_tabs">
+                        <GenericButton
+                            color="PRIMARY"
+                            title="Button"
+                        ></GenericButton>
+                    </div>
                 </nav>
             </div>
             <main className="fin_ContentAlterContainer">
-                {tabAtual === Tab.DASHBOARD && <div>Conteúdo do Dashboard</div>}
-                {tabAtual === Tab.ENTRADAS && <div>Conteúdo de Entradas</div>}
-                {tabAtual === Tab.SAIDAS && <div>Conteúdo de Saídas</div>}
+                {tabAtual === Tab.DASHBOARD && <DashboardTab></DashboardTab>}
+                {tabAtual === Tab.ENTRADAS && <EntradasTab></EntradasTab>}
+                {tabAtual === Tab.SAIDAS && <SaidasTab></SaidasTab>}
             </main>
         </div>
     );
