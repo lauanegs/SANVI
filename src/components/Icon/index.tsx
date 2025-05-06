@@ -2,13 +2,15 @@ import { IconProps, LibNames } from "./types";
 import * as fa from "react-icons/fa";
 import * as md from "react-icons/md";
 import * as ai from "react-icons/ai";
-import * as lia from "react-icons/lia";
+import * as pi from "react-icons/pi";
+import * as lu from "react-icons/lu";  
 
 export const libs = {
     fa,
     md,
     ai,
-    lia
+    pi,
+    lu
 }
 
 function Icon<T extends LibNames>({color, iconLibName, icon, size}:IconProps<T>){
