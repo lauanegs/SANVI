@@ -10,6 +10,10 @@ export const Container = styled.button<ColorButtonProp>`
     height: 32px;
     padding: 5px;
     border-radius: 4px;
+
+    &:hover {
+        background-color: ${theme.COLORS.AZUL_DA_FRANCA_60};
+    }
 `;
 
 

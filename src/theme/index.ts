@@ -8,7 +8,8 @@ export default {
         CINZA_ESCURO: "#737373",
         PLATINA: "#D9D9D9",
         FUMACA_BRANCA: "#F3F3F3",
-        BRANCO: "#FFFFFF"
+        BRANCO: "#FFFFFF",
+        CINZA_NAVIO_DE_GUERRA: "#888888",
 
     }
 }

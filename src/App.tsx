@@ -4,6 +4,7 @@ import Home from "@pages/Home/Home";
 import Pacientes from "@pages/Pacientes";
 import Login from "@pages/Login/Login";
 import '@fontsource/inter'; 
+import { CadastroPaciente } from "@pages/Pacientes/CadastroPacientes";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/pacientes" element={<Pacientes />}/>
+          <Route path="/cadastroPaciente" element={<CadastroPaciente />}/>
         </Route>       
         
       </Routes>
