@@ -1,19 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { CommandHeader, Container, Content, LabelEntity, SearchStyleWrapper } from './styles';
-import { HeaderGeneric } from '@components/GenericHeader';
+import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
 import GenericButton from '@components/GenericButton';
 import { FixedSizeGrid } from 'react-window';
 import SimpleCard from '@components/SimpleCard';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { useNavigate } from 'react-router-dom';
 
 
 export function Pacientes() {
   const [isFullScreen] = useState(document.fullscreenElement);
   const contentRef = useRef<HTMLDivElement>(null);
   const rows = isFullScreen ? 6 : 4;
-  
 
+  const navigator = useNavigate();
+  
   const data = Array(30).fill(true).map((_, index) => ({
     title: `Pessoa ${index}`,
     subtitle: `Subtitulo`
@@ -40,7 +42,7 @@ export function Pacientes() {
 
   return (
     <Container>
-      <HeaderGeneric />
+      <GenericHeader />
       <CommandHeader>
         <SearchStyleWrapper>
           <LabelEntity>Paciente:</LabelEntity>
@@ -52,7 +54,7 @@ export function Pacientes() {
         </SearchStyleWrapper>
         <GenericButton
           color='PRIMARY'
-          onClick={() => { }}
+          onClick={() => { navigator("/cadastroPaciente") }}
           title='Novo Cadastro'
         />
 

@@ -1,9 +1,12 @@
 import styled, { css } from "styled-components";
 import { InputSizeStyle } from "./types";
 import theme from "theme";
-import ReactModal from "react-modal";
 
-export const Container = styled.div<InputSizeStyle>`
+export const Container = styled.div`
+    
+`;
+
+export const ContainerField = styled.div<InputSizeStyle>`
     display: flex;
     flex-direction: row;
     position: relative;
@@ -35,10 +38,16 @@ export const Container = styled.div<InputSizeStyle>`
 
 `;
 
+export const Label = styled.p`
+    font-size: 12px;
+    
+    margin-bottom: 8px;
+`;
+
 export const InputText = styled.input`
     flex: 1;
     background-color: ${theme.COLORS.BRANCO};
-    margin: 0 5px;
+    margin: 0 4px;
     border: none;
     outline: none;
     

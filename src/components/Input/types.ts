@@ -11,4 +11,5 @@ export type InputProps = {
     placeholder? : string,
     type?: InputType,
     elements?: string[],
+    label?: string,
 }
