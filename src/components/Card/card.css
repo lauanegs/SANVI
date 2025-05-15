@@ -1,0 +1,37 @@
+.card_Container {
+    background-color: var(--branco);
+    border-radius: 12px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    padding: 20px 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.4rem;
+}
+
+.card_Container .card-title {
+    color: var(--cinza-escuro);
+}
+
+.card_Container .card-content {
+    font-size: 1.4rem;
+    color: var(--cinza-escuro);
+}
+
+.card_Container .card-footer {
+    font-size: 12px;
+    color: var(--cinza-escuro);
+}
+
+.card_Container .destaque {
+    font-weight: bold;
+}
+
+.card_Container .azul {
+    color: #007bff;
+}
+
+.card_Container .vermelho {
+    color: #dc3545;
+}

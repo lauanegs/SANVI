@@ -1,0 +1,26 @@
+.dashboard_Container {
+    max-width: 1000px;
+    width: 1000px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dashboard_Container .header_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+}
+
+.dashboard_Container .header_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard_Container .header_container .card_Container {
+    flex: 1;
+}
