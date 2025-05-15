@@ -6,7 +6,6 @@ import { Text } from "@components/Text";
 import { useState } from "react";
 import Icon from "@components/Icon";
 import theme from "theme";
-import Input from "@components/Input";
 
 export function CadastroPaciente() {
     const [isAgeOfMajority, setIsAgeOfMajority] = useState(true);
@@ -87,7 +86,6 @@ export function CadastroPaciente() {
                    
                 </ContainerColunmForm>
 
-                
             </Form>
         </Container>
 
