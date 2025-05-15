@@ -5,8 +5,6 @@ import Icon from '@components/Icon';
 
 export function Controls() {
   const appWindow = getCurrentWindow();
-
-  console.log("IS MAXIMEZED",appWindow.isMaximized());
   
 
   return (
