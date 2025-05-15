@@ -1,4 +1,4 @@
-import { HeaderGeneric } from "@components/GenericHeader";
+import { GenericHeader } from "@components/GenericHeader";
 import Input from "@components/Input/Input";
 import SimpleCard from "@components/SimpleCard";
 import s from "./Especialista.module.css";
@@ -57,7 +57,7 @@ function Especialistas() {
       {tabEspecialista === false ? (
         <div>
 
-          <HeaderGeneric></HeaderGeneric>
+          <GenericHeader></GenericHeader>
           <div className={s.Esp_header}>
             <GenericButton
               color="PRIMARY"
@@ -84,7 +84,7 @@ function Especialistas() {
         </div>
       ) : (
         <div>
-          <HeaderGeneric></HeaderGeneric>
+          <GenericHeader></GenericHeader>
           <div className={s.esp_headerContainer}>
             <div className={s.esp_cadastroTab}>Cadastro</div>
             <GenericButton

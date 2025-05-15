@@ -1,4 +1,4 @@
-import { HeaderGeneric } from "@components/GenericHeader";
+import { GenericHeader } from "@components/GenericHeader";
 import "./styles.css";
 import { useState } from "react";
 import GenericButton from "@components/GenericButton";
@@ -17,7 +17,7 @@ function Financas() {
 
     return (
         <div className="fin_AlterContainer">
-            <HeaderGeneric></HeaderGeneric>
+            <GenericHeader></GenericHeader>
 
             <div className="fin_TabContainer">
                 <nav>
