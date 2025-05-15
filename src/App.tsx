@@ -5,6 +5,7 @@ import Pacientes from "@pages/Pacientes";
 import Especialistas from "@pages/Especialistas/Especialistas";
 import Login from "@pages/Login/Login";
 import '@fontsource/inter'; 
+import { CadastroPaciente } from "@pages/Pacientes/CadastroPacientes";
 
 
 function App() {
