@@ -6,7 +6,7 @@ function Sidebar() {
         <div data-tauri-drag-region className={styles.parent}>
             <Link to="/">Home</Link>
             <Link to="/pacientes">Pacientes</Link>
-            <Link to="/">Especialistas</Link>
+            <Link to="/especialistas">Especialistas</Link>
             <Link to="/">Agendamentos</Link>
             <Link to="/financas">Finanças</Link>
         </div>

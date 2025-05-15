@@ -1,3 +1,4 @@
+
 :root {
     --casca-de-laranja: #ffa630;
     --casca-de-laranja-60: #ffca83;
@@ -16,6 +17,7 @@
     font-family: "Inter";
     font-weight: 100;
     box-sizing: border-box;
+    color: #737373;
 }
 
 body {

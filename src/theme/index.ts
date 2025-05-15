@@ -9,5 +9,7 @@ export default {
         PLATINA: "#D9D9D9",
         FUMACA_BRANCA: "#F3F3F3",
         BRANCO: "#FFFFFF",
-    },
-};
+        CINZA_NAVIO_DE_GUERRA: "#888888",
+    }
+}
+
