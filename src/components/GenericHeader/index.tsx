@@ -2,7 +2,7 @@ import { Container, DefaultTitle, WrapperLogo } from './styles';
 import { LogoSANVI } from '@assets/svgs/LogoSANVI';
 
 
-export function HeaderGeneric() {
+export function GenericHeader() {
   return (
     <Container>
         <DefaultTitle>
