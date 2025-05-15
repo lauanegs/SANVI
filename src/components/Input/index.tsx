@@ -1,62 +1,38 @@
 import Icon from "@components/Icon";
-import { Container, InputText, WrapperGenericIcon, WrapperSearchIcon, SelectOptions, WrapperOptions, Option, ContainerField, Label } from "./styles";
+import { Container, InputText, WrapperGenericIcon, WrapperSearchIcon, ContainerField, Label } from "./styles";
 import { InputProps } from "./types";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale } from "react-datepicker";
 import { ptBR } from "date-fns/locale";
 import theme from "theme";
-import { FixedSizeList as List } from "react-window";
 
-export default function Input({ size, type, placeholder, elements = [], label }: InputProps) {
+export default function Input({ sizeType, label, elements = [], inputType, ...rest }: InputProps) {
+
     registerLocale("ptBR", ptBR);
     const [isVisibleDateMenu, setIsVisibleDateMenu] = useState(false);
     const [date, setDate] = useState(new Date());
-    const [heightStyleSelectMenu, setHeightStyleSelectMenu] = useState(0);
     const [inputValue, setInputValue] = useState('');
 
-    const elementRow = ({ index }) => (
-        <WrapperOptions>
-            <Option
-                onClick={() => setInputValue(elements[index])}
-
-            >{elements[index]}</Option>
-        </WrapperOptions>
-    );
-
-    const widthStyleElement =
-        size === "PP" ? 68 :
-            size === "P" ? 216 :
-                size === "G" || size === "M" ? 300 : 0;
-
-    const openSelectMenu = () => {
-        setHeightStyleSelectMenu(200);
-    }
-
-    const closeSelectMenu = () => {
-        setHeightStyleSelectMenu(0);
-    }
-
-    console.log(isVisibleDateMenu)
     return (
         <Container>
             <Label>
                 {label}
             </Label>
             <ContainerField
-                size={size}
+                sizeType={sizeType}
             >
-                {type === "search" &&
+                {inputType === "search" &&
                     <WrapperSearchIcon>
                         <Icon
-                            iconLibName="lu"
-                            icon="LuSearch"
+                            iconLibName="cg"
+                            icon="CgSearch"
                             color={theme.COLORS.CINZA_ESCURO}
                             size={15}
                         />
                     </WrapperSearchIcon>
                 }
-                {type === "date" ?
+                {inputType === "date" ?
                     <DatePicker
                         locale="pt-BR"
                         selected={date}
@@ -71,13 +47,12 @@ export default function Input({ size, type, placeholder, elements = [], label }:
                     />
                     :
                     <InputText
-                        disabled={type === "select"}
-                        placeholder={placeholder && placeholder || ""}
                         value={inputValue}
                         onChange={text => setInputValue(text.target.value)}
+                        {...rest}
                     />
                 }
-                {type === "date" &&
+                {inputType === "date" &&
                     <WrapperGenericIcon
                         onClick={() => setIsVisibleDateMenu(prev => !prev)}
                     >
@@ -89,42 +64,6 @@ export default function Input({ size, type, placeholder, elements = [], label }:
                         />
                     </WrapperGenericIcon>
                 }
-                {type === "select" &&
-                    <WrapperGenericIcon
-                        onClick={() => {
-                            if (heightStyleSelectMenu > 0) closeSelectMenu();
-                            else openSelectMenu();
-                        }}
-                    >
-                        {heightStyleSelectMenu > 0 ?
-                            <Icon
-                                color={theme.COLORS.CINZA_ESCURO}
-                                iconLibName="md"
-                                icon="MdKeyboardArrowUp"
-                                size={15}
-                            />
-                            :
-                            <Icon
-                                color={theme.COLORS.CINZA_ESCURO}
-                                iconLibName="md"
-                                icon="MdKeyboardArrowDown"
-                                size={15}
-                            />
-                        }
-                    </WrapperGenericIcon>
-                }
-                <SelectOptions
-                    style={{ height: heightStyleSelectMenu }}
-                >
-                    <List
-                        itemCount={elements.length}
-                        height={heightStyleSelectMenu}
-                        width={widthStyleElement}
-                        itemSize={50}
-                    >
-                        {elementRow}
-                    </List>
-                </SelectOptions>
             </ContainerField>
         </Container>
     );

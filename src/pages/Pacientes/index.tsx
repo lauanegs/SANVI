@@ -47,8 +47,8 @@ export function Pacientes() {
         <SearchStyleWrapper>
           <LabelEntity>Paciente:</LabelEntity>
           <Input
-            type='search'
-            size={isFullScreen ? 'G' : 'MG'}
+            sizeType='P'
+            inputType='search'
             placeholder='João Santos'
           />
         </SearchStyleWrapper>
