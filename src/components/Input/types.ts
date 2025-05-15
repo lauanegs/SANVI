@@ -1,15 +1,15 @@
-export type InputType = "search" | "date" | "select";
+import React from 'react';
 
-export type InputSize = "PP" | "P" | "M" | "MG" | "G";
+export type InputSizeType = 'PP' | 'P' | 'M' | 'MG' | 'G';
+export type InputType = 'text' | 'search' | 'date';
 
 export type InputSizeStyle = {
-    size: InputSize
-}
+    sizeType: InputSizeType;
+} 
 
 export type InputProps = {
-    size: InputSize,
-    placeholder? : string,
-    type?: InputType,
-    elements?: string[],
-    label?: string,
-}
+  sizeType: InputSizeType;
+  label?: string;
+  elements?: string[];
+  inputType?: InputType;
+} & React.InputHTMLAttributes<HTMLInputElement>;

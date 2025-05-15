@@ -12,21 +12,21 @@ export const ContainerField = styled.div<InputSizeStyle>`
     position: relative;
 
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    ${({ size }) => size === "PP" && css`
+    ${({ sizeType }) => sizeType === "PP" && css`
         width: 68px;
     `};
-    ${({ size }) => size === "P" && css`
+    ${({ sizeType }) => sizeType === "P" && css`
         width: 216px;
     `};
-    ${({ size }) => size === "M" && css`
+    ${({ sizeType }) => sizeType === "M" && css`
         width: 300px;
     `};
-    ${({ size }) => size === "MG" && css`
+    ${({ sizeType }) => sizeType === "MG" && css`
         width: 450px;
     `};
-    ${({ size }) => size === "G" && css`
+    ${({ sizeType }) => sizeType === "G" && css`
         width: 580px;
     `};
     height: 32px;
@@ -65,33 +65,3 @@ export const WrapperGenericIcon = styled.div`
     }
 `;
 
-export const SelectOptions = styled.div`
-    display: flex;
-    flex-direction: column;
-    background-color: ${theme.COLORS.BRANCO};
-
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-
-    position: absolute;
-    top: 35px;
-    right: 0;
-`;
-
-export const WrapperOptions = styled.div`
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-`;
-
-export const Option = styled.p`
-    font-size: medium;
-    text-align: center;
-
-    margin-bottom: 5px;
-
-    &:hover {
-        color: ${theme.COLORS.AZUL_DA_FRANCA};
-        cursor: pointer;
-    }
-`;

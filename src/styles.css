@@ -33,21 +33,19 @@ body {
     flex-direction: column;
 }
 #header {
-    background-image: url("./assets/ffflux-background.svg");
-    background-size: cover;
-    background-position: top;
-    height: 5vh; /* Pouca altura */
+  background-color: #A5CFF9;
+  background-position: top;
 }
 #content {
     display: flex;
     flex-direction: row;
 }
 #sideL {
-    display: flex;
-    width: 20%;
-    background-image: url("./assets/ffflux-background.svg");
-    background-size: cover;
-    background-position: left;
+  display: flex;
+  width: 20%;
+	background-color: #A5CFF9;
+  background-size: cover;
+  background-position: left;
 }
 .main-content {
     display: flex;

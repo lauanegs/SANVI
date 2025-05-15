@@ -4,13 +4,17 @@ import * as md from "react-icons/md";
 import * as ai from "react-icons/ai";
 import * as pi from "react-icons/pi";
 import * as lu from "react-icons/lu";  
+import * as io5 from "react-icons/io5";
+import * as cg from "react-icons/cg";
 
 export const libs = {
     fa,
     md,
     ai,
     pi,
-    lu
+    lu,
+    io5,
+    cg
 }
 
 function Icon<T extends LibNames>({color, iconLibName, icon, size}:IconProps<T>){
@@ -18,6 +22,7 @@ function Icon<T extends LibNames>({color, iconLibName, icon, size}:IconProps<T>)
     return(
         <IconComponent
             color={color}
+            fill={color}
             size={size}
         />
     );

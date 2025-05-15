@@ -1,9 +1,7 @@
-import Button from "@components/GenericButton"
-import styles from "./Login.module.css"
-import logo from "@assets/logo.svg"
-import Input from "@components/Input"
-import { useNavigate } from "react-router-dom"
-import GenericButton from "@components/GenericButton"
+import styles from "./Login.module.css";
+import logo from "@assets/logo.svg";
+import { useNavigate } from "react-router-dom";
+import GenericButton from "@components/GenericButton";
 
 
 export default function Login() {
