@@ -9,7 +9,6 @@ export const Container = styled.div`
 export const ContainerField = styled.div<InputSizeStyle>`
     display: flex;
     flex-direction: row;
-    position: relative;
 
     align-items: center;
     justify-content: space-between;

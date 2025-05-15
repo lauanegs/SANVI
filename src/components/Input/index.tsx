@@ -49,6 +49,7 @@ export default function Input({ sizeType, label, elements = [], inputType, ...re
                     <InputText
                         value={inputValue}
                         onChange={text => setInputValue(text.target.value)}
+                        style={{width: "100%", height: "100%"}}
                         {...rest}
                     />
                 }

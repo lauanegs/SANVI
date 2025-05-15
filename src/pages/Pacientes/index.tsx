@@ -47,9 +47,10 @@ export function Pacientes() {
         <SearchStyleWrapper>
           <LabelEntity>Paciente:</LabelEntity>
           <Input
-            sizeType='P'
+            sizeType='G'
             inputType='search'
             placeholder='João Santos'
+  
           />
         </SearchStyleWrapper>
         <GenericButton
