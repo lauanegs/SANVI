@@ -10,6 +10,8 @@ import Financas from "@pages/Financas/Financas";
 import '@fontsource/inter'; 
 
 
+const queryClient = new QueryClient({});
+
 function App() {
   return (
     <Router>
