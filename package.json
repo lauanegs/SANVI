@@ -15,7 +15,7 @@
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
-    "@tanstack/react-query": "^5.75.1",
+    "@tanstack/react-query": "^5.76.1",
     "@tauri-apps/api": "^2.3.0",
     "@tauri-apps/plugin-opener": "^2",
     "date-fns": "^4.1.0",
