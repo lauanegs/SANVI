@@ -1,6 +1,6 @@
 import styles from "./Login.module.css"
 import logo from "@assets/logo.svg"
-import Input from "@components/Input/Input"
+import Input from "@components/Input/index.tsx"
 import { useNavigate } from "react-router-dom"
 import GenericButton from "@components/GenericButton"
 import {useMutation } from "@tanstack/react-query";
