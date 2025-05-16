@@ -8,6 +8,7 @@ import "@fontsource/inter";
 import Financas from "@pages/Financas/Financas";
 
 import '@fontsource/inter'; 
+import { CadastroPaciente } from "@pages/Pacientes/CadastroPacientes";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/pacientes" element={<Pacientes />}/>
           <Route path="/especialistas" element={<Especialistas />}/>
           <Route path="/financas" element={<Financas />} />
+          <Route path="/cadastroPaciente" element={<CadastroPaciente/>}/>
         </Route>       
         
       </Routes>

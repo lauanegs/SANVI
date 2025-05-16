@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CommandHeader, Container, Content, LabelEntity, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
@@ -84,7 +84,6 @@ export function Pacientes() {
                 {cell}
               </FixedSizeGrid>
             </div>
-
           }
         </AutoSizer>
       </Content>

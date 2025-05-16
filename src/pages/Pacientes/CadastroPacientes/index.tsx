@@ -1,20 +1,38 @@
 import { TabCard } from "@components/TabCard";
-import { CheckBox, CheckBoxWrapper, Container, ContainerColunmForm, DivMarginButton, Form, HeaderTabs, Tabs, WrapperRow } from "./styles";
+import {
+    CheckBox,
+    CheckBoxWrapper,
+    ColunmLeftWrapper,
+    ColunmRightWrapper,
+    Container,
+    DivMarginButton,
+    Form,
+    FormTitleRowWrapper,
+    FormTitleWrapper,
+    HeaderTabs,
+    Tabs
+} from "./styles";
 import { GenericHeader } from "@components/GenericHeader";
 import GenericButton from "@components/GenericButton";
 import { Text } from "@components/Text";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@components/Icon";
 import theme from "theme";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export function CadastroPaciente() {
     const [isAgeOfMajority, setIsAgeOfMajority] = useState(true);
 
-    const datePlaceholder = new Date();
-
     const handleCheckAgeOfMajority = () => {
         setIsAgeOfMajority(prev => !prev);
     }
+
+    useEffect(() => {
+    getCurrentWindow().isFullscreen().then((fullScreen) => {
+        console.log(fullScreen);
+    })
+  
+  }, []);
 
     return (
         <Container>
@@ -39,53 +57,58 @@ export function CadastroPaciente() {
                     />
                 </DivMarginButton>
             </HeaderTabs>
-            <Form>
-                <ContainerColunmForm>
-                    <Text
-                        color="TERTIARY"
-                        size={14}
-                        text="Informações Gerais"
-                    />
-
+            <Form
+                style={{
                     
-                </ContainerColunmForm>
-                <ContainerColunmForm>
-                    <WrapperRow>
+                }}
+            >
+                <FormTitleWrapper>
+                    <ColunmLeftWrapper>
                         <Text
                             color="TERTIARY"
                             size={14}
-                            text="Informações do Responsável"
+                            text="Informações Gerais"
                         />
-                        <CheckBoxWrapper>
-                            <CheckBox
-                                onClick={handleCheckAgeOfMajority}
-                            >
-                                {isAgeOfMajority ?
-                                    <Icon
-                                        iconLibName="md"
-                                        icon="MdCheckBox"
-                                        color="#000"
-                                        size={20}
-                                    />
-                                    :
-                                    <Icon
-                                        iconLibName="md"
-                                        icon="MdCheckBoxOutlineBlank"
-                                        color={theme.COLORS.AZUL_DA_FRANCA}
-                                        size={20}
-                                    />
-                                }
-                            </CheckBox>
+                    </ColunmLeftWrapper>
+                    <ColunmRightWrapper>
+                        <FormTitleRowWrapper>
                             <Text
                                 color="TERTIARY"
                                 size={14}
-                                text="Declaro que o Paciente é menor de idade"
+                                text="Informações do Responsável"
                             />
-                        </CheckBoxWrapper>
-                    </WrapperRow>
-                   
-                </ContainerColunmForm>
+                            <CheckBoxWrapper>
+                                <CheckBox
+                                    onClick={handleCheckAgeOfMajority}
+                                >
+                                    {isAgeOfMajority ?
+                                        <Icon
+                                            iconLibName="md"
+                                            icon="MdCheckBox"
+                                            color="#000"
+                                            size={20}
+                                        />
+                                        :
+                                        <Icon
+                                            iconLibName="md"
+                                            icon="MdCheckBoxOutlineBlank"
+                                            color={theme.COLORS.AZUL_DA_FRANCA}
+                                            size={20}
+                                        />
+                                    }
+                                </CheckBox>
+                                <Text
+                                    color="TERTIARY"
+                                    size={14}
+                                    text="Declaro que o Paciente é menor de idade"
+                                />
+                            </CheckBoxWrapper>
+                        </FormTitleRowWrapper>
+                    </ColunmRightWrapper>
+                </FormTitleWrapper>
+                <div style={{ width: 100, height: 100, background: 'black' }}>
 
+                </div>
             </Form>
         </Container>
 
