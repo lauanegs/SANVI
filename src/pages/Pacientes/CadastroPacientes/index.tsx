@@ -15,6 +15,7 @@ import {
     HeaderTabs,
     StyleWrapper,
     Tabs,
+    TabWrapper,
     VariableRowWrapper,
     WrapperInput
 } from "./styles";
@@ -41,15 +42,21 @@ export function CadastroPaciente() {
             <GenericHeader />
             <HeaderTabs>
                 <Tabs>
-                    <TabCard
-                        title="Cadastro"
-                    />
-                    <TabCard
-                        title="Jornada"
-                    />
-                    <TabCard
-                        title="Prontuário"
-                    />
+                    <TabWrapper>
+                        <TabCard
+                            title="Cadastro"
+                        />
+                    </TabWrapper>
+                    <TabWrapper>
+                        <TabCard
+                            title="Jornada"
+                        />
+                    </TabWrapper>
+                    <TabWrapper>
+                        <TabCard
+                            title="Prontuário"
+                        />
+                    </TabWrapper>
                 </Tabs>
                 <DivMarginButton>
                     <GenericButton

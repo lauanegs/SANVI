@@ -12,11 +12,13 @@ export const Container = styled.div`
 export const CommandHeader = styled.div`
     display: flex;
     flex-direction: row;
-    width: 100%;
+    width: 95%;
     margin: 5px 0;
 
-    
-    justify-content: space-around;
+    align-items: center;
+
+    align-self: center;
+    justify-content: space-between;
 `;
 
 export const LabelEntity = styled.p`
@@ -27,11 +29,8 @@ export const LabelEntity = styled.p`
 export const SearchStyleWrapper = styled.div`
     display: flex;
     flex-direction: row;
-    width: 60%;
     align-items: center;
     justify-content: flex-start;
-
-    background-color: red;
 
     gap: 15px;
 `;
