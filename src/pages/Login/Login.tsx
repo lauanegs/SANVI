@@ -8,6 +8,7 @@ import {fetchLogin} from "@api/login";
 import {useState} from "react";
 
 
+
 export default function Login() {
   const navigate = useNavigate();
 
@@ -36,15 +37,14 @@ export default function Login() {
             </div>
             <div className={styles.campos}>
                 <label>Usuário</label>
-                <Input type="text"
-                    tamanho="P"
+                <Input sizeType="P"
+
                     value={username}
-                    onChange={setUsername}/>
+                    onChange={text => setUsername(text.target.value)}/>
                 <label>Senha</label>            
-                <Input type="password"
-                    tamanho="P"
+                <Input sizeType="P" type={"password"}
                     value={password}
-                    onChange={setPassword}/>
+                    onChange={pass => setPassword(pass.target.value)}/>
             </div>
             <GenericButton
               color="PRIMARY"
