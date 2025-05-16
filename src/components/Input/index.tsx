@@ -34,6 +34,7 @@ export default function Input({ sizeType, label, elements = [], inputType, ...re
                 }
                 {inputType === "date" ?
                     <DatePicker
+                        
                         locale="pt-BR"
                         selected={date}
                         dateFormat="dd/MM/yyyy"
@@ -43,13 +44,12 @@ export default function Input({ sizeType, label, elements = [], inputType, ...re
                         onSelect={() => setIsVisibleDateMenu(false)}
                         onInputClick={() => setIsVisibleDateMenu(true)}
                         showPopperArrow={false}
-                        customInput={<InputText />}
+                        customInput={<InputText/>}
                     />
                     :
                     <InputText
                         value={inputValue}
                         onChange={text => setInputValue(text.target.value)}
-                        style={{width: "100%", height: "100%"}}
                         {...rest}
                     />
                 }

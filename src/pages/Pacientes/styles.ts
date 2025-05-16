@@ -15,7 +15,7 @@ export const CommandHeader = styled.div`
     width: 100%;
     margin: 5px 0;
 
-    align-items: center;
+    
     justify-content: space-around;
 `;
 
@@ -27,8 +27,11 @@ export const LabelEntity = styled.p`
 export const SearchStyleWrapper = styled.div`
     display: flex;
     flex-direction: row;
+    width: 60%;
     align-items: center;
     justify-content: flex-start;
+
+    background-color: red;
 
     gap: 15px;
 `;

@@ -21,7 +21,7 @@
 }
 
 
-html, body, #root, #cssportal, #content {
+html, body, #root, #cssportal, #content, .main-content {
   height: 100%;
   width: 100%;
 }
