@@ -20,33 +20,33 @@
     color: #737373;
 }
 
+
+html, body, #root, #cssportal, #content, .main-content {
+  height: 100%;
+  width: 100%;
+}
+
 body {
     /* background: rgb(2,0,36);
   background: linear-gradient(80deg, rgba(2, 0, 36, 0.95) 0%, rgba(50,99,74,0.75) 35%, rgba(137,158,55,0.65) 100%); */
     overflow: hidden;
-    height: 100%;
 }
 
 #cssportal {
     display: flex;
-    flex: 1;
     flex-direction: column;
 }
 #header {
+  width: 100%;
   background-color: #A5CFF9;
-  background-position: top;
+  background-position: bottom;
 }
 #content {
+    width: 100%;
     display: flex;
     flex-direction: row;
 }
-#sideL {
-  display: flex;
-  width: 20%;
-	background-color: #A5CFF9;
-  background-size: cover;
-  background-position: left;
-}
+
 .main-content {
     display: flex;
     flex: 1;

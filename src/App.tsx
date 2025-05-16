@@ -6,14 +6,12 @@ import Especialistas from "@pages/Especialistas/Especialistas";
 import Login from "@pages/Login/Login";
 import "@fontsource/inter";
 import Financas from "@pages/Financas/Financas";
-
-import '@fontsource/inter';
-
+ 
+import { CadastroPaciente } from "@pages/Pacientes/CadastroPacientes";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 
 const queryClient = new QueryClient({});
-
 
 function App() {
   return (
@@ -27,6 +25,7 @@ function App() {
               <Route path="/pacientes" element={<Pacientes />}/>
               <Route path="/especialistas" element={<Especialistas />}/>
               <Route path="/financas" element={<Financas />} />
+              <Route path="/cadastroPaciente" element={<CadastroPaciente/>}/>
             </Route>
 
           </Routes>

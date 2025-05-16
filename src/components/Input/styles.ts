@@ -14,19 +14,19 @@ export const ContainerField = styled.div<InputSizeStyle>`
     justify-content: space-between;
 
     ${({ sizeType }) => sizeType === "PP" && css`
-        width: 68px;
+        width: 20%;
     `};
     ${({ sizeType }) => sizeType === "P" && css`
-        width: 216px;
+        width: 50%;
     `};
     ${({ sizeType }) => sizeType === "M" && css`
-        width: 300px;
+        width: 60%;
     `};
     ${({ sizeType }) => sizeType === "MG" && css`
-        width: 450px;
+        width: 75%;
     `};
     ${({ sizeType }) => sizeType === "G" && css`
-        width: 580px;
+        width: 100%;
     `};
     height: 32px;
 
@@ -44,11 +44,13 @@ export const Label = styled.p`
 `;
 
 export const InputText = styled.input`
-    flex: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0 8px;
     background-color: ${theme.COLORS.BRANCO};
-    margin: 0 4px;
     border: none;
     outline: none;
+    box-sizing: border-box;
     
 `;
 
