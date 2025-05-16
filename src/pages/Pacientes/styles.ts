@@ -12,11 +12,13 @@ export const Container = styled.div`
 export const CommandHeader = styled.div`
     display: flex;
     flex-direction: row;
-    width: 100%;
+    width: 95%;
     margin: 5px 0;
 
     align-items: center;
-    justify-content: space-around;
+
+    align-self: center;
+    justify-content: space-between;
 `;
 
 export const LabelEntity = styled.p`

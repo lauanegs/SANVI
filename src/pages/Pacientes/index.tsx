@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CommandHeader, Container, Content, LabelEntity, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
@@ -7,16 +7,17 @@ import { FixedSizeGrid } from 'react-window';
 import SimpleCard from '@components/SimpleCard';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 
 export function Pacientes() {
-  const [isFullScreen] = useState(document.fullscreenElement);
   const contentRef = useRef<HTMLDivElement>(null);
-  const rows = isFullScreen ? 6 : 4;
+
+  const rows = 8;
 
   const navigator = useNavigate();
   
-  const data = Array(30).fill(true).map((_, index) => ({
+  const data = Array(50).fill(true).map((_, index) => ({
     title: `Pessoa ${index}`,
     subtitle: `Subtitulo`
   }))
@@ -84,7 +85,6 @@ export function Pacientes() {
                 {cell}
               </FixedSizeGrid>
             </div>
-
           }
         </AutoSizer>
       </Content>
