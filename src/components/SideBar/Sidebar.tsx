@@ -116,7 +116,7 @@ function Sidebar() {
                 </ScreenCardWrapper>
             </Link>
 
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/agendamentos" style={{ textDecoration: 'none' }}>
                 <ScreenCardWrapper>
                     <ScreenCardWrapperHover isSelected={screenSelected === "agendamentos"}>
                         <ScreenCardTitleWrapper>

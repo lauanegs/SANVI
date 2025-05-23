@@ -15,7 +15,7 @@ export function Controls() {
           <Icon color="#fff" iconLibName="fa" icon="FaWindowMinimize" size={14} />
         </ActionButton>
         <ActionButton onClick={async () => {
-          await appWindow.maximize();
+          await appWindow.toggleMaximize();
         }}>
           <Icon color="#fff" iconLibName="fa" icon="FaClone" size={14} />
         </ActionButton>

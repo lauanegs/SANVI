@@ -22,8 +22,8 @@ export interface CalendarEvent {
   date: string; // só a data (ex: 2025-05-20)
   time: string; // só a hora (ex: 15:30)
   color: string;
-  patient: string; // atualmente nome, mas usaremos id no envio
-  specialist: string; // atualmente nome, mas usaremos id
+  patient: string; // id do paciente como string
+  specialist: string; // id do especialista
   phone: string;
   status: string;
 }
@@ -33,7 +33,7 @@ interface EventModalProps {
   onClose: () => void;
   onSave: (event: CalendarEvent | Omit<CalendarEvent, "id">) => void;
   selectedDate: string;
-  selectedEvent: CalendarEvent | null;
+  selectedEvent: any | null; // aceitando any pois a estrutura pode variar
 }
 
 export default function EventModal({
@@ -44,6 +44,7 @@ export default function EventModal({
   selectedEvent,
 }: EventModalProps) {
   const [title, setTitle] = useState("");
+  const [date, setDate] = useState(selectedDate);
   const [time, setTime] = useState("08:00");
   const [color, setColor] = useState("#90CAF9");
   const [patient, setPatient] = useState(""); // armazenar id do paciente como string
@@ -52,17 +53,67 @@ export default function EventModal({
   const [status, setStatus] = useState("");
 
   const [patientsList, setPatientsList] = useState<any[]>([]);
-  const [specialistsList, setSpecialistsList] = useState<any[]>([]); // agora guarda objetos completos
+  const [specialistsList, setSpecialistsList] = useState<any[]>([]);
 
+  // Sincroniza dados quando selectedEvent ou selectedDate mudam
   useEffect(() => {
     if (selectedEvent) {
-      setTitle(selectedEvent.title);
-      setTime(selectedEvent.time);
-      setColor(selectedEvent.color);
-      setPatient(selectedEvent.patient); // aqui deve ser id do paciente
-      setSpecialist(selectedEvent.specialist); // id do especialista
-      setPhone(selectedEvent.phone || "");
-      setStatus(selectedEvent.status);
+      // Corrige título "undefined" como string
+      setTitle(
+        selectedEvent.title && selectedEvent.title !== "undefined"
+          ? selectedEvent.title
+          : ""
+      );
+
+      setTime(selectedEvent.time || "08:00");
+      setColor(selectedEvent.color || "#90CAF9");
+
+      // Se patient for objeto, pegar id e telefone
+      if (
+        selectedEvent.patient &&
+        typeof selectedEvent.patient === "object" &&
+        selectedEvent.patient !== null
+      ) {
+        setPatient(selectedEvent.patient.id?.toString() || "");
+        setPhone(
+          selectedEvent.patient.phoneNumber
+            ? selectedEvent.patient.phoneNumber.toString()
+            : ""
+        );
+      } else {
+        setPatient(selectedEvent.patient || "");
+        setPhone(selectedEvent.phone || "");
+      }
+
+      if (
+        selectedEvent.specialist &&
+        typeof selectedEvent.specialist === "object" &&
+        selectedEvent.specialist !== null
+      ) {
+        setSpecialist(selectedEvent.specialist.id?.toString() || "");
+      } else {
+        setSpecialist(selectedEvent.specialist || "");
+      }
+
+
+
+
+      setStatus(() => {
+        switch (selectedEvent.status.toLowerCase()) {
+          case "confirmado":
+            return "CONFIRMED";
+          case "criado":
+            return "PENDING";
+          case "cancelado":
+            return "CANCELED";
+          case "concluído":
+            return "COMPLETED";
+          default:
+            return "";
+        }
+      });
+
+      setDate(selectedEvent.date.split("T")[0]);
     } else {
       setTitle("");
       setTime("08:00");
@@ -71,9 +122,11 @@ export default function EventModal({
       setSpecialist("");
       setPhone("");
       setStatus("");
+      setDate(selectedDate);
     }
-  }, [selectedEvent]);
+  }, [selectedEvent, selectedDate]);
 
+  // Buscar pacientes e especialistas quando modal abrir
   useEffect(() => {
     if (isOpen) {
       fetch(`${API_URL}/patient`)
@@ -92,9 +145,11 @@ export default function EventModal({
     }
   }, [isOpen]);
 
+  // Atualiza telefone quando paciente mudar
   useEffect(() => {
-    // Atualiza telefone baseado no paciente selecionado
-    const selectedPatient = patientsList.find((p) => p.id.toString() === patient);
+    const selectedPatient = patientsList.find(
+      (p) => p.id.toString() === patient
+    );
     if (selectedPatient && selectedPatient.phoneNumber) {
       setPhone(selectedPatient.phoneNumber.toString());
     } else {
@@ -103,65 +158,131 @@ export default function EventModal({
   }, [patient, patientsList]);
 
   const handleSubmit = () => {
-    try {
-      const dateTimeISO = new Date(`${selectedDate}T${time}`).toISOString();
-  
-      const statusMap: Record<string, string> = {
-        CONFIRMED: "Confirmado",
-        PENDING: "Criado",
-        CANCELED: "Cancelado",
-        COMPLETED: "Concluído",
-      };
-  
-      const mappedStatus = statusMap[status.toUpperCase()];
-      if (!mappedStatus) {
-        alert("Status inválido.");
-        return;
-      }
-  
-      const eventData = {
-        patient: { id: Number(patient) },
-        specialists: specialist ? [{ id: Number(specialist) }] : [],
-        date: dateTimeISO,
-        status: mappedStatus,
-      };
-  
-      console.log("🟡 Dados enviados:", eventData);
-  
-      const url = selectedEvent
-        ? `${API_URL}/appointments/${selectedEvent.id}`
-        : `${API_URL}/appointments/create`;
-  
-      const method = selectedEvent ? "PUT" : "POST";
-  
-      fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(eventData),
+    console.log("📤 Iniciando envio do formulário");
+
+    const dateTimeISO = new Date(`${date}T${time}`).toISOString();
+    console.log("📅 Data e hora combinadas (ISO):", dateTimeISO);
+
+    const statusMap: Record<string, string> = {
+      CONFIRMED: "Confirmado",
+      PENDING: "Criado",
+      CANCELED: "Cancelado",
+      COMPLETED: "Concluído",
+    };
+
+    const mappedStatus = statusMap[status.toUpperCase()];
+    console.log("📌 Status mapeado:", mappedStatus);
+
+    if (!mappedStatus) {
+      alert("Status inválido.");
+      return;
+    }
+
+    const selectedPatient = patientsList.find((p) => p.id.toString() === patient);
+    const selectedSpecialist = specialistsList.find((s) => s.id.toString() === specialist);
+
+    console.log("🧍 Paciente selecionado:", selectedPatient);
+    console.log("🧑‍⚕️ Especialista selecionado:", selectedSpecialist);
+
+    if (!selectedPatient || !selectedSpecialist) {
+      alert("Paciente ou especialista inválido.");
+      return;
+    }
+
+    const eventData = {
+      patient: {
+        id: selectedPatient.id,
+        name: selectedPatient.name,
+        birthDate: selectedPatient.birthDate,
+        phoneNumber: selectedPatient.phoneNumber,
+        address: selectedPatient.address,
+        gender: selectedPatient.gender,
+        rg: selectedPatient.rg,
+        cpf: selectedPatient.cpf,
+      },
+      specialist: {
+        id: selectedSpecialist.id,
+        name: selectedSpecialist.name,
+        birthDate: selectedSpecialist.birthDate,
+        phoneNumber: selectedSpecialist.phoneNumber,
+        address: selectedSpecialist.address,
+        gender: selectedSpecialist.gender,
+        rg: selectedSpecialist.rg,
+        cpf: selectedSpecialist.cpf,
+      },
+      date: dateTimeISO,
+      status: mappedStatus,
+    };
+
+    if (selectedEvent?.id) {
+      eventData.id = selectedEvent.id;
+    }
+
+    console.log("📦 Dados preparados para envio:", eventData);
+
+    const url = selectedEvent
+      ? `${API_URL}/appointments/${selectedEvent.id}`
+      : `${API_URL}/appointments/create`;
+
+    const method = selectedEvent ? "PUT" : "POST";
+
+    console.log("🌐 URL da requisição:", url);
+    console.log("📬 Método da requisição:", method);
+
+    fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(eventData),
+    })
+      .then(async (res) => {
+        console.log("📨 Resposta recebida (status):", res.status);
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("❌ Erro do servidor:", errorText);
+          throw new Error(`Erro na requisição: ${res.status} - ${errorText}`);
+        }
+        return res.json();
       })
-        .then(async (res) => {
-          if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(`Erro na requisição: ${res.status} - ${errorText}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          onSave(selectedEvent ? { ...eventData, id: selectedEvent.id } : data);
-        })
-        .catch((err) => {
-          console.error("❌ Erro ao enviar os dados:", err);
-          alert("Erro ao salvar o agendamento. Verifique os campos e tente novamente.");
-        });
-    } catch (err) {
-      console.error("❌ Erro inesperado:", err);
-      alert("Erro inesperado ao enviar os dados.");
+      .then((data) => {
+        console.log("✅ Dados salvos com sucesso:", data);
+        onSave(selectedEvent ? { ...eventData, id: selectedEvent.id } : data);
+      })
+      .catch((err) => {
+        console.error("❌ Erro ao enviar os dados:", err);
+        alert("Erro ao salvar o agendamento. Verifique os campos e tente novamente.");
+      });
+  };
+
+
+
+
+
+  const handleDelete = async () => {
+    if (!selectedEvent || !selectedEvent.id) return;
+
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir este agendamento?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/appointments/${selectedEvent.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ao excluir: ${response.status} - ${errorText}`);
+      }
+
+      onSave(null); // ou crie um callback `onDelete` separado se quiser tratar diferente
+      onClose();    // Fecha o modal
+    } catch (error) {
+      console.error("Erro ao excluir o evento:", error);
+      alert("Não foi possível excluir o agendamento.");
     }
   };
-  
-  
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -195,7 +316,12 @@ export default function EventModal({
           </select>
 
           <div style={{ display: "flex", gap: "8px" }}>
-            <input type="date" value={selectedDate} disabled style={{ flex: 1 }} />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              style={{ flex: 1 }}
+            />
             <input
               type="time"
               value={time}
@@ -209,7 +335,6 @@ export default function EventModal({
               type="text"
               placeholder="Celular do paciente"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
               style={{ flex: 1 }}
               disabled
             />
@@ -220,15 +345,24 @@ export default function EventModal({
             <option value="CONFIRMED">Confirmado</option>
             <option value="PENDING">Pendente</option>
             <option value="CANCELED">Cancelado</option>
+            <option value="COMPLETED">Concluído</option>
           </select>
         </div>
 
         <DialogFooter>
           <Button onClick={handleSubmit}>
-            {selectedEvent ? "Salvar alterações" : "Criar horário"}
+            {selectedEvent ? "Atualizar" : "Salvar"}
           </Button>
-          <DialogClose>
-            <Button onClick={onClose}>Cancelar</Button>
+          {selectedEvent && (
+            <Button variant="destructive" onClick={handleDelete}>
+              Excluir
+            </Button>
+          )}
+
+          <DialogClose asChild>
+            <Button variant="secondary" onClick={onClose}>
+              Cancelar
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

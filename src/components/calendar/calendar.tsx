@@ -80,20 +80,49 @@ export default function Calendar() {
     setSelectedEvent(null);
   };
 
-  const handleSaveEvent = (eventData: CalendarEvent | Omit<CalendarEvent, "id">) => {
-    if ("id" in eventData) {
-      setEvents((prevEvents) =>
-        prevEvents.map((ev) => (ev.id === eventData.id ? eventData : ev))
-      );
-    } else {
-      const newEvent: CalendarEvent = {
-        ...eventData,
-        id: Date.now().toString(),
-      };
-      setEvents((prev) => [...prev, newEvent]);
+  const handleSaveEvent = async (eventData: CalendarEvent | Omit<CalendarEvent, "id">) => {
+    try {
+      let updatedEvent: CalendarEvent;
+
+      if ("id" in eventData) {
+        // Edição
+        const response = await fetch(`${API_URL}/appointments/${eventData.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(eventData),
+        });
+
+        if (!response.ok) throw new Error("Erro ao atualizar evento");
+
+        updatedEvent = await response.json();
+
+        setEvents((prevEvents) =>
+          prevEvents.map((ev) => (ev.id === updatedEvent.id ? updatedEvent : ev))
+        );
+      } else {
+        // Criação
+        const response = await fetch(`${API_URL}/appointments/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(eventData),
+        });
+
+        if (!response.ok) throw new Error("Erro ao criar evento");
+
+        updatedEvent = await response.json();
+
+        setEvents((prev) => [...prev, updatedEvent]);
+      }
+
+      setIsModalOpen(false);
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error("Erro ao salvar evento:", error);
     }
-    setIsModalOpen(false);
-    setSelectedEvent(null);
   };
 
   const handleDateClick = (info: any) => {
@@ -103,25 +132,39 @@ export default function Calendar() {
   };
 
   const handleEventClick = (info: any) => {
-    const clickedEvent = events.find((event) => event.id === info.event.id);
-    if (clickedEvent) {
-      setSelectedEvent(clickedEvent);
-      setIsModalOpen(true);
-    }
+    const eventId = info.event.id;
+    const extended = info.event.extendedProps;
+
+    const clickedEvent: CalendarEvent = {
+      id: Number(eventId),
+      title: info.event.title,
+      date: info.event.startStr,
+      time: extended.time,
+      color: extended.color,
+      patient: extended.patient,
+      specialist: extended.specialist,
+      phone: extended.phone,
+      status: extended.status,
+    };
+
+    console.log("Evento selecionado:", clickedEvent);
+
+    setSelectedEvent(clickedEvent);
+    setIsModalOpen(true);
   };
 
   const renderEventContent = (eventInfo: any) => {
     const patient = eventInfo.event.extendedProps.patient;
     const patientName = patient?.name || "Paciente";
-    
+
     // A data está no formato ISO com hora e fuso, então extraia só a hora para mostrar:
     const eventDateStr = eventInfo.event.start || eventInfo.event.extendedProps.date;
-    const eventTime = eventDateStr 
-      ? new Date(eventDateStr).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) 
+    const eventTime = eventDateStr
+      ? new Date(eventDateStr).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
       : "";
-      
+
     const eventColor = eventInfo.event.extendedProps.color || "#90CAF9";
-  
+
     return (
       <div className={styles.eventContent} style={{ backgroundColor: eventColor }}>
         <div className={styles.eventTitle}>{patientName}</div>
@@ -132,7 +175,6 @@ export default function Calendar() {
       </div>
     );
   };
-  
 
   return (
     <div className={styles.calendarContainer}>

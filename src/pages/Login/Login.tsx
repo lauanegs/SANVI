@@ -35,14 +35,14 @@ export default function Login() {
                 <img src={logo} width={130} height={130}/>
                 <p>Bem-vindo!</p>
             </div>
-            <div className={styles.campos}>
+            <div className={styles.campos} style={{width:"90%"}}>
                 <label>Usuário</label>
-                <Input sizeType="P"
-
+                <Input sizeType="G"
+                    
                     value={username}
                     onChange={text => setUsername(text.target.value)}/>
                 <label>Senha</label>            
-                <Input sizeType="P" type={"password"}
+                <Input sizeType="G" type={"password"} 
                     value={password}
                     onChange={pass => setPassword(pass.target.value)}/>
             </div>
