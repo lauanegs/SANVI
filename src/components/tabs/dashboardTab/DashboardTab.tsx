@@ -50,14 +50,12 @@ export default function DashboardTab() {
         <div className="dashboard_Container">
             <div className="header_container">
                 <Card
-                    key="TotalCaixa"
                     titulo="Total Caixa"
                     conteudo="R$ 15.500,00"
                     positivo={true}
                 />
 
                 <Card
-                    key="recebido"
                     titulo="Recebido"
                     conteudo="R$ 4.200,00"
                     textoInferior={{
@@ -68,7 +66,6 @@ export default function DashboardTab() {
                 />
 
                 <Card
-                    key="recebido"
                     titulo="Recebido"
                     conteudo="R$ 11.300,00"
                     textoInferior={{
