@@ -1,4 +1,4 @@
-import { HeaderGeneric } from "@components/GenericHeader";
+import { GenericHeader } from "@components/GenericHeader";
 import "./styles.css";
 import { useState } from "react";
 import GenericButton from "@components/GenericButton";
@@ -17,25 +17,31 @@ function Financas() {
 
     return (
         <div className="fin_AlterContainer">
-            <HeaderGeneric></HeaderGeneric>
+            <GenericHeader></GenericHeader>
 
             <div className="fin_TabContainer">
                 <nav>
                     <div className="fin_tabs">
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.DASHBOARD ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.DASHBOARD)}
                         >
                             Dashboard
                         </button>
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.ENTRADAS ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.ENTRADAS)}
                         >
                             Entradas
                         </button>
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.SAIDAS ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.SAIDAS)}
                         >
                             Saídas

@@ -8,6 +8,24 @@
     flex-direction: column;
 
     gap: 0.4rem;
+
+    height: 100px;
+}
+
+.containerPositivo {
+    background-color: var(--azul-da-franca);
+}
+
+.containerPositivo .card-content {
+    color: #fff !important;
+}
+
+.containerPositivo .card-title {
+    color: #fff !important;
+}
+
+.containerNegativo {
+    background-color: var(--casca-de-laranja);
 }
 
 .card_Container .card-title {
@@ -34,4 +52,12 @@
 
 .card_Container .vermelho {
     color: #dc3545;
+}
+
+.card_Container .branco {
+    color: #fff;
+}
+
+.card_Container .cinza {
+    color: var(--cinza-escuro);
 }

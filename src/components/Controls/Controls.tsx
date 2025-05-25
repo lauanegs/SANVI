@@ -12,7 +12,7 @@ const Controls: React.FC = () => {
     const appWindow = getCurrentWindow();
     return (
         <div data-tauri-drag-region className={styles.parent}>
-            {/* <div className={styles.info}>
+            <div className={styles.info}>
                 <p>{data.getUTCDate()}</p>
             </div>
             <div className={styles.buttons}>
@@ -28,7 +28,7 @@ const Controls: React.FC = () => {
                 <button onClick={() => appWindow.close()}>
                     <FaRegCircleXmark />
                 </button>
-            </div> */}
+            </div>
         </div>
     );
 };
