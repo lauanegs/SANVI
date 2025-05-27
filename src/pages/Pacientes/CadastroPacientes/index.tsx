@@ -1,4 +1,3 @@
-import { TabCard } from "@components/TabCard";
 import {
     CheckBox,
     CheckBoxWrapper,
@@ -8,24 +7,20 @@ import {
     ColunmRightWrapper,
     ColunmsWrapper,
     Container,
-    DivMarginButton,
     Form,
     FormContentWrapper,
     FormTitleRowWrapper,
-    HeaderTabs,
     StyleWrapper,
-    Tabs,
-    TabWrapper,
     VariableRowWrapper,
     WrapperInput
 } from "./styles";
 import { GenericHeader } from "@components/GenericHeader";
-import GenericButton from "@components/GenericButton";
 import { Text } from "@components/Text";
 import { useState } from "react";
 import Icon from "@components/Icon";
 import theme from "theme";
 import Input from "@components/Input";
+import { MenuHeader } from "@components/MenuHeader";
 
 export function CadastroPaciente() {
     const [isAgeOfMajority, setIsAgeOfMajority] = useState(true);
@@ -35,37 +30,18 @@ export function CadastroPaciente() {
         setIsAgeOfMajority(prev => !prev);
     }
 
-    console.log(value)
+    console.log("renderizou");
 
     return (
         <Container>
             <GenericHeader />
-            <HeaderTabs>
-                <Tabs>
-                    <TabWrapper>
-                        <TabCard
-                            title="Cadastro"
-                        />
-                    </TabWrapper>
-                    <TabWrapper>
-                        <TabCard
-                            title="Jornada"
-                        />
-                    </TabWrapper>
-                    <TabWrapper>
-                        <TabCard
-                            title="Prontuário"
-                        />
-                    </TabWrapper>
-                </Tabs>
-                <DivMarginButton>
-                    <GenericButton
-                        color="PRIMARY"
-                        title="Salvar"
-                        onClick={() => { }}
-                    />
-                </DivMarginButton>
-            </HeaderTabs>
+            <MenuHeader
+                firstSubScreen="cadastroPaciente"
+                secondSubScreen="jornadaPaciente"
+                thirdSubScreen="prontuarioPaciente"
+                buttonTitle="Salvar"
+                onPressButton={() => {}}
+            />
             <Form>
                 <FormContentWrapper>
                     <FormTitleRowWrapper>

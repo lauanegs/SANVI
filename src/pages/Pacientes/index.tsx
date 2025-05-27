@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { CommandHeader, Container, Content, LabelEntity, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
@@ -7,7 +7,6 @@ import { FixedSizeGrid } from 'react-window';
 import SimpleCard from '@components/SimpleCard';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 
 
 export function Pacientes() {
@@ -67,7 +66,7 @@ export function Pacientes() {
             <div
               onWheel={e => {
                 e.preventDefault();
-                if(contentRef){
+                if(contentRef.current){
                   contentRef.current.scrollLeft += e.deltaY;
                 }
               }}

@@ -9,6 +9,8 @@ import Financas from "@pages/Financas/Financas";
  
 import { CadastroPaciente } from "@pages/Pacientes/CadastroPacientes";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import { JornadaPaciente } from "@pages/Pacientes/JornadaPaciente";
+import { ProntuarioPaciente } from "@pages/Pacientes/ProntuarioPaciente";
 
 
 const queryClient = new QueryClient({});
@@ -26,8 +28,9 @@ function App() {
               <Route path="/especialistas" element={<Especialistas />}/>
               <Route path="/financas" element={<Financas />} />
               <Route path="/cadastroPaciente" element={<CadastroPaciente/>}/>
+              <Route path="/jornadaPaciente" element={<JornadaPaciente/>}/>
+              <Route path="/prontuarioPaciente" element={<ProntuarioPaciente/>}/>
             </Route>
-
           </Routes>
         </Router>
       </QueryClientProvider>
