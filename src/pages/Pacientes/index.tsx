@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CommandHeader, Container, Content, LabelEntity, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
@@ -7,12 +7,14 @@ import { FixedSizeGrid } from 'react-window';
 import SimpleCard from '@components/SimpleCard';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from 'store/appStore';
 
 
 export function Pacientes() {
   const contentRef = useRef<HTMLDivElement>(null);
+  const isFullScreen = useAppStore().isFullScreen;
 
-  const rows = 8;
+  const [rows, setRows] = useState(4);
 
   const navigator = useNavigate();
   
@@ -22,6 +24,14 @@ export function Pacientes() {
   }))
 
   const columns = Math.ceil(data.length/rows);
+
+  useEffect(() => {
+    const newRowsQtd = isFullScreen ? 8 : 4;
+    setRows(newRowsQtd);
+    console.log("FULL",isFullScreen)
+  }, [isFullScreen])
+
+ 
 
   const cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
     const index = rows * columnIndex + rowIndex;

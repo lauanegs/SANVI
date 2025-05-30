@@ -14,7 +14,6 @@ export const Form = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin: 0 5px;
 
     margin-bottom: 40px;
     padding-bottom: 50px;

@@ -1,17 +1,22 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import theme from "theme";
+import { StyleProps } from "./types";
 
 export const Container = styled.div`
-    width: 100%;
     display: flex;
     flex-direction: column;
 
     gap: 5px;
 `;
 
-export const SelectWrapper = styled.div`
+export const SelectWrapper = styled.div<StyleProps>`
     display: flex;
-    flex-direction: column;
+    ${({direction}) => direction === "horizontal" && css`
+        flex-direction: row;
+    `}
+    ${({direction}) => direction === "vertical" && css`
+        flex-direction: column;
+    `}
 
     gap: 5px;
 `;

@@ -21,8 +21,14 @@ import Icon from "@components/Icon";
 import theme from "theme";
 import Input from "@components/Input";
 import { MenuHeader } from "@components/MenuHeader";
+import { useAppStore } from "store/appStore";
 
 export function CadastroPaciente() {
+    const isFullScreen = useAppStore().isFullScreen;
+
+    const SIZE_TITLE = isFullScreen ? 14 : 12;
+    const PADDING_TOP = isFullScreen ? 50 : 20;
+
     const [isAgeOfMajority, setIsAgeOfMajority] = useState(true);
     const [value, setValue] = useState('');
 
@@ -42,17 +48,19 @@ export function CadastroPaciente() {
                 buttonTitle="Salvar"
                 onPressButton={() => {}}
             />
-            <Form>
+            <Form
+                style={{paddingTop: PADDING_TOP}}
+            >
                 <FormContentWrapper>
                     <FormTitleRowWrapper>
                         <Text
                             color="TERTIARY"
-                            size={12}
+                            size={SIZE_TITLE}
                             text="Informações Gerais"
                         />
                         <Text
                             color="TERTIARY"
-                            size={12}
+                            size={SIZE_TITLE}
                             text="Informações do Responsável"
                         />
                         <CheckBoxWrapper>
@@ -77,7 +85,7 @@ export function CadastroPaciente() {
                             </CheckBox>
                             <Text
                                 color="TERTIARY"
-                                size={12}
+                                size={SIZE_TITLE}
                                 text="Declaro que o Paciente é menor de idade"
                             />
                         </CheckBoxWrapper>
@@ -134,7 +142,7 @@ export function CadastroPaciente() {
                     <FormTitleRowWrapper>
                         <Text
                             color="TERTIARY"
-                            size={12}
+                            size={SIZE_TITLE}
                             text="Informações do paciente"
                         />
                     </FormTitleRowWrapper>

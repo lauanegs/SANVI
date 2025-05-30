@@ -10,5 +10,4 @@ export const Container = styled.div`
 
 export const ContentContainer = styled.div`
     flex: 1;
-    padding: 30px 60px 0 20px;
 `;

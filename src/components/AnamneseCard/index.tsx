@@ -1,19 +1,43 @@
 import { Text } from "@components/Text";
 import { Container, TextField, TextFieldWrapper } from "./styles";
 import { AnamneseCardProps } from "./types";
+import { useEffect, useRef } from "react";
+import { useAppStore } from "store/appStore";
 
-export function AnamneseCard({textField, title}: AnamneseCardProps){
-    return(
+export function AnamneseCard({ title, onHeightChange, ...rest }: AnamneseCardProps) {
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const isFullScreen = useAppStore().isFullScreen;
+
+    useEffect(() => {
+        const textArea = textAreaRef.current;
+        if(textArea){
+            const prevHeight = textArea.style.height;
+            textArea.style.height = 'auto';
+            textArea.style.height = `${textArea.scrollHeight}px`;
+
+            const heightValueChanged = Number(prevHeight) - Number(textArea.style.height);
+            const isSum = heightValueChanged > 0;
+            const value = isSum ? heightValueChanged : heightValueChanged * -1;
+
+            onHeightChange(value, isSum);
+        }
+
+    }, [textAreaRef.current?.value, isFullScreen])
+
+    return (
         <Container>
-            <Text
-                color="PRIMARY"
-                size={12}
-                text={title}
-            />
+            {title &&
+                <Text
+                    color="PRIMARY"
+                    size={12}
+                    text={title}
+                />
+            }
             <TextFieldWrapper>
                 <TextField
-                    value={textField}
-                    rows={4}
+                    ref={textAreaRef}
+                    spellCheck={false}
+                    {...rest}
                 />
             </TextFieldWrapper>
         </Container>

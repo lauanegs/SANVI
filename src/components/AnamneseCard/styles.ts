@@ -7,7 +7,6 @@ export const Container = styled.div`
     flex-direction: column;
 
     gap: 10px;
-    padding: 10px;
 `;
 
 export const TextFieldWrapper = styled.div`
@@ -24,16 +23,9 @@ export const TextFieldWrapper = styled.div`
 export const TextField = styled.textarea`
     width: 100%;
     size: 12px;
-    text-overflow: ellipsis;
     border: none;
     border-radius: 5px;
     resize: none;
-    overflow: auto;
-
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE e Edge antigo */
-
-    &::-webkit-scrollbar {
-        display: none;            /* Chrome, Safari, Edge moderno */
-    }
+    outline: none;
+    
 `;

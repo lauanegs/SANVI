@@ -13,26 +13,27 @@ export const Form = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin: 30px 60px 0 60px;
 
-    padding-bottom: 50px;
+    align-items: center;
+    justify-content: center;
 
     overflow-y: auto;
 `;
 
+export const FormContent = styled.div`
+    flex: 1;
+    width: 90%;
+
+`;
+
 export const FormTitleRowWrapper = styled.div`
     display: flex;
-    width: 90%;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
 
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 `;
 
-export const FormContent = styled.div`
-    padding: 10px;
-`;
 
 export const ContainerInfo = styled.div`
     display: flex;
@@ -48,6 +49,7 @@ export const VariableRowWrapper = styled.div`
     flex-direction: row;
     width: 100%;
 
+    margin-bottom: 10px;
     gap: 15px;
 `;
 
@@ -55,4 +57,21 @@ export const ContainerAnamneseCard = styled.div`
     display: flex;
     flex-direction: column;
     width: 40%;
+`;
+
+export const VerticalWrapper = styled.div`
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+`;
+
+export const SelectStyleWrapper = styled.div`
+    padding-left: 10px;
+`;
+
+export const FirstSelectStyleWrapper = styled.div`
+    margin-top: 8px;
+
 `;

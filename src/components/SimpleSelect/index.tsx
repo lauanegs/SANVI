@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Text } from "@components/Text";
 import { SimpleSelectProps } from "./types";
 
-export function SimpleSelect({onChangeState, title}: SimpleSelectProps) {
+export function SimpleSelect({onChangeState, title, direction = "vertical"}: SimpleSelectProps) {
     const [isYesSelected, setIsYesSelected] = useState(false);
 
     const handleSetState = () => {
@@ -21,7 +21,9 @@ export function SimpleSelect({onChangeState, title}: SimpleSelectProps) {
                 size={12}
                 text={title}
             />
-            <SelectWrapper>
+            <SelectWrapper
+                direction={direction}
+            >
                 <OptionWrapper
                     onClick={handleSetState}
                 >

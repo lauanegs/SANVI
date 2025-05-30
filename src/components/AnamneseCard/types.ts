@@ -1,4 +1,4 @@
 export type AnamneseCardProps = {
-    title: string;
-    textField: string;
-}
+    title?: string;
+    onHeightChange: (value: number, isSum: boolean) => void;
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>
