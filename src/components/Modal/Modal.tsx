@@ -5,9 +5,10 @@ interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    size: "BIG" | "SMALL";
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, size }) => {
     const contentRef = useRef<HTMLDivElement>(null);
 
     if (!isOpen) return null;
@@ -23,7 +24,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
 
     return (
         <div className="modal-overlay" onClick={handleOverlayClick}>
-            <div className="modal-content" ref={contentRef}>
+            <div
+                className={
+                    size == "BIG"
+                        ? "modal-content modal-expand"
+                        : "modal-content"
+                }
+                ref={contentRef}
+            >
                 <div className="modal-header">
                     <button className="modal-close" onClick={onClose}>
                         &times;
