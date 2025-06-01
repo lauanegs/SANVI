@@ -1,4 +1,4 @@
-export type Gender = "MASC" | "FEM";
+export type Gender = "H" | "M";
 
 export interface Person {
     id?: number;
@@ -38,7 +38,7 @@ export interface Treatment {
     events: JourneyEvent[];
 }
 
-export type PaymentStatus = "PENDENTE" | "PAGO";
+export type PaymentStatus = "Pendente" | "Pago" | "Parcial" | "Atrasado";
 
 export type PaymentMethod = "Dinheiro" | "Cartão" | "PIX";
 

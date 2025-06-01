@@ -109,8 +109,10 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                                     setStatus(e.target.value as PaymentStatus)
                                 }
                             >
-                                <option value="PAGO">PAGO</option>
-                                <option value="PENDENTE">PENDENTE</option>
+                                <option value="Pago">Pago</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Parcial">Parcial</option>
+                                <option value="Atrasado">Atrasado</option>
                             </select>
                         </div>
 
