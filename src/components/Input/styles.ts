@@ -9,25 +9,24 @@ export const Container = styled.div`
 export const ContainerField = styled.div<InputSizeStyle>`
     display: flex;
     flex-direction: row;
-    position: relative;
 
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    ${({ size }) => size === "PP" && css`
-        width: 68px;
+    ${({ sizeType }) => sizeType === "PP" && css`
+        width: 20%;
     `};
-    ${({ size }) => size === "P" && css`
-        width: 216px;
+    ${({ sizeType }) => sizeType === "P" && css`
+        width: 50%;
     `};
-    ${({ size }) => size === "M" && css`
-        width: 300px;
+    ${({ sizeType }) => sizeType === "M" && css`
+        width: 60%;
     `};
-    ${({ size }) => size === "MG" && css`
-        width: 450px;
+    ${({ sizeType }) => sizeType === "MG" && css`
+        width: 75%;
     `};
-    ${({ size }) => size === "G" && css`
-        width: 580px;
+    ${({ sizeType }) => sizeType === "G" && css`
+        width: 100%;
     `};
     height: 32px;
 
@@ -45,11 +44,13 @@ export const Label = styled.p`
 `;
 
 export const InputText = styled.input`
-    flex: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0 8px;
     background-color: ${theme.COLORS.BRANCO};
-    margin: 0 4px;
     border: none;
     outline: none;
+    box-sizing: border-box;
     
 `;
 
@@ -65,33 +66,3 @@ export const WrapperGenericIcon = styled.div`
     }
 `;
 
-export const SelectOptions = styled.div`
-    display: flex;
-    flex-direction: column;
-    background-color: ${theme.COLORS.BRANCO};
-
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-
-    position: absolute;
-    top: 35px;
-    right: 0;
-`;
-
-export const WrapperOptions = styled.div`
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-`;
-
-export const Option = styled.p`
-    font-size: medium;
-    text-align: center;
-
-    margin-bottom: 5px;
-
-    &:hover {
-        color: ${theme.COLORS.AZUL_DA_FRANCA};
-        cursor: pointer;
-    }
-`;

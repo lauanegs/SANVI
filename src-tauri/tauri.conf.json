@@ -15,11 +15,9 @@
         "title": "sanvi-frontend",
         "width": 950,
         "height": 600,
-        "transparent": true,
         "decorations": false,
-        "resizable": false,
-        "minimizable": true, 
         "maximizable": true,
+        "minimizable": true,
         "closable": true
         
       }

@@ -9,7 +9,7 @@ function Home() {
           subtitle="123.456.789-01"
           info="Info"
         />
-        <Input tamanho="M" placeholder="26/02/2024"/>
+        <Input sizeType="G" placeholder="26/02/2024"/>
       </div>
     )
   }

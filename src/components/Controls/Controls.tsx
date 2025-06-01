@@ -1,36 +1,50 @@
-import styles from "./Controls.module.css";
-import React from "react";
-import { getCurrentWindow } from "@tauri-apps/api/window"; // Importa a nova API para obter a janela atual
-import {
-    FaRegWindowMinimize,
-    FaRegWindowMaximize,
-    FaRegCircleXmark,
-} from "react-icons/fa6";
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { ActionButton, Container, WrapperButtons } from "./styles";
+import Icon from "@components/Icon";
 
-const data = new Date();
-const Controls: React.FC = () => {
+export function Controls() {
     const appWindow = getCurrentWindow();
-    return (
-        <div data-tauri-drag-region className={styles.parent}>
-            <div className={styles.info}>
-                <p>{data.getUTCDate()}</p>
-            </div>
-            <div className={styles.buttons}>
-                <button onClick={() => appWindow.minimize()}>
-                    <FaRegWindowMinimize />
-                </button>
-                <button onClick={() => appWindow.maximize()}>
-                    <FaRegWindowMaximize />
-                </button>
-                <button onClick={() => appWindow.unmaximize()}>
-                    <FaRegWindowMaximize />
-                </button>
-                <button onClick={() => appWindow.close()}>
-                    <FaRegCircleXmark />
-                </button>
-            </div>
-        </div>
-    );
-};
 
-export default Controls;
+    return (
+        <Container>
+            <WrapperButtons>
+                <ActionButton
+                    onClick={async () => {
+                        await appWindow.minimize();
+                    }}
+                >
+                    <Icon
+                        color="#fff"
+                        iconLibName="fa"
+                        icon="FaWindowMinimize"
+                        size={14}
+                    />
+                </ActionButton>
+                <ActionButton
+                    onClick={async () => {
+                        await appWindow.maximize();
+                    }}
+                >
+                    <Icon
+                        color="#fff"
+                        iconLibName="fa"
+                        icon="FaClone"
+                        size={14}
+                    />
+                </ActionButton>
+                <ActionButton
+                    onClick={async () => {
+                        await appWindow.close();
+                    }}
+                >
+                    <Icon
+                        color="#fff"
+                        iconLibName="io5"
+                        icon="IoClose"
+                        size={15}
+                    />
+                </ActionButton>
+            </WrapperButtons>
+        </Container>
+    );
+}
