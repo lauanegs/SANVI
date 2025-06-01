@@ -25,7 +25,7 @@
 }
 
 .cardTitle {
-    color: #2563eb;
+    color: var(--azul-da-franca);
     font-size: 18px;
     font-weight: 500;
     margin: 0;
@@ -42,7 +42,7 @@
 .label {
     display: block;
     font-size: 14px;
-    color: #6b7280;
+    color: var(--cinza-escuro);
     margin-bottom: 6px;
 }
 
@@ -86,7 +86,7 @@
 
 .fileName {
     font-size: 14px;
-    color: #2563eb;
+    color: var(--azul-da-franca);
 }
 
 .button {
@@ -102,7 +102,7 @@
 }
 
 .buttonCheck {
-    background-color: #2563eb;
+    background-color: var(--azul-da-franca);
     color: white;
 }
 
@@ -113,11 +113,15 @@
 
 .detailItem {
     margin-bottom: 16px;
+    font-size: 1rem;
+    color: var(--cinza-escuro);
 }
 
+.detailItem .label {
+    font-size: 1rem;
+}
 .detailValue {
-    font-size: 14px;
-    color: #374151;
+    padding: 10px;
 }
 
 .parcela {
@@ -142,6 +146,7 @@
     font-weight: 500;
     margin-bottom: 8px;
     width: 100%;
+    color: #fff;
 }
 
 .parcelaDetails {

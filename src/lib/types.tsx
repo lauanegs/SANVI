@@ -40,14 +40,18 @@ export interface Treatment {
 
 export type PaymentStatus = "PENDENTE" | "PAGO";
 
+export type PaymentMethod = "Dinheiro" | "Cartão" | "PIX";
+
 export interface PaymentEntry {
     id?: number;
     patient: Patient;
-    value: string; // BigDecimal é melhor representado como string no TS
+    value: number; // Agora é number
     status: PaymentStatus;
-    treatment?: Treatment; // Pode ser null/undefined (nullable em Java)
+    treatment?: Treatment;
     billingPaid: number;
     billingLeft: number;
+    paymentMethod: PaymentMethod;
+    installments: number; // ← Número de parcelas
 }
 
 export interface JourneyEvent {

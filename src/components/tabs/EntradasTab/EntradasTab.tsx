@@ -35,8 +35,10 @@ export default function EntradasTab() {
                 profession: "Engenheiro",
                 treatments: [],
             },
-            value: "400.00",
+            value: 400.53,
             status: "PAGO",
+            paymentMethod: "Cartão",
+            installments: 1,
             treatment: {
                 id: 201,
                 title: "Clareamento",
@@ -65,8 +67,10 @@ export default function EntradasTab() {
                 profession: "Professora",
                 treatments: [],
             },
-            value: "200.00",
+            value: 200.0,
             status: "PENDENTE",
+            paymentMethod: "Dinheiro",
+            installments: 2,
             treatment: {
                 id: 202,
                 title: "Limpeza",
@@ -95,8 +99,10 @@ export default function EntradasTab() {
                 profession: "Médico",
                 treatments: [],
             },
-            value: "900.00",
+            value: 900.0,
             status: "PAGO",
+            paymentMethod: "PIX",
+            installments: 4,
             treatment: {
                 id: 203,
                 title: "Canal",
@@ -115,8 +121,9 @@ export default function EntradasTab() {
     const [modalPagamentoFixoOpen, setmodalPagamentoFixoOpen] = useState(false);
     const [modalCombranca, setModalCombranca] = useState(false);
 
-    const [modalPaymentEntry, setModalPaymentEntry] =
-        useState<PaymentEntry | null>(null);
+    const [modalPaymentEntry, setModalPaymentEntry] = useState<PaymentEntry>(
+        dadosPlaceholder[1]
+    );
 
     // Filtra os dados pelo paciente que contenha o texto do searchTerm (ignore case)
     const filteredDados = dadosPlaceholder.filter((item) =>
@@ -132,8 +139,11 @@ export default function EntradasTab() {
 
         const payment =
             dadosPlaceholder.find((p) => p.id === paymentId) ?? null;
-        setModalPaymentEntry(payment);
-        setModalCombranca(true);
+
+        if (payment) {
+            setModalPaymentEntry(payment);
+            setModalCombranca(true);
+        }
     };
 
     return (
@@ -208,7 +218,9 @@ export default function EntradasTab() {
                 onClose={() => setModalCombranca(false)}
                 size="BIG"
             >
-                <GerenciarCobranca></GerenciarCobranca>
+                <GerenciarCobranca
+                    payment={modalPaymentEntry}
+                ></GerenciarCobranca>
             </Modal>
         </div>
     );

@@ -1,20 +1,28 @@
 import { useState } from "react";
 import styles from "./GerenciarCobranca.module.css";
 
-export function GerenciarCobranca() {
-    const [paymentMethod, setPaymentMethod] = useState("Dinheiro");
-    const [status, setStatus] = useState("pago");
-    const [collections, setCollections] = useState("4");
+import { PaymentEntry, PaymentMethod, PaymentStatus } from "lib/types";
 
-    const totalCobranca = parseInt(collections) * 200;
-    const totalPago = 500; // Esse valor pode vir de um estado se quiser depois
-    const statusFormatado =
-        status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+interface GerenciarCobrancaProps {
+    payment: PaymentEntry;
+}
+
+export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
+    const [paymentMethod, setPaymentMethod] = useState(payment.paymentMethod);
+    const paymentOptions: { label: string; value: PaymentMethod }[] = [
+        { label: "Dinheiro", value: "Dinheiro" },
+        { label: "Cartão", value: "Cartão" },
+        { label: "PIX", value: "PIX" },
+    ];
+    const [status, setStatus] = useState<PaymentStatus>(payment.status);
+    const [installments, setInstallments] = useState<number>(
+        payment.installments
+    );
 
     return (
         <div className={styles.container}>
             <div className={styles.grid}>
-                {/* Left Section - Realizar pagamento */}
+                {/* Seção Esquerda */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2 className={styles.cardTitle}>Realizar pagamento</h2>
@@ -28,12 +36,19 @@ export function GerenciarCobranca() {
                                 className={styles.select}
                                 value={paymentMethod}
                                 onChange={(e) =>
-                                    setPaymentMethod(e.target.value)
+                                    setPaymentMethod(
+                                        e.target.value as PaymentMethod
+                                    )
                                 }
                             >
-                                <option value="Dinheiro">Dinheiro</option>
-                                <option value="Cartão">Cartão</option>
-                                <option value="PIX">PIX</option>
+                                {paymentOptions.map((option) => (
+                                    <option
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -41,7 +56,8 @@ export function GerenciarCobranca() {
                             <label className={styles.label}>Valor</label>
                             <input
                                 className={styles.input}
-                                defaultValue="200,00"
+                                defaultValue={`R$ ${payment.value}`}
+                                readOnly
                             />
                         </div>
 
@@ -51,7 +67,7 @@ export function GerenciarCobranca() {
                                     Total pago
                                 </label>
                                 <div className={styles.totalPago}>
-                                    R$ {totalPago.toFixed(2)}
+                                    R$ {payment.billingPaid.toFixed(2)}
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
@@ -60,15 +76,15 @@ export function GerenciarCobranca() {
                                 </label>
                                 <select
                                     className={styles.select}
-                                    value={collections}
+                                    value={installments}
                                     onChange={(e) =>
-                                        setCollections(e.target.value)
-                                    }
+                                        setInstallments(Number(e.target.value))
+                                    } // Converte para número aqui
                                 >
-                                    <option value="4">4</option>
-                                    <option value="3">3</option>
-                                    <option value="2">2</option>
-                                    <option value="1">1</option>
+                                    <option value={4}>4</option>
+                                    <option value={3}>3</option>
+                                    <option value={2}>2</option>
+                                    <option value={1}>1</option>
                                 </select>
                             </div>
                         </div>
@@ -89,11 +105,12 @@ export function GerenciarCobranca() {
                             <select
                                 className={styles.select}
                                 value={status}
-                                onChange={(e) => setStatus(e.target.value)}
+                                onChange={(e) =>
+                                    setStatus(e.target.value as PaymentStatus)
+                                }
                             >
-                                <option value="pago">pago</option>
-                                <option value="pendente">pendente</option>
-                                <option value="cancelado">cancelado</option>
+                                <option value="PAGO">PAGO</option>
+                                <option value="PENDENTE">PENDENTE</option>
                             </select>
                         </div>
 
@@ -115,7 +132,7 @@ export function GerenciarCobranca() {
                     </div>
                 </div>
 
-                {/* Middle Section - Detalhes do pagamento */}
+                {/* Seção do meio - Detalhes */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2 className={styles.cardTitle}>
@@ -126,22 +143,24 @@ export function GerenciarCobranca() {
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Paciente</label>
                             <div className={styles.detailValue}>
-                                João Santos
+                                {payment.patient.name}
                             </div>
                         </div>
 
-                        <div className={styles.detailItem}>
-                            <label className={styles.label}>Tratamento</label>
-                            <div className={styles.detailValue}>
-                                001/Desvinculado
+                        {payment.treatment && (
+                            <div className={styles.detailItem}>
+                                <label className={styles.label}>
+                                    Tratamento
+                                </label>
+                                <div className={styles.detailValue}>
+                                    {payment.treatment.title}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Parcelas</label>
-                            <div className={styles.detailValue}>
-                                {collections}
-                            </div>
+                            <div className={styles.detailValue}>4</div>
                         </div>
 
                         <div className={styles.detailItem}>
@@ -149,64 +168,56 @@ export function GerenciarCobranca() {
                                 Total da cobrança
                             </label>
                             <div className={styles.detailValue}>
-                                R$ {totalCobranca.toFixed(2)}
+                                R${" "}
+                                {(
+                                    payment.billingPaid + payment.billingLeft
+                                ).toFixed(2)}
                             </div>
                         </div>
 
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Total pago</label>
                             <div className={styles.detailValue}>
-                                R$ {totalPago.toFixed(2)}
+                                R$ {payment.billingPaid.toFixed(2)}
                             </div>
                         </div>
 
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Status</label>
                             <div className={styles.detailValue}>
-                                {statusFormatado}
+                                {payment.status}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Section - Parcelas */}
+                {/* Seção Direita - Parcelas */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2 className={styles.cardTitle}>Parcelas</h2>
                     </div>
                     <div className={styles.cardContent}>
-                        {/* Parcela 1 */}
-                        <div
-                            className={`${styles.parcela} ${styles.parcelaActive}`}
-                        >
-                            <div className={styles.parcelaTitle}>1 parcela</div>
-                            <div className={styles.parcelaDetails}>
-                                <div>Valor: R$200,00</div>
-                                <div>Método de pagamento: {paymentMethod}</div>
+                        {/* Exemplo de parcelas fictícias */}
+                        {[1, 2, 3, 4].map((parcela) => (
+                            <div
+                                key={parcela}
+                                className={`${styles.parcela} ${
+                                    parcela <= 2
+                                        ? styles.parcelaActive
+                                        : styles.parcelaInactive
+                                }`}
+                            >
+                                <div className={styles.parcelaTitle}>
+                                    {parcela}ª parcela
+                                </div>
+                                <div className={styles.parcelaDetails}>
+                                    <div>Valor: R$200,00</div>
+                                    <div>
+                                        Método de pagamento: {paymentMethod}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Parcela 2 */}
-                        <div
-                            className={`${styles.parcela} ${styles.parcelaActive}`}
-                        >
-                            <div className={styles.parcelaTitle}>2 parcela</div>
-                            <div className={styles.parcelaDetails}>
-                                <div>Valor: R$200,00</div>
-                                <div>Método de pagamento: {paymentMethod}</div>
-                            </div>
-                        </div>
-
-                        {/* Parcela 3 */}
-                        <div
-                            className={`${styles.parcela} ${styles.parcelaInactive}`}
-                        >
-                            <div className={styles.parcelaTitle}>3 parcela</div>
-                            <div className={styles.parcelaDetails}>
-                                <div>Valor: R$200,00</div>
-                                <button>s</button>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
