@@ -37,5 +37,19 @@ export const SearchStyleWrapper = styled.div`
 
 export const Content = styled.div`
     flex: 1;
+    display: flex;
+    flex-direction: row;
+   
     padding: 15px;
+    
+`;
+
+export const LoaderWrapper = styled.div`
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+`;
+
+export const ButtonWrapper = styled.div`
+    padding-top: 8px;
 `;

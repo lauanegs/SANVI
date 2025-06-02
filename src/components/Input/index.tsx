@@ -1,5 +1,5 @@
 import Icon from "@components/Icon";
-import { Container, InputText, WrapperGenericIcon, WrapperSearchIcon, ContainerField, Label } from "./styles";
+import { Container, InputText, WrapperGenericIcon, WrapperSearchIcon, ContainerField, Label, ErrorText } from "./styles";
 import { InputProps } from "./types";
 import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
@@ -7,12 +7,12 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import { ptBR } from "date-fns/locale";
 import theme from "theme";
 
-export default function Input({ sizeType, label, elements = [], inputType, ...rest }: InputProps) {
+export default function Input({ sizeType, label, inputType, errorMessage, onChangeDate, ...rest }: InputProps) {
 
-    registerLocale("ptBR", ptBR);
+    registerLocale("pt-BR", ptBR);
     const [isVisibleDateMenu, setIsVisibleDateMenu] = useState(false);
-    const [date, setDate] = useState(new Date());
     const [inputValue, setInputValue] = useState('');
+    const [date, setDate] = useState(new Date());
 
     return (
         <Container>
@@ -32,19 +32,23 @@ export default function Input({ sizeType, label, elements = [], inputType, ...re
                         />
                     </WrapperSearchIcon>
                 }
-                {inputType === "date" ?
+                {(inputType === "date" && onChangeDate) ?
                     <DatePicker
-                        
                         locale="pt-BR"
                         selected={date}
                         dateFormat="dd/MM/yyyy"
-                        onChange={date => date && setDate(date)}
+                        onChange={date => {
+                            if (date) {
+                                setDate(date);
+                                onChangeDate(date);
+                            }
+                        }}
                         open={isVisibleDateMenu}
                         onClickOutside={() => setIsVisibleDateMenu(false)}
                         onSelect={() => setIsVisibleDateMenu(false)}
                         onInputClick={() => setIsVisibleDateMenu(true)}
                         showPopperArrow={false}
-                        customInput={<InputText/>}
+                        customInput={<InputText {...rest} />}
                     />
                     :
                     <InputText
@@ -66,6 +70,9 @@ export default function Input({ sizeType, label, elements = [], inputType, ...re
                     </WrapperGenericIcon>
                 }
             </ContainerField>
+            <ErrorText>
+                {errorMessage && errorMessage}
+            </ErrorText>
         </Container>
     );
 }

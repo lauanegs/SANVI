@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useAppStore } from "store/appStore";
+import { SelectInput } from "@components/SelectInput";
 
 
 export function ProntuarioPaciente() {

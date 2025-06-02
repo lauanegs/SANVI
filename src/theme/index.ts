@@ -12,6 +12,7 @@ export default {
         FUMACA_BRANCA_50: "#E0E0E0",
         BRANCO: "#FFFFFF",
         CINZA_NAVIO_DE_GUERRA: "#888888",
+        ERROR: "#DC2626",
     }
 }
 

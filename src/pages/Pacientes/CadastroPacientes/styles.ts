@@ -16,7 +16,7 @@ export const Form = styled.div`
     flex-direction: column;
 
     margin-bottom: 40px;
-    padding-bottom: 50px;
+    padding-bottom: 100px;
 
     overflow-y: auto;
 `;

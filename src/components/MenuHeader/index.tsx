@@ -11,7 +11,6 @@ export function MenuHeader({ firstSubScreen, buttonTitle, onPressButton, secondS
         <Container>
             <Tabs>
                 {firstSubScreen &&
-
                     <TabCard
                         onClick={() => { navigator(`/${firstSubScreen}`) }}
                         title={SubScreenEnum[firstSubScreen as keyof typeof SubScreenEnum]}
@@ -21,6 +20,7 @@ export function MenuHeader({ firstSubScreen, buttonTitle, onPressButton, secondS
                 {secondSubScreen &&
 
                     <TabCard
+
                         onClick={() => { navigator(`/${secondSubScreen}`) }}
                         title={SubScreenEnum[secondSubScreen as keyof typeof SubScreenEnum]}
                     />
