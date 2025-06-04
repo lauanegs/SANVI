@@ -4,8 +4,9 @@ import "./entradas.css";
 import GenericButton from "@components/GenericButton";
 import Modal from "@components/Modal/Modal";
 import DetalhesPagamento from "@components/DetalhesPagamento";
-import { Patient, PaymentEntry, Treatment } from "lib/types";
+import { Patient, Treatment } from "lib/types";
 import GerenciarCobranca from "@components/GerenciarCobranca";
+import { PaymentEntry } from "lib/types"; // para tipagem dos dados internos do treatment
 
 export default function EntradasTab() {
     const handleGenerate = (data: {
@@ -14,106 +15,77 @@ export default function EntradasTab() {
         value: number;
         installments: number;
     }) => {
-        // Aqui você pode fazer a lógica de salvar, mostrar mensagem, etc.
         console.log("Gerando pagamento com dados:", data);
     };
 
-    const dadosPlaceholder: PaymentEntry[] = [
+    const dadosPlaceholder: Treatment[] = [
         {
-            id: 1,
-            patient: {
-                id: 101,
-                name: "João Silva",
-                CPF: "12345678901",
-                birthDate: new Date("1980-05-20"),
-                phoneNumber: 11999999999,
-                address: "Rua A",
-                addressNumber: 123,
-                neighborhood: "Centro",
-                gender: "H", // Assumindo que Gender é string "M" | "F" ou similar
-                rg: "12345678-9",
-                profession: "Engenheiro",
-                treatments: [],
-            },
-            value: 400.53,
-            status: "Pago",
-            paymentMethod: "Cartão",
-            installments: 1,
-            treatment: {
-                id: 201,
-                title: "Clareamento",
-                startedAt: new Date("2023-04-01"),
-                endedAt: undefined,
-                patients: [], // lista de pacientes que pode estar vazia aqui
-                paymentEntries: [],
-                events: [],
-            },
-            billingPaid: 400,
-            billingLeft: 0,
+            id: 201,
+            title: "Clareamento",
+            startedAt: new Date(),
+            endedAt: new Date(),
+            patients: [
+                {
+                    id: 101,
+                    name: "João Silva",
+                    CPF: "12345678901",
+                    birthDate: new Date("1980-05-20"),
+                    phoneNumber: 11999999999,
+                    address: "Rua A",
+                    addressNumber: 123,
+                    neighborhood: "Centro",
+                    gender: "H",
+                    rg: "12345678-9",
+                    profession: "Engenheiro",
+                    treatments: [],
+                },
+            ],
+            paymentEntries: [
+                {
+                    id: 1,
+                    patient: {} as Patient,
+                    value: 400.53,
+                    status: "Pendente",
+                    treatment: {} as Treatment,
+                    billingPaid: 400,
+                    billingLeft: 0,
+                },
+            ],
+            events: [],
         },
         {
-            id: 2,
-            patient: {
-                id: 102,
-                name: "Maria Oliveira",
-                CPF: "10987654321",
-                birthDate: new Date("1990-10-10"),
-                phoneNumber: 11988888888,
-                address: "Rua B",
-                addressNumber: 456,
-                neighborhood: "Jardim",
-                gender: "M",
-                rg: "98765432-1",
-                profession: "Professora",
-                treatments: [],
-            },
-            value: 200.0,
-            status: "Pendente",
-            paymentMethod: "Dinheiro",
-            installments: 2,
-            treatment: {
-                id: 202,
-                title: "Limpeza",
-                startedAt: new Date("2023-05-01"),
-                endedAt: undefined,
-                patients: [],
-                paymentEntries: [],
-                events: [],
-            },
-            billingPaid: 50,
-            billingLeft: 150,
-        },
-        {
-            id: 3,
-            patient: {
-                id: 103,
-                name: "Carlos Souza",
-                CPF: "11223344556",
-                birthDate: new Date("1975-07-15"),
-                phoneNumber: 11977777777,
-                address: "Rua C",
-                addressNumber: 789,
-                neighborhood: "Vila Nova",
-                gender: "H",
-                rg: "11223344-5",
-                profession: "Médico",
-                treatments: [],
-            },
-            value: 900.0,
-            status: "Pago",
-            paymentMethod: "PIX",
-            installments: 4,
-            treatment: {
-                id: 203,
-                title: "Canal",
-                startedAt: new Date("2023-06-01"),
-                endedAt: undefined,
-                patients: [],
-                paymentEntries: [],
-                events: [],
-            },
-            billingPaid: 900,
-            billingLeft: 0,
+            id: 202,
+            title: "Limpeza",
+            startedAt: new Date(),
+            endedAt: new Date(),
+            patients: [
+                {
+                    id: 102,
+                    name: "Maria Oliveira",
+                    CPF: "10987654321",
+                    birthDate: new Date("1990-10-10"),
+                    phoneNumber: 11988888888,
+                    address: "Rua B",
+                    addressNumber: 456,
+                    neighborhood: "Jardim",
+                    gender: "M",
+                    rg: "98765432-1",
+                    profession: "Professora",
+                    treatments: [],
+                },
+            ],
+            paymentEntries: [
+                {
+                    id: 2,
+                    patient: {} as Patient,
+                    value: 200.0,
+                    status: "Pendente",
+                    treatment: {} as Treatment,
+                    billingPaid: 50,
+                    billingLeft: 150,
+                },
+            ],
+            events: [],
         },
     ];
 
@@ -121,27 +93,25 @@ export default function EntradasTab() {
     const [modalPagamentoFixoOpen, setmodalPagamentoFixoOpen] = useState(false);
     const [modalCombranca, setModalCombranca] = useState(false);
 
-    const [modalPaymentEntry, setModalPaymentEntry] = useState<PaymentEntry>(
+    const [modalTreatment, setModalTreatment] = useState<Treatment>(
         dadosPlaceholder[1]
     );
 
-    // Filtra os dados pelo paciente que contenha o texto do searchTerm (ignore case)
-    const filteredDados = dadosPlaceholder.filter((item) =>
-        item.patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredDados = dadosPlaceholder.filter((treatment) =>
+        treatment.patients.some((patient) =>
+            patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
 
     const abrirModal_PagamentoFixo = () => {
         setmodalPagamentoFixoOpen(true);
     };
 
-    const abrirModal_Cobranca = (paymentId: number | undefined) => {
-        if (paymentId === undefined) return;
-
-        const payment =
-            dadosPlaceholder.find((p) => p.id === paymentId) ?? null;
-
-        if (payment) {
-            setModalPaymentEntry(payment);
+    const abrirModal_Cobranca = (treatmentId: number | undefined) => {
+        if (treatmentId === undefined) return;
+        const treatment = dadosPlaceholder.find((t) => t.id === treatmentId);
+        if (treatment) {
+            setModalTreatment(treatment);
             setModalCombranca(true);
         }
     };
@@ -158,43 +128,49 @@ export default function EntradasTab() {
                 <GenericButton
                     color="PRIMARY"
                     title="Pagamento Fixo"
-                    onClick={() => abrirModal_PagamentoFixo()}
+                    onClick={abrirModal_PagamentoFixo}
                 />
             </div>
 
             <div className="ent_content">
                 <div className="cards-container">
                     {filteredDados.length > 0 ? (
-                        filteredDados.map((item) => (
-                            <div
-                                key={item.id}
-                                className="card-item"
-                                onClick={() => abrirModal_Cobranca(item.id)}
-                            >
-                                <div className="card-header">
-                                    <h3>{item.treatment?.title}</h3>
-                                    <span
-                                        className={`status ${item.status.toLowerCase()}`}
-                                    >
-                                        {item.status}
-                                    </span>
+                        filteredDados.map((treatment) => {
+                            const firstPatient = treatment.patients[0];
+                            const firstPayment = treatment.paymentEntries[0];
+                            return (
+                                <div
+                                    key={treatment.id}
+                                    className="card-item"
+                                    onClick={() =>
+                                        abrirModal_Cobranca(treatment.id)
+                                    }
+                                >
+                                    <div className="card-header">
+                                        <h3>{treatment.title}</h3>
+                                        <span
+                                            className={`status ${firstPayment?.status?.toLowerCase()}`}
+                                        >
+                                            {firstPayment?.status}
+                                        </span>
+                                    </div>
+                                    <div className="card-body">
+                                        <div className="paciente">
+                                            <strong>Paciente:</strong>{" "}
+                                            {firstPatient.name}
+                                        </div>
+                                        <div>
+                                            <strong>Valor:</strong>{" "}
+                                            {firstPayment?.value ?? "N/A"}
+                                        </div>
+                                        <div>
+                                            <strong>Cobrança:</strong>{" "}
+                                            {firstPayment?.billingPaid ?? 0}
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div className="card-body">
-                                    <div className="paciente">
-                                        <strong>Paciente:</strong>{" "}
-                                        {item.patient.name}
-                                    </div>
-                                    <div>
-                                        <strong>Valor:</strong> {item.value}
-                                    </div>
-                                    <div>
-                                        <strong>Cobrança:</strong>{" "}
-                                        {item.billingPaid}
-                                    </div>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <p>Nenhum paciente encontrado.</p>
                     )}
@@ -210,7 +186,7 @@ export default function EntradasTab() {
                     patients={[]}
                     treatments={[]}
                     onGenerate={handleGenerate}
-                ></DetalhesPagamento>
+                />
             </Modal>
 
             <Modal
@@ -218,9 +194,7 @@ export default function EntradasTab() {
                 onClose={() => setModalCombranca(false)}
                 size="BIG"
             >
-                <GerenciarCobranca
-                    payment={modalPaymentEntry}
-                ></GerenciarCobranca>
+                <GerenciarCobranca treatment={modalTreatment} />
             </Modal>
         </div>
     );

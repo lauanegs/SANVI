@@ -1,23 +1,33 @@
 import { useState } from "react";
 import styles from "./GerenciarCobranca.module.css";
 
-import { PaymentEntry, PaymentMethod, PaymentStatus } from "lib/types";
+import {
+    Treatment,
+    PaymentEntry,
+    PaymentMethod,
+    PaymentStatus,
+} from "lib/types";
 
 interface GerenciarCobrancaProps {
-    payment: PaymentEntry;
+    treatment: Treatment;
 }
 
-export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
-    const [paymentMethod, setPaymentMethod] = useState(payment.paymentMethod);
+export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
+    const firstPayment: PaymentEntry | undefined = treatment.paymentEntries[0];
+
+    const [status, setStatus] = useState<PaymentStatus>(
+        firstPayment?.status || "Pendente"
+    );
+
     const paymentOptions: { label: string; value: PaymentMethod }[] = [
         { label: "Dinheiro", value: "Dinheiro" },
         { label: "Cartão", value: "Cartão" },
         { label: "PIX", value: "PIX" },
     ];
-    const [status, setStatus] = useState<PaymentStatus>(payment.status);
-    const [installments, setInstallments] = useState<number>(
-        payment.installments
-    );
+
+    if (!firstPayment) {
+        return <p>Tratamento sem pagamentos registrados.</p>;
+    }
 
     return (
         <div className={styles.container}>
@@ -29,34 +39,10 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                     </div>
                     <div className={styles.cardContent}>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>
-                                Método de pagamento
-                            </label>
-                            <select
-                                className={styles.select}
-                                value={paymentMethod}
-                                onChange={(e) =>
-                                    setPaymentMethod(
-                                        e.target.value as PaymentMethod
-                                    )
-                                }
-                            >
-                                {paymentOptions.map((option) => (
-                                    <option
-                                        key={option.value}
-                                        value={option.value}
-                                    >
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className={styles.formGroup}>
                             <label className={styles.label}>Valor</label>
                             <input
                                 className={styles.input}
-                                defaultValue={`R$ ${payment.value}`}
+                                defaultValue={`R$ ${firstPayment.value}`}
                                 readOnly
                             />
                         </div>
@@ -67,25 +53,8 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                                     Total pago
                                 </label>
                                 <div className={styles.totalPago}>
-                                    R$ {payment.billingPaid.toFixed(2)}
+                                    R$ {firstPayment.billingPaid.toFixed(2)}
                                 </div>
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label className={styles.label}>
-                                    Cobranças
-                                </label>
-                                <select
-                                    className={styles.select}
-                                    value={installments}
-                                    onChange={(e) =>
-                                        setInstallments(Number(e.target.value))
-                                    } // Converte para número aqui
-                                >
-                                    <option value={4}>4</option>
-                                    <option value={3}>3</option>
-                                    <option value={2}>2</option>
-                                    <option value={1}>1</option>
-                                </select>
                             </div>
                         </div>
 
@@ -145,20 +114,16 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Paciente</label>
                             <div className={styles.detailValue}>
-                                {payment.patient.name}
+                                {firstPayment.patient.name}
                             </div>
                         </div>
 
-                        {payment.treatment && (
-                            <div className={styles.detailItem}>
-                                <label className={styles.label}>
-                                    Tratamento
-                                </label>
-                                <div className={styles.detailValue}>
-                                    {payment.treatment.title}
-                                </div>
+                        <div className={styles.detailItem}>
+                            <label className={styles.label}>Tratamento</label>
+                            <div className={styles.detailValue}>
+                                {treatment.title}
                             </div>
-                        )}
+                        </div>
 
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Parcelas</label>
@@ -172,7 +137,8 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                             <div className={styles.detailValue}>
                                 R${" "}
                                 {(
-                                    payment.billingPaid + payment.billingLeft
+                                    firstPayment.billingPaid +
+                                    firstPayment.billingLeft
                                 ).toFixed(2)}
                             </div>
                         </div>
@@ -180,43 +146,42 @@ export function GerenciarCobranca({ payment }: GerenciarCobrancaProps) {
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Total pago</label>
                             <div className={styles.detailValue}>
-                                R$ {payment.billingPaid.toFixed(2)}
+                                R$ {firstPayment.billingPaid.toFixed(2)}
                             </div>
                         </div>
 
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Status</label>
                             <div className={styles.detailValue}>
-                                {payment.status}
+                                {firstPayment.status}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Seção Direita - Parcelas */}
+                {/* Seção Direita - Parcelas (mock) */}
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h2 className={styles.cardTitle}>Parcelas</h2>
                     </div>
                     <div className={styles.cardContent}>
-                        {/* Exemplo de parcelas fictícias */}
-                        {[1, 2, 3, 4].map((parcela) => (
+                        {treatment.paymentEntries.map((entry, index) => (
                             <div
-                                key={parcela}
+                                key={entry.id}
                                 className={`${styles.parcela} ${
-                                    parcela <= 2
+                                    entry.status === "Pago"
                                         ? styles.parcelaActive
                                         : styles.parcelaInactive
                                 }`}
                             >
                                 <div className={styles.parcelaTitle}>
-                                    {parcela}ª parcela
+                                    {index + 1}ª parcela
                                 </div>
                                 <div className={styles.parcelaDetails}>
-                                    <div>Valor: R$200,00</div>
                                     <div>
-                                        Método de pagamento: {paymentMethod}
+                                        Valor: R$ {entry.value.toFixed(2)}
                                     </div>
+                                    <div>Status: {entry.status}</div>
                                 </div>
                             </div>
                         ))}

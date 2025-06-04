@@ -43,15 +43,13 @@ export type PaymentStatus = "Pendente" | "Pago" | "Parcial" | "Atrasado";
 export type PaymentMethod = "Dinheiro" | "Cartão" | "PIX";
 
 export interface PaymentEntry {
-    id?: number;
+    id?: number; // Opcional, pois pode ser gerado pelo backend
     patient: Patient;
-    value: number; // Agora é number
+    value: number; // BigDecimal -> number
     status: PaymentStatus;
-    treatment?: Treatment;
+    treatment?: Treatment | null;
     billingPaid: number;
     billingLeft: number;
-    paymentMethod: PaymentMethod;
-    installments: number; // ← Número de parcelas
 }
 
 export interface JourneyEvent {
