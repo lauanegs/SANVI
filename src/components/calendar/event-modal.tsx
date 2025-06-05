@@ -18,14 +18,13 @@ import styles from "./event-modal.module.css";
 
 export interface CalendarEvent {
   id: string;
-  title: string;
   date: string; // só a data (ex: 2025-05-20)
   time: string; // só a hora (ex: 15:30)
-  color: string;
   patient: string; // id do paciente como string
   specialist: string; // id do especialista
   phone: string;
   status: string;
+  valor: string;
 }
 
 interface EventModalProps {
@@ -43,30 +42,43 @@ export default function EventModal({
   selectedDate,
   selectedEvent,
 }: EventModalProps) {
-  const [title, setTitle] = useState("");
+
+  const [treatment, setTreatment] = useState("");
+  const [treatmentsList, setTreatmentsList] = useState<any[]>([]);
+
   const [date, setDate] = useState(selectedDate);
   const [time, setTime] = useState("08:00");
-  const [color, setColor] = useState("#90CAF9");
   const [patient, setPatient] = useState(""); // armazenar id do paciente como string
   const [specialist, setSpecialist] = useState(""); // armazenar id do especialista
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState("");
+  const [isTreatmentConciliated, setIsTreatmentConciliated] = useState(false);
+  const [value, setValue] = useState('');
+
+
 
   const [patientsList, setPatientsList] = useState<any[]>([]);
   const [specialistsList, setSpecialistsList] = useState<any[]>([]);
 
+  const resetForm = () => {
+    setTreatment("");
+    setTreatmentsList([]);
+    setDate(selectedDate); // Reseta para a data originalmente selecionada
+    setTime("08:00");
+    setPatient(""); // Apenas um paciente
+    setSpecialist(""); // Apenas um especialista
+    setPhone("");
+    setStatus("");
+    setIsTreatmentConciliated(false);
+    setValue('');
+  };
+
+
   // Sincroniza dados quando selectedEvent ou selectedDate mudam
   useEffect(() => {
     if (selectedEvent) {
-      // Corrige título "undefined" como string
-      setTitle(
-        selectedEvent.title && selectedEvent.title !== "undefined"
-          ? selectedEvent.title
-          : ""
-      );
 
       setTime(selectedEvent.time || "08:00");
-      setColor(selectedEvent.color || "#90CAF9");
 
       // Se patient for objeto, pegar id e telefone
       if (
@@ -101,13 +113,13 @@ export default function EventModal({
       setStatus(() => {
         switch (selectedEvent.status.toLowerCase()) {
           case "confirmado":
-            return "CONFIRMED";
+            return "Confirmado";
           case "criado":
-            return "PENDING";
+            return "Criado";
           case "cancelado":
-            return "CANCELED";
+            return "Cancelado";
           case "concluído":
-            return "COMPLETED";
+            return "Concluido";
           default:
             return "";
         }
@@ -115,9 +127,7 @@ export default function EventModal({
 
       setDate(selectedEvent.date.split("T")[0]);
     } else {
-      setTitle("");
       setTime("08:00");
-      setColor("#90CAF9");
       setPatient("");
       setSpecialist("");
       setPhone("");
@@ -142,6 +152,21 @@ export default function EventModal({
           setSpecialistsList(data);
         })
         .catch((err) => console.error("Erro ao buscar especialistas:", err));
+
+      fetch(`${API_URL}/treatment`)
+        .then((res) => res.text())  // pega a resposta como texto bruto
+        .then((text) => {
+          console.log("Resposta crua da API:", text);  // aqui você vê exatamente o que está vindo
+          try {
+            const data = JSON.parse(text);  // tenta fazer o parse do JSON
+            setTreatmentsList(data);        // se der certo, atualiza o estado
+          } catch (err) {
+            console.error("Erro ao parsear JSON:", err, text); // se falhar, mostra o erro e o texto que causou erro
+          }
+        })
+        .catch((err) => console.error("Erro ao buscar tratamentos:", err));
+
+
     }
   }, [isOpen]);
 
@@ -163,21 +188,6 @@ export default function EventModal({
     const dateTimeISO = new Date(`${date}T${time}`).toISOString();
     console.log("📅 Data e hora combinadas (ISO):", dateTimeISO);
 
-    const statusMap: Record<string, string> = {
-      CONFIRMED: "Confirmado",
-      PENDING: "Criado",
-      CANCELED: "Cancelado",
-      COMPLETED: "Concluído",
-    };
-
-    const mappedStatus = statusMap[status.toUpperCase()];
-    console.log("📌 Status mapeado:", mappedStatus);
-
-    if (!mappedStatus) {
-      alert("Status inválido.");
-      return;
-    }
-
     const selectedPatient = patientsList.find((p) => p.id.toString() === patient);
     const selectedSpecialist = specialistsList.find((s) => s.id.toString() === specialist);
 
@@ -189,34 +199,21 @@ export default function EventModal({
       return;
     }
 
-    const eventData = {
-      patient: {
-        id: selectedPatient.id,
-        name: selectedPatient.name,
-        birthDate: selectedPatient.birthDate,
-        phoneNumber: selectedPatient.phoneNumber,
-        address: selectedPatient.address,
-        gender: selectedPatient.gender,
-        rg: selectedPatient.rg,
-        cpf: selectedPatient.cpf,
-      },
-      specialist: {
-        id: selectedSpecialist.id,
-        name: selectedSpecialist.name,
-        birthDate: selectedSpecialist.birthDate,
-        phoneNumber: selectedSpecialist.phoneNumber,
-        address: selectedSpecialist.address,
-        gender: selectedSpecialist.gender,
-        rg: selectedSpecialist.rg,
-        cpf: selectedSpecialist.cpf,
-      },
-      date: dateTimeISO,
-      status: mappedStatus,
-    };
-
-    if (selectedEvent?.id) {
-      eventData.id = selectedEvent.id;
+    if (!status || !date || !time) {
+      alert("Preencha todos os campos obrigatórios.");
+      return;
     }
+
+    const eventData = {
+      patientId: selectedPatient.id,
+      specialistId: selectedSpecialist.id,
+      date: dateTimeISO,
+      confirmPhoneNumber: selectedPatient.phoneNumber.toString(), // ou use outro campo se desejar
+      hasTreatment: !!treatment, // true se houver tratamento selecionado
+      treatmentId: treatment,
+      value: Number(value) || 0, // valor do atendimento; ajuste conforme necessário
+      status: status, // Enviar como "Criado", "Confirmado", etc. (sem mapear)
+    };
 
     console.log("📦 Dados preparados para envio:", eventData);
 
@@ -253,10 +250,8 @@ export default function EventModal({
         console.error("❌ Erro ao enviar os dados:", err);
         alert("Erro ao salvar o agendamento. Verifique os campos e tente novamente.");
       });
+
   };
-
-
-
 
 
   const handleDelete = async () => {
@@ -275,14 +270,13 @@ export default function EventModal({
         throw new Error(`Erro ao excluir: ${response.status} - ${errorText}`);
       }
 
-      onSave(null); // ou crie um callback `onDelete` separado se quiser tratar diferente
+      // ou crie um callback `onDelete` separado se quiser tratar diferente
       onClose();    // Fecha o modal
     } catch (error) {
       console.error("Erro ao excluir o evento:", error);
       alert("Não foi possível excluir o agendamento.");
     }
   };
-
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -297,7 +291,12 @@ export default function EventModal({
         </DialogHeader>
 
         <div className={styles.form}>
-          <select value={patient} onChange={(e) => setPatient(e.target.value)}>
+          <label htmlFor="patient">Paciente</label>
+          <select
+            id="patient"
+            value={patient}
+            onChange={(e) => setPatient(e.target.value)}
+          >
             <option value="">Selecione o paciente</option>
             {patientsList.map((p) => (
               <option key={p.id} value={p.id}>
@@ -306,7 +305,12 @@ export default function EventModal({
             ))}
           </select>
 
-          <select value={specialist} onChange={(e) => setSpecialist(e.target.value)}>
+          <label htmlFor="specialist">Especialista</label>
+          <select
+            id="specialist"
+            value={specialist}
+            onChange={(e) => setSpecialist(e.target.value)}
+          >
             <option value="">Selecione o especialista</option>
             {specialistsList.map((s) => (
               <option key={s.id} value={s.id}>
@@ -315,14 +319,19 @@ export default function EventModal({
             ))}
           </select>
 
+          <label htmlFor="date">Data</label>
           <div style={{ display: "flex", gap: "8px" }}>
             <input
+              id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               style={{ flex: 1 }}
             />
+
+            <label htmlFor="time" style={{ alignSelf: 'center' }}>Hora</label>
             <input
+              id="time"
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
@@ -330,42 +339,98 @@ export default function EventModal({
             />
           </div>
 
+          <label htmlFor="phone">Celular do paciente</label>
           <div style={{ display: "flex", gap: "8px" }}>
             <input
+              id="phone"
               type="text"
               placeholder="Celular do paciente"
               value={phone}
               style={{ flex: 1 }}
-              disabled
+
             />
           </div>
 
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <label htmlFor="status">Status</label>
+          <select
+            id="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
             <option value="">Selecione o status</option>
-            <option value="CONFIRMED">Confirmado</option>
-            <option value="PENDING">Pendente</option>
-            <option value="CANCELED">Cancelado</option>
-            <option value="COMPLETED">Concluído</option>
+            <option value="Confirmado">Confirmado</option>
+            <option value="Criado">Pendente</option>
+            <option value="Cancelado">Cancelado</option>
+            <option value="Concluído">Concluído</option>
           </select>
+
+          {!selectedEvent && (
+            <>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isTreatmentConciliated}
+                  onChange={(e) => setIsTreatmentConciliated(e.target.checked)}
+                />
+                Conciliar tratamento
+              </label>
+
+              <label htmlFor="treatment">Tratamento</label>
+              <select
+                id="treatment"
+                value={treatment}
+                onChange={(e) => setTreatment(e.target.value)}
+                disabled={!isTreatmentConciliated} // aqui está a condição
+              >
+                <option value="">Selecione o tratamento</option>
+                {treatmentsList.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+
+              <label htmlFor="value">Valor</label>
+              <input
+                id="value"
+                type="number"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            </>
+          )}
+
         </div>
 
         <DialogFooter>
-          <Button onClick={handleSubmit}>
+          <Button onClick={() => {
+            handleSubmit();
+            resetForm();
+          }}>
             {selectedEvent ? "Atualizar" : "Salvar"}
           </Button>
+
           {selectedEvent && (
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button onClick={handleDelete}>
               Excluir
             </Button>
           )}
 
-          <DialogClose asChild>
-            <Button variant="secondary" onClick={onClose}>
+          <DialogClose>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                resetForm();
+                onClose();
+              }}
+            >
               Cancelar
             </Button>
           </DialogClose>
         </DialogFooter>
+
       </DialogContent>
     </Dialog>
   );
+
 }

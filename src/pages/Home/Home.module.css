@@ -1,0 +1,45 @@
+/* home.module.css */
+.fin_AlterContainer {
+    height: 100%;
+    width: 100%;
+
+    background-color: var(--fumaca-branca);
+}
+
+.main {
+  min-height: 100vh;
+  padding: 16rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza verticalmente */
+  align-items: center;     /* Centraliza horizontalmente */
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Container dos cards lado a lado */
+.cardsContainer {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px; /* limite max para os cards juntos */
+}
+
+/* Colunas verticais */
+.patientsColumn, .dentistsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Container da tabela centralizada */
+.tableContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  max-width: 1200px; /* limitar largura máxima da tabela */
+}

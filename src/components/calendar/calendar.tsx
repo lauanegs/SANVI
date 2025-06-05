@@ -136,15 +136,14 @@ export default function Calendar() {
     const extended = info.event.extendedProps;
 
     const clickedEvent: CalendarEvent = {
-      id: Number(eventId),
-      title: info.event.title,
+      id: eventId,
       date: info.event.startStr,
       time: extended.time,
-      color: extended.color,
       patient: extended.patient,
       specialist: extended.specialist,
       phone: extended.phone,
       status: extended.status,
+      valor: extended.valor,
     };
 
     console.log("Evento selecionado:", clickedEvent);
@@ -163,16 +162,22 @@ export default function Calendar() {
       ? new Date(eventDateStr).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
       : "";
 
-    const eventColor = eventInfo.event.extendedProps.color || "#90CAF9";
+
+    const status = eventInfo.event.extendedProps.status;
 
     return (
-      <div className={styles.eventContent} style={{ backgroundColor: eventColor }}>
+      <div className={`${styles.eventContent} ${status === "Criado" ? styles.eventPendente :
+          status === "Concluído" ? styles.eventConcluido :
+            status === "Confirmado" ? styles.eventConfirmado :
+              status === "Cancelado" ? styles.eventCancelado : ""
+        }`}>
         <div className={styles.eventTitle}>{patientName}</div>
         <div className={styles.eventTime}>
           <Clock className={styles.clockIcon} size={14} />
           <span>{eventTime}</span>
         </div>
       </div>
+
     );
   };
 
@@ -190,8 +195,8 @@ export default function Calendar() {
             </button>
           </div>
         </div>
-        <Button className={styles.addButton} onClick={handleAddEvent}>
-          Adicionar
+        <Button variant="primary" size="md" onClick={handleAddEvent}>
+          Novo horário
         </Button>
       </div>
 
@@ -205,11 +210,9 @@ export default function Calendar() {
           dayHeaderFormat={{ weekday: "long" }}
           events={events.map((event) => ({
             id: event.id,
-            title: event.title,
             date: event.date,
             extendedProps: {
               time: event.time,
-              color: event.color,
               patient: event.patient,
               specialist: event.specialist,
               phone: event.phone,

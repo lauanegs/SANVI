@@ -8,6 +8,9 @@
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  max-height: 400px;    /* altura máxima que o container pode ter */
+  overflow-y: auto;     /* adiciona scroll vertical automático */
 }
 
 .form input,
@@ -57,4 +60,14 @@
 
 .dialogFooter button:hover {
   background: #2a2370;
+}
+
+.addButton {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
 }

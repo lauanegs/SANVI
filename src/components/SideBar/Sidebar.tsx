@@ -35,7 +35,7 @@ function Sidebar() {
                 />
             </UserTitleWrapper>
 
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/home" style={{ textDecoration: 'none' }}>
                 <ScreenCardWrapper>
                     <ScreenCardWrapperHover isSelected={screenSelected === "home"}>
                         <ScreenCardTitleWrapper>
