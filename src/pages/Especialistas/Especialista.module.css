@@ -39,3 +39,9 @@
 	border-bottom: 2px solid #1e87f0;
 	font-size: 14px;
 }
+
+.esp_headerButtons {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}

@@ -1,67 +1,25 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import "./NovoEspecialista.css";
-export function NovoEspecialista() {
+import { createSpecialist } from "@api/specialist/create";
+import generateSchedulesForToday from "lib/gerarSchedules";
+
+export const NovoEspecialista = forwardRef((props, ref) => {
 	const [formData, setFormData] = useState({
-		specialistId: "123456",
-		registrationDate: "2024-02-26",
-		fullName: "João Ribeiro dos Santos",
-		profession: "Professor",
-		cpf: "XXX.XXX.XXX-XX",
-		address: "Rua José de Santana",
-		rg: "MGXX.XXX.XXX",
-		neighborhood: "Ipanema",
-		number: "3456",
+		fullName: "",
+		profession: "DENTISTA",
+		cpf: "",
+		address: "",
+		rg: "",
+		neighborhood: "",
+		number: "",
 		state: "MG",
-		birthDate: "2024-02-26",
-		gender: "Masc",
-		cep: "XXXXXX",
-		mobile: "(xx) xxxxx-xxxx",
+		birthDate: "",
+		gender: "M",
+		cep: "",
+		mobile: "",
 	});
 
-	const [schedules, setSchedules] = useState({
-		"Segunda-feira": {
-			inicio: "2024-02-26T11:00",
-			inicioInt: "2024-02-26T11:30",
-			finalInt: "2024-02-26T12:00",
-			final: "2024-02-26T12:30",
-		},
-		"Terça-feira": {
-			inicio: "2024-02-27T11:00",
-			inicioInt: "2024-02-27T11:30",
-			finalInt: "2024-02-27T12:00",
-			final: "2024-02-27T12:30",
-		},
-		"Quarta-feira": {
-			inicio: "2024-02-28T11:00",
-			inicioInt: "2024-02-28T11:30",
-			finalInt: "2024-02-28T12:00",
-			final: "2024-02-28T12:30",
-		},
-		"Quinta-feira": {
-			inicio: "2024-02-29T11:00",
-			inicioInt: "2024-02-29T11:30",
-			finalInt: "2024-02-29T12:00",
-			final: "2024-02-29T12:30",
-		},
-		"Sexta-feira": {
-			inicio: "2024-03-01T11:00",
-			inicioInt: "2024-03-01T11:30",
-			finalInt: "2024-03-01T12:00",
-			final: "2024-03-01T12:30",
-		},
-		Sábado: {
-			inicio: "2024-03-02T11:00",
-			inicioInt: "2024-03-02T11:30",
-			finalInt: "2024-03-02T12:00",
-			final: "2024-03-02T12:30",
-		},
-		Domingo: {
-			inicio: "2024-03-03T11:00",
-			inicioInt: "2024-03-03T11:30",
-			finalInt: "2024-03-03T12:00",
-			final: "2024-03-03T12:30",
-		},
-	});
+	const [schedules, setSchedules] = useState(generateSchedulesForToday);
 
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -90,46 +48,46 @@ export function NovoEspecialista() {
 		});
 	};
 
+	const handleSave = async () => {
+		const rawPhone = formData.mobile.replace(/\D/g, "");
+		const phoneNumber = rawPhone.length > 0 ? parseInt(rawPhone, 10) : null;
+
+		const payload = {
+			name: formData.fullName,
+			CPF: formData.cpf,
+			birthDate: formData.birthDate,
+			phoneNumber,
+			address: formData.address,
+			addressNumber: parseInt(formData.number),
+			neighborhood: formData.neighborhood,
+			gender: formData.gender === "M" ? 0 : 1,
+			rg: formData.rg,
+			specialistType: formData.profession,
+		};
+
+		try {
+			await createSpecialist(payload, schedules);
+			return true;
+		} catch {
+			alert("Erro ao cadastrar especialista");
+			return false;
+		}
+	};
+
+	useImperativeHandle(ref, () => ({
+		handleSave,
+	}));
+
 	return (
 		<div className="container">
 			<div className="content">
 				{/* Informações Gerais */}
-				<div className="section">
+				{/* <div className="section">
 					<h2 className="section-title">Informações Gerais</h2>
 					<div className="form-grid">
-						<div className="form-row-two">
-							<div className="form-group">
-								<label className="label">ID Especialista</label>
-								<input
-									className="input"
-									value={formData.specialistId}
-									onChange={(e) =>
-										handleInputChange(
-											"specialistId",
-											e.target.value
-										)
-									}
-								/>
-							</div>
-							<div className="form-group">
-								<label className="label">
-									Data de registro
-								</label>
-								<input
-									className="date-input"
-									type="date"
-									value={formData.registrationDate}
-									onChange={(e) =>
-										handleInputChange(
-											"registrationDate",
-											e.target.value
-										)
-									}
-								/>
-							</div>
-						</div>
+						<div className="form-row-two"></div>
 					</div>
-				</div>
+				</div> */}
 
 				{/* Informações do Especialista */}
 				<div className="section">
@@ -153,7 +111,7 @@ export function NovoEspecialista() {
 							</div>
 							<div className="form-group">
 								<label className="label">Profissão</label>
-								<input
+								{/* <input
 									className="input"
 									value={formData.profession}
 									onChange={(e) =>
@@ -162,7 +120,24 @@ export function NovoEspecialista() {
 											e.target.value
 										)
 									}
-								/>
+								/> */}
+
+								<select
+									className="select"
+									value={formData.profession}
+									onChange={(e) =>
+										handleInputChange(
+											"profession",
+											e.target.value
+										)
+									}
+								>
+									<option value="DENTISTA">Dentista</option>
+									<option value="ASB">ASB</option>
+									<option value="FUNCIONARIO">
+										Funcionário
+									</option>
+								</select>
 							</div>
 						</div>
 
@@ -272,7 +247,7 @@ export function NovoEspecialista() {
 								/>
 							</div>
 							<div className="form-group">
-								<label className="label">Sexo</label>
+								<label className="label">Gênero</label>
 								<select
 									className="select"
 									value={formData.gender}
@@ -283,9 +258,8 @@ export function NovoEspecialista() {
 										)
 									}
 								>
-									<option value="Masc">Masculino</option>
-									<option value="Fem">Feminino</option>
-									<option value="Outro">Outro</option>
+									<option value="M">Masculino</option>
+									<option value="F">Feminino</option>
 								</select>
 							</div>
 							<div className="form-group">
@@ -415,4 +389,4 @@ export function NovoEspecialista() {
 			</div>
 		</div>
 	);
-}
+});
