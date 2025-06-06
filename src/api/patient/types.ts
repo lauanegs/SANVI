@@ -67,6 +67,20 @@ export interface PatientInterfaceDTO {
     treatments: Array<any>
 }
 
+export interface TreatmentInterface {
+    id: number,
+    endedAt: string,
+    startedAt: string,
+    title: string,
+    patientId: number
+}
+export interface TreatmentInterfaceDTO {
+    endedAt: string | null,
+    startedAt: string,
+    title: string,
+    patientId: number
+}
+
 export interface MedicalRecordDataInterfaceDTO {
     patientId: number;
     isPregnant: boolean,

@@ -1,5 +1,5 @@
 import { API_URL } from "@api/connection";
-import { MedicalRecordDataInterfaceDTO, PatientInterface, PatientInterfaceDTO } from "./types";
+import { MedicalRecordDataInterfaceDTO, PatientInterface, PatientInterfaceDTO, TreatmentInterface, TreatmentInterfaceDTO } from "./types";
 
 export async function findPatient(): Promise<PatientInterface[]> {
     try {
@@ -15,7 +15,28 @@ export async function findPatient(): Promise<PatientInterface[]> {
     } catch (error) {
         throw new Error(`Erro ${error}`);
     }
+}
 
+export async function findTreatmentsByPatientId(patient: { id: number }): Promise<TreatmentInterface[]> {
+    try {
+        const response = await fetch(`${API_URL}/treatment`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(patient)
+        })
+
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}: ${response.statusText}`)
+        }
+
+        const data = await response.json();
+        console.log("RESPONSE TREATMENTS", data)
+        return data;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
 }
 
 export async function editPatient(patient: PatientInterface): Promise<any> {
@@ -42,6 +63,22 @@ export async function persistPatient(patient: PatientInterfaceDTO): Promise<any>
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(patient)
+        })
+
+        return response;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
+}
+
+export async function persistTreatment(treatment: TreatmentInterfaceDTO): Promise<any> {
+    try {
+        const response = await fetch(`${API_URL}/treatment/create`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(treatment)
         })
 
         return response;

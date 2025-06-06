@@ -7,65 +7,86 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import { useAppStore } from "store/appStore";
 import { JourneyCard } from "@components/JourneyCard";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { findTreatmentsByPatientId, persistTreatment } from "@api/patient";
+import { queryKeys } from "utils/query-keys";
+import toast from "react-hot-toast";
 
-export function TratamentoPacientes(){
+export function TratamentoPacientes() {
     const store = useAppStore();
 
     const isFullScreen = store.isFullScreen;
 
-    const treatments = store.selectedPatient.treatments;
+    const idPatient = store.selectedPatient.id;
 
-    const PADDING_CONTAINER = isFullScreen ? 
-        {paddingTop: 82, paddingLeft: 64}
+    const queryClient = useQueryClient();
+    const { data = [], error, isPending} = useQuery({
+        queryKey: queryKeys.ALL_PATIENT_TREATMENTS,
+        queryFn: () => {},
+        staleTime: 1000 * 60 * 5
+    })
+
+    async function createTreatment(){
+        try {
+            const response = await persistTreatment({
+                patientId: 1,
+                startedAt: '2023-03-04',
+                title: 'Tratamento aparelho',
+                endedAt: null,
+            });
+            console.log("CREATE RESPONSE", response);
+        } catch (error) {
+            
+        }
+    }
+
+    console.log("DATA TREATMENTS", data);
+
+    const PADDING_CONTAINER = isFullScreen ?
+        { paddingTop: 82, paddingLeft: 64 }
         :
-        {paddingTop: 41, paddingLeft: 32};
+        { paddingTop: 41, paddingLeft: 32 };
 
-    const PADDING_RIGHT_JOURNEY = isFullScreen ? 
-        {paddingRight: 110}
+    const PADDING_RIGHT_JOURNEY = isFullScreen ?
+        { paddingRight: 110 }
         :
-        {paddingRight: 55}
+        { paddingRight: 55 }
 
-    const elements = new Array(50).fill(true).map((_, index) => ({
-        count: index,
-        startDate: "25/02/2025",
-        title: "Aparelhos"
-    }))
+    const cell = ({ index, style }: { index: number, style: React.CSSProperties }) => {
+        const element = data[index];
 
-    const cell = ({index, style}: {index: number, style: React.CSSProperties}) => {
-        const element = elements[index];
-
-        return(
-            <div style={{...style, ...PADDING_RIGHT_JOURNEY}}>
+        return (
+            <div style={{ ...style, ...PADDING_RIGHT_JOURNEY }}>
                 <TreatmentCard
-                    count={element.count}
-                    startDate={element.startDate}
-                    title={element.title}
+                    count={0}
+                    startDate={''}
+                    title={''}
                 />
             </div>
         );
     }
-    return(
+    return (
         <Container>
-            <GenericHeader/>
+            <GenericHeader />
             <MenuHeader
                 firstSubScreen="cadastroPaciente"
                 secondSubScreen="jornadaPaciente"
                 thirdSubScreen="prontuarioPaciente"
                 buttonTitle="Novo tratamento"
-                onPressButton={() => {}}
+                onPressButton={() => { }}
             />
-            <WrapperA><JourneyCard/></WrapperA>
+            <WrapperA><JourneyCard /></WrapperA>
             <ContentContainer
                 style={PADDING_CONTAINER}
             >
                 <AutoSizer>
-                    {({width, height}) => (
+                    {({ width, height }) => (
                         <FixedSizeList
                             height={height}
                             width={width}
                             itemSize={75}
-                            itemCount={elements.length}
-                            
+                            itemCount={data.length}
+
                         >
                             {cell}
                         </FixedSizeList>

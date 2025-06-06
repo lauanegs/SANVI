@@ -32,6 +32,8 @@ export function Pacientes() {
     staleTime: 1000 * 60 * 5
   })
 
+  console.log("DATA NOVA", data);
+
   const columns = Math.ceil((data?.length || 0) / rows);
 
   useEffect(() => {

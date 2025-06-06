@@ -32,7 +32,6 @@ import { registerLocale } from "react-datepicker";
 import { ptBR } from 'date-fns/locale';
 import { editPatient, persistPatient } from "@api/patient";
 import toast from "react-hot-toast";
-import { MedicalRecordInterface } from "@api/patient/types";
 
 registerLocale("ptBR", ptBR);
 
