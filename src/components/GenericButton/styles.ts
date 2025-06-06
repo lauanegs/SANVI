@@ -20,4 +20,3 @@ export const Container = styled.button<ColorButtonProp>`
         background-color: ${theme.COLORS.AZUL_DA_FRANCA_60};
     }
 `;
-

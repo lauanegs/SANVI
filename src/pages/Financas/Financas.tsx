@@ -23,19 +23,25 @@ function Financas() {
                 <nav>
                     <div className="fin_tabs">
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.DASHBOARD ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.DASHBOARD)}
                         >
                             Dashboard
                         </button>
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.ENTRADAS ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.ENTRADAS)}
                         >
                             Entradas
                         </button>
                         <button
-                            className="fin_tabButton"
+                            className={`fin_tabButton ${
+                                tabAtual === Tab.SAIDAS ? "ativo" : ""
+                            }`}
                             onClick={() => setTabAtual(Tab.SAIDAS)}
                         >
                             Saídas

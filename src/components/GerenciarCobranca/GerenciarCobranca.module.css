@@ -1,0 +1,156 @@
+.container {
+    /* background-color: #f8f9fa; */
+    padding: 24px;
+    font-family: Arial, sans-serif;
+}
+
+.grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.cardHeader {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.cardTitle {
+    color: var(--azul-da-franca);
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.cardContent {
+    padding: 20px;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.label {
+    display: block;
+    font-size: 14px;
+    color: var(--cinza-escuro);
+    margin-bottom: 6px;
+}
+
+.input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.gridTwo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.totalPago {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.fileSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 16px;
+}
+
+.fileName {
+    font-size: 14px;
+    color: var(--azul-da-franca);
+}
+
+.button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.buttonCheck {
+    background-color: var(--azul-da-franca);
+    color: white;
+}
+
+.buttonDelete {
+    background-color: #dc2626;
+    color: white;
+}
+
+.detailItem {
+    margin-bottom: 16px;
+    font-size: 1rem;
+    color: var(--cinza-escuro);
+}
+
+.detailItem .label {
+    font-size: 1rem;
+}
+.detailValue {
+    padding: 10px;
+}
+
+.parcela {
+    background-color: #fff;
+    color: white;
+    overflow-y: hidden;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.parcelaActive .parcelaTitle {
+    background-color: var(--verde) !important;
+}
+
+.parcelaInactive .parcelaTitle {
+    background-color: var(--casca-de-laranja) !important;
+}
+
+.parcelaTitle {
+    padding: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    width: 100%;
+    color: #fff;
+}
+
+.parcelaDetails {
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 12px;
+}

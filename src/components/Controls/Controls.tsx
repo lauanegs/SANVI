@@ -1,10 +1,9 @@
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ActionButton, Container, WrapperButtons } from "./styles";
-import Icon from '@components/Icon';
-
+import Icon from "@components/Icon";
 
 export function Controls() {
-  const appWindow = getCurrentWindow();
+    const appWindow = getCurrentWindow();
 
   return (
     <Container>

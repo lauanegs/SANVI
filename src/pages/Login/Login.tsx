@@ -1,25 +1,27 @@
-import styles from "./Login.module.css"
-import logo from "@assets/logo.svg"
-import Input from "@components/Input/index.tsx"
-import { useNavigate } from "react-router-dom"
-import GenericButton from "@components/GenericButton"
-import {useMutation } from "@tanstack/react-query";
-import {fetchLogin} from "@api/login";
-import {useState} from "react";
-
-
+import styles from "./Login.module.css";
+import logo from "@assets/logo.svg";
+import Input from "@components/Input/index.tsx";
+import { useNavigate } from "react-router-dom";
+import GenericButton from "@components/GenericButton";
+import { useMutation } from "@tanstack/react-query";
+import { fetchLogin } from "@api/login";
+import { useState } from "react";
 
 export default function Login() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
-  const mutation = useMutation({
-      mutationFn: fetchLogin,
-      onSuccess: ( )=> { navigate("/home"); },
-      onError: (error) => { console.log("Erro: ", error); }
-  });
+    const mutation = useMutation({
+        mutationFn: fetchLogin,
+        onSuccess: () => {
+            navigate("/home");
+        },
+        onError: (error) => {
+            console.log("Erro: ", error);
+        },
+    });
 
   const handleSubmit = () => {
       mutation.mutate({username, password});
@@ -56,6 +58,5 @@ export default function Login() {
                     {(mutation.error as Error).message}
                 </p>)}
         </div>
-    </div>
-  )
+    );
 }
