@@ -108,6 +108,8 @@ export default function AppointmentTable() {
         return styles.statusPendente
       case "Confirmado":
         return styles.statusConfirmado
+      case "Concluído":
+        return styles.statusConcluído
       default:
         return ""
     }

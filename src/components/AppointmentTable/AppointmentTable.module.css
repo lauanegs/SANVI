@@ -153,6 +153,11 @@
   color: white;
 }
 
+.statusConcluído {
+  background: #0CCE6B;
+  color: white;
+}
+
 .footer {
   text-align: center;
   margin-top: 16px;
