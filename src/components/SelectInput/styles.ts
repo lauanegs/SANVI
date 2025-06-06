@@ -84,10 +84,29 @@ export const TouchableWrapperStyled = styled.button`
     }
 `;
 
-export const OptionsWrapper = styled.div`
+export const OptionsWrapper = styled.div<InputSizeStyle>`
     display: flex;
     flex-direction: column;
-    width: 100%;
+    
+    ${({ sizeType }) => sizeType === "PP" && css`
+        width: 20%;
+    `};
+    ${({ sizeType }) => sizeType === "P" && css`
+        width: 50%;
+    `};
+    ${({ sizeType }) => sizeType === "M" && css`
+        width: 60%;
+    `};
+    ${({ sizeType }) => sizeType === "MG" && css`
+        width: 75%;
+    `};
+    ${({ sizeType }) => sizeType === "G" && css`
+        width: 100%;
+    `};
+    ${({ sizeType }) => typeof sizeType === "number" && css`
+        width: ${sizeType}px;
+    `};
+
     max-height: 150px;
 
     align-items: flex-start;
@@ -95,8 +114,6 @@ export const OptionsWrapper = styled.div`
 
     position: absolute;
     top: 100%;
-    left: 0;
-    z-index: 999; 
     overflow-y: auto;
 
     background-color: ${theme.COLORS.BRANCO};

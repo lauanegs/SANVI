@@ -51,5 +51,5 @@ export const LoaderWrapper = styled.div`
 `;
 
 export const ButtonWrapper = styled.div`
-    padding-top: 8px;
+    padding-bottom: 4px;
 `;

@@ -12,5 +12,5 @@ export type InputProps = {
   label?: string;
   inputType?: InputType;
   errorMessage?: string;
-  onChangeDate?: (date: Date) => void;
+  onVisibleDateMenu?: () => void;
 } & React.InputHTMLAttributes<HTMLInputElement>;

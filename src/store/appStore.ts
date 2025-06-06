@@ -12,4 +12,7 @@ export const useAppStore = create<AppStoreStates & AppStoreActions>((set) => ({
     selectedPatient: {} as PatientInterface,
     setSelectedPatient: (selectedPatient) => set(() => ({selectedPatient: selectedPatient})),
 
+    isValidPatientCache: true,
+    setIsValidPatientCache: (isValidPatientCache) => set(() => ({isValidPatientCache: isValidPatientCache}))
+
 }));

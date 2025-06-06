@@ -5,7 +5,7 @@ import { MenuHeaderProps } from "./types";
 import { useNavigate } from "react-router-dom";
 import { SubScreenEnum } from "@pages/Pacientes/types";
 
-export function MenuHeader({ firstSubScreen, buttonTitle, onPressButton, secondSubScreen, thirdSubScreen }: MenuHeaderProps) {
+export function MenuHeader({ firstSubScreen, buttonTitle, onPressButton, secondSubScreen, thirdSubScreen, buttonDisabled}: MenuHeaderProps) {
     const navigator = useNavigate();
     return (
         <Container>
@@ -37,9 +37,10 @@ export function MenuHeader({ firstSubScreen, buttonTitle, onPressButton, secondS
 
             {buttonTitle && onPressButton &&
                 <GenericButton
-                    color="PRIMARY"
+                    color={buttonDisabled ? "TERTIARY" : "PRIMARY"}
                     title={buttonTitle}
                     onClick={onPressButton}
+                    disabled={buttonDisabled}
                 />}
 
         </Container>

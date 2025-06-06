@@ -8,6 +8,7 @@ export type StyleProps = {
 
 export type SimpleSelectProps = {
     title: string,
+    state?: boolean,
     direction?: DirectionType
     onChangeState: (state: boolean) => void;
 }

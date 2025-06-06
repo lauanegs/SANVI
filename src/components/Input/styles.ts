@@ -57,7 +57,7 @@ export const InputText = styled.input`
     box-sizing: border-box;
     
     &::placeholder {
-        color: ${theme.COLORS.CINZA_NAVIO_DE_GUERRA};
+        color: ${theme.COLORS.PLACEHOLDER};
     }
 `;
 

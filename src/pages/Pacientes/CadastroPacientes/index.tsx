@@ -16,7 +16,7 @@ import {
 } from "./styles";
 import { GenericHeader } from "@components/GenericHeader";
 import { Text } from "@components/Text";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Icon from "@components/Icon";
 import theme from "theme";
 import Input from "@components/Input";
@@ -26,23 +26,35 @@ import * as yup from 'yup';
 import InputMask from "react-input-mask";
 import { formatCpf, formatPhoneNumber, formatRg } from "utils/formatFunctions";
 import { SelectInput } from "@components/SelectInput";
-import { GenderEnum, MockGender } from "./types";
+import { FormStateType, GenderEnum, GenderEnumPost, MockGender, MockUf } from "./types";
+import DatePicker from "react-datepicker";
+import { registerLocale } from "react-datepicker";
+import { ptBR } from 'date-fns/locale';
+import { editPatient, persistPatient } from "@api/patient";
+import toast from "react-hot-toast";
+import { MedicalRecordInterface } from "@api/patient/types";
+
+registerLocale("ptBR", ptBR);
 
 export function CadastroPaciente() {
     const isFullScreen = useAppStore().isFullScreen;
     const SIZE_TITLE = isFullScreen ? 14 : 12;
     const PADDING_TOP = isFullScreen ? 50 : 20;
 
-    const data = useAppStore().selectedPatient;
+    const store = useAppStore();
+    const data = store.selectedPatient;
 
-    const [isAgeOfMajority, setIsAgeOfMajority] = useState(true);
+    const [isMinor, setIsMinor] = useState(false);
+    const [isVisibleDateModal, setIsVisibleDateModal] = useState(false);
 
-    const [formState, setFormState] = useState({
+    const isNewRegistration = Object.keys(data).length < 1;
+
+    const [formState, setFormState] = useState<FormStateType>({
         address: '',
         addressNumber: '',
-        birthDate: '',
+        birthDate: new Date(),
         cpf: '',
-        createdAt: '',
+        createdAt: new Date(),
         gender: '0',
         id: '',
         name: '',
@@ -50,21 +62,24 @@ export function CadastroPaciente() {
         phoneNumber: '',
         profession: '',
         rg: '',
-        updatedAt: '',
         cep: '',
         uf: '',
-        guardianName: '',
-        guardiancpf: '',
-        guardianPhoneNumber: ''
+        guardianName: null,
+        guardianCPF: null,
+        guardianPhoneNumber: null
     });
 
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
     const [canBeOpenSelect, setCanBeOpenSelect] = useState(true);
+    const [hasChanges, setHasChanges] = useState(true);
+
+    const formRef = useRef<HTMLDivElement>(null);
 
     function handleSelectGender(gender: string) {
-        const genderValue = GenderEnum[gender as keyof typeof GenderEnum];
-        setFormState(prev => ({ ...prev, gender: genderValue }));
+        setFormState(prev => ({ ...prev, gender: gender }));
     }
+
+    console.log("GENDER", formState.gender);
 
     function handleOpenSelectOptions() {
         setCanBeOpenSelect(false);
@@ -74,42 +89,125 @@ export function CadastroPaciente() {
     }
 
     const handleCheckAgeOfMajority = () => {
-        setIsAgeOfMajority(prev => !prev);
+        setIsMinor(prev => !prev);
     };
-
-    function formatDate(dateString: string) {
-        const [year, month, day] = dateString.split('T')[0].split('-');
-        return `${day}/${month}/${year}`;
-    }
 
     const formSchema = yup.object().shape({
         name: yup.string().required('Informe o nome'),
-        cpf: yup.string().required('Informe o CPF').min(11, 'CPF inválido'),
-        adress: yup.string().required('Informe o endereço'),
-        adressNumber: yup.string().required('Informe o número'),
+        cpf: yup.string().required('Informe o CPF').length(11, 'CPF inválido'),
+        address: yup.string().required('Informe o endereço'),
+        addressNumber: yup.string().required('Informe o número'),
         neighborhood: yup.string().required('Informe o bairro'),
-        phoneNumber: yup.string().required('Informe o telefone').min(11, "Telefone inválido"),
+        phoneNumber: yup.string().required('Informe o telefone')
+            .transform(value => value.replace(/[^\d]/g, ''))
+            .length(11, "Telefone inválido"),
         profession: yup.string().required('Informe a profissão'),
-        rg: yup.string().required('Informe o RG').min(8, 'RG inválido'),
-        cep: yup.string().required('Informe o CEP'),
-        guardianName: isAgeOfMajority
-            ? yup.string().notRequired()
-            : yup.string().required('Informe o nome do responsável'),
-        guardiancpf: isAgeOfMajority
-            ? yup.string().notRequired()
-            : yup.string().required('Informe o CPF do responsável').min(11, 'CPF inválido'),
-        guardianPhoneNumber: isAgeOfMajority
-            ? yup.string().notRequired()
-            : yup.string().required('Informe o telefone do responsável').min(11, 'Telefone inválido')
+        rg: yup.string()
+            .transform(value => value.replace(/[^\d]/g, ''))
+            .required('Informe o RG').length(8, 'RG inválido'),
+        cep: yup.string().required('Informe o CEP')
+            .transform(value => value.replace(/[^\d]/g, ''))
+            .length(8, "CEP inválido"),
+        guardianName: isMinor
+            ? yup.string().required('Informe o nome do responsável')
+            : yup.string().notRequired(),
+        guardianCPF: isMinor
+            ? yup.string().required('Informe o CPF do responsável').length(11, 'CPF inválido')
+            : yup.string().notRequired(),
+        guardianPhoneNumber: isMinor
+            ? yup.string().required('Informe o telefone do responsável').length(11, 'Telefone inválido')
+            : yup.string().notRequired()
     });
 
     async function handleSubmitForm() {
-        const { birthDate, createdAt, updatedAt, gender, id, ...rest } = formState;
+        const { birthDate, createdAt, gender, id, uf, ...fields } = formState;
 
         try {
-            await formSchema.validate({ ...rest, birthDate }, { abortEarly: false });
+            await formSchema.validate({ ...fields }, { abortEarly: false });
             setFormErrors({});
+
             console.log('Formulário válido:', formState);
+
+            if (isNewRegistration) {
+                const response = await persistPatient({
+                    address: formState.address,
+                    addressNumber: Number(formState.addressNumber),
+                    birthDate: formState.birthDate.toISOString(),
+                    cep: formState.cep,
+                    cpf: formState.cpf,
+                    createdAt: formState.createdAt.toISOString(),
+                    gender: GenderEnumPost[formState.gender as keyof typeof GenderEnumPost],
+                    guardianCPF: formState.guardianCPF,
+                    guardianName: formState.guardianName,
+                    guardianPhoneNumber: typeof formState.guardianPhoneNumber === "string" ? Number(formState.guardianPhoneNumber) : null,
+                    medicalRecord: data.medicalRecord,
+                    name: formState.name,
+                    neighborhood: formState.neighborhood,
+                    phoneNumber: Number(formState.phoneNumber),
+                    profession: formState.profession,
+                    rg: formState.rg,
+                    treatments: data.treatments,
+                    uf: formState.uf,
+                    updatedAt: new Date().toISOString()
+                });
+
+                store.setIsValidPatientCache(false);
+
+                if (response.ok) {
+                    toast.success("Paciente criado com sucesso!", {
+                        position: "bottom-right",
+                        duration: 2000
+                    })
+                }
+
+                if (!response.ok) {
+                    toast.error("Não foi possível criar o paciente", {
+                        position: "bottom-right",
+                        duration: 2000
+                    })
+                }
+
+            } else {
+                const response = await editPatient({
+                    address: formState.address,
+                    addressNumber: Number(formState.addressNumber),
+                    birthDate: formState.birthDate.toISOString(),
+                    cep: formState.cep,
+                    cpf: formState.cpf,
+                    createdAt: formState.createdAt.toISOString(),
+                    gender: GenderEnumPost[formState.gender as keyof typeof GenderEnumPost],
+                    guardianCPF: formState.guardianCPF,
+                    guardianName: formState.guardianName,
+                    guardianPhoneNumber: typeof formState.guardianPhoneNumber === "string" ? Number(formState.guardianPhoneNumber) : null,
+                    id: Number(formState.id),
+                    medicalRecord: data.medicalRecord,
+                    name: formState.name,
+                    neighborhood: formState.neighborhood,
+                    phoneNumber: Number(formState.phoneNumber),
+                    profession: formState.profession,
+                    rg: formState.rg,
+                    treatments: data.treatments,
+                    uf: formState.uf,
+                    updatedAt: new Date().toISOString()
+                });
+
+                store.setIsValidPatientCache(false);
+
+                if (response.ok) {
+                    toast.success("Paciente editado com sucesso!", {
+                        position: "bottom-right",
+                        duration: 2000
+                    })
+                }
+
+                if (!response.ok) {
+                    toast.error("Não foi possivel editar", {
+                        position: "bottom-right",
+                        duration: 2000
+                    })
+                }
+            }
+
         } catch (error) {
             if (error instanceof yup.ValidationError) {
                 const errors: Record<string, string> = {};
@@ -119,39 +217,122 @@ export function CadastroPaciente() {
                     }
                 });
                 setFormErrors(errors);
+                return;
             }
+
+            console.log("ERRO persistMedicalRecord", error);
+            toast.error("Erro desconhecido", {
+                position: "bottom-right",
+                duration: 2000
+            })
         }
     }
 
     useEffect(() => {
-        console.log('DATA ATUAL', data);
+        const form = formRef.current;
+        if (!form) return;
+
+        let scrollTarget = 0;
+        let currentScroll = 0;
+        let isScrolling = false;
+
+        const handleWheel = (e: WheelEvent) => {
+            e.preventDefault(); // impede scroll nativo
+            scrollTarget += e.deltaY * 0.5; // ← reduz sensibilidade (0.5 == 50%)
+            scrollTarget = Math.max(0, Math.min(scrollTarget, form.scrollHeight));
+
+            if (!isScrolling) {
+                isScrolling = true;
+                smoothScroll();
+            }
+        };
+
+        const smoothScroll = () => {
+            currentScroll += (scrollTarget - currentScroll) * 0.1; // velocidade de aproximação
+            form.scrollTop = currentScroll;
+
+            if (Math.abs(scrollTarget - currentScroll) > 0.5) {
+                requestAnimationFrame(smoothScroll);
+            } else {
+                isScrolling = false;
+            }
+        };
+
+        form.addEventListener("wheel", handleWheel, { passive: false });
+
+        return () => {
+            form.removeEventListener("wheel", handleWheel);
+        };
+    }, []);
+
+    useEffect(() => {
         if (!data) return;
 
         setFormState({
-            address: data.address || '',
-            addressNumber: `${data.addressNumber}` || '',
-            birthDate: data.birthDate || '',
-            cpf: data.cpf || '',
-            createdAt: data.createdAt || '',
-            gender: data.gender || '0',
-            id: data.id != null ? `${data.id}` : '',
-            name: data.name || '',
-            neighborhood: data.neighborhood || '',
-            phoneNumber: data.phoneNumber != null ? `${data.phoneNumber}` : '',
-            profession: data.profession || '',
-            rg: data.rg || '',
-            updatedAt: data.updatedAt || '',
-            cep: data.cep || '',
-            uf: data.uf || '',
-            guardianName: data.guardianName || '',
-            guardiancpf: data.guardiancpf || '',
-            guardianPhoneNumber: data.guardianPhoneNumber != null
-                ? `${data.guardianPhoneNumber}`
-                : ''
+            address: data.address ? data.address : '',
+            addressNumber: data.addressNumber ? data.addressNumber.toString() : '',
+            birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
+            cpf: data.cpf ? data.cpf : '',
+            createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+            gender: data.gender ? data.gender : '',
+            id: data.id ? data.id.toString() : '',
+            name: data.name ? data.name : '',
+            neighborhood: data.neighborhood ? data.neighborhood : '',
+            phoneNumber: data.phoneNumber ? data.phoneNumber.toString() : '',
+            profession: data.profession ? data.profession : '',
+            rg: data.rg ? data.rg : '',
+            cep: data.cep ? data.cep : '',
+            uf: data.uf ? data.uf : '',
+            guardianName: data.guardianName ? data.guardianName : '',
+            guardianCPF: data.guardianCPF ? data.guardianCPF : '',
+            guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
         });
+
+        if (data.guardianName && data.guardianName.length > 0) {
+            setIsMinor(true);
+        }
     }, [data]);
 
-    console.log("FORMSTATE", formState);
+    useEffect(() => {
+        if (isMinor === false) {
+            setFormState(prev => ({
+                ...prev, guardianCPF: "", guardianName: "", guardianPhoneNumber: ""
+            }));
+        }
+
+        if (isMinor && data.guardianName && data.guardianPhoneNumber && data.guardianCPF) {
+            setFormState(prev => ({
+                ...prev, guardianCPF: data.guardianCPF || "", guardianName: data.guardianName || "", guardianPhoneNumber: data.guardianPhoneNumber?.toString() || ""
+            }));
+        }
+    }, [isMinor])
+
+    useEffect(() => {
+        if (data && !isNewRegistration) {
+            const dataObj = {
+                address: data.address ? data.address : '',
+                addressNumber: data.addressNumber ? data.addressNumber.toString() : '',
+                birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
+                cpf: data.cpf ? data.cpf : '',
+                createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+                gender: data.gender ? data.gender : '',
+                id: data.id ? data.id.toString() : '',
+                name: data.name ? data.name : '',
+                neighborhood: data.neighborhood ? data.neighborhood : '',
+                phoneNumber: data.phoneNumber ? data.phoneNumber.toString() : '',
+                profession: data.profession ? data.profession : '',
+                rg: data.rg ? data.rg : '',
+                cep: data.cep ? data.cep : '',
+                uf: data.uf ? data.uf : '',
+                guardianName: data.guardianName ? data.guardianName : '',
+                guardianCPF: data.guardianCPF ? data.guardianCPF : '',
+                guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
+            }
+
+            const isNoChanges = JSON.stringify(dataObj) === JSON.stringify(formState);
+            setHasChanges(!isNoChanges);
+        }
+    }, [formState])
 
     return (
         <Container>
@@ -162,16 +343,17 @@ export function CadastroPaciente() {
                 thirdSubScreen="prontuarioPaciente"
                 buttonTitle="Salvar"
                 onPressButton={handleSubmitForm}
+                buttonDisabled={!hasChanges}
             />
 
-            <Form onScroll={handleOpenSelectOptions} style={{ paddingTop: PADDING_TOP }}>
+            <Form onScroll={handleOpenSelectOptions} style={{ paddingTop: PADDING_TOP }} ref={formRef}>
                 <FormContentWrapper>
                     <FormTitleRowWrapper>
                         <Text color="TERTIARY" size={SIZE_TITLE} text="Informações Gerais" />
                         <Text color="TERTIARY" size={SIZE_TITLE} text="Informações do Responsável" />
                         <CheckBoxWrapper>
                             <CheckBox onClick={handleCheckAgeOfMajority}>
-                                {isAgeOfMajority ? (
+                                {isMinor ? (
                                     <Icon iconLibName="md" icon="MdCheckBox" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
                                 ) : (
                                     <Icon iconLibName="md" icon="MdCheckBoxOutlineBlank" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
@@ -183,19 +365,17 @@ export function CadastroPaciente() {
 
                     <ColunmsWrapper>
                         <ColunmLeftWrapper>
-                            {data?.id != null && (
+                            {!isNewRegistration && (
                                 <Input
                                     sizeType="G"
-                                    placeholder="123456"
                                     label="ID Paciente"
-                                    value={data.id.toString()}
+                                    value={data.id}
                                     disabled
                                 />
                             )}
                             <Input
                                 sizeType="MG"
-                                label="Data de registro"
-                                value={formState.createdAt ? formatDate(formState.createdAt) : new Date().toLocaleDateString()}
+                                label="Data de registro" value={formState.createdAt ? formState.createdAt.toLocaleDateString() : new Date().toLocaleDateString()}
                                 disabled
                             />
                         </ColunmLeftWrapper>
@@ -204,30 +384,35 @@ export function CadastroPaciente() {
                             <Input
                                 sizeType="G"
                                 label="Nome completo"
-                                placeholder="João Ribeiro dos Santos"
-                                value={formState.name}
+                                placeholder={isMinor ? "João Ribeiro dos Santos" : ""}
+                                disabled={!isMinor}
+                                value={formState.guardianName || ""}
                                 onChange={e =>
-                                    setFormState(prev => ({ ...prev, name: e.target.value }))
+                                    setFormState(prev => ({ ...prev, guardianName: e.target.value }))
                                 }
-                                errorMessage={formErrors.name}
+                                errorMessage={formErrors.guardianName}
                             />
 
                             <StyleWrapper>
                                 <WrapperInput>
                                     <InputMask
                                         mask="999.999.999-99"
-                                        value={formState.cpf}
-                                        onChange={e =>
-                                            setFormState(prev => ({ ...prev, cpf: e.target.value }))
-                                        }
-                                        alwaysShowMask
+                                        value={formState.guardianCPF || ""}
+                                        disabled={!isMinor}
+                                        onChange={e => {
+                                            const maskedValue = e.target.value;
+                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                            setFormState(prev => ({ ...prev, guardianCPF: unmaskedValue }))
+                                        }}
+                                        alwaysShowMask={isMinor}
                                     >
                                         {inputProps => (
                                             <Input
                                                 sizeType="M"
                                                 label="CPF"
+                                                disabled={!isMinor}
                                                 {...inputProps}
-                                                errorMessage={formErrors.cpf}
+                                                errorMessage={formErrors.guardianCPF}
                                             />
                                         )}
                                     </InputMask>
@@ -236,18 +421,22 @@ export function CadastroPaciente() {
                                 <WrapperInput style={{ marginLeft: '20%' }}>
                                     <InputMask
                                         mask="(99) 99999-9999"
-                                        value={formState.phoneNumber}
-                                        onChange={e =>
-                                            setFormState(prev => ({ ...prev, phoneNumber: e.target.value }))
-                                        }
-                                        alwaysShowMask
+                                        value={formState.guardianPhoneNumber || ""}
+                                        disabled={!isMinor}
+                                        onChange={e => {
+                                            const maskedValue = e.target.value;
+                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                            setFormState(prev => ({ ...prev, guardianPhoneNumber: unmaskedValue }))
+                                        }}
+                                        alwaysShowMask={isMinor}
                                     >
                                         {inputProps => (
                                             <Input
                                                 sizeType="P"
+                                                disabled={!isMinor}
                                                 label="Celular"
                                                 {...inputProps}
-                                                errorMessage={formErrors.phoneNumber}
+                                                errorMessage={formErrors.guardianPhoneNumber}
                                             />
                                         )}
                                     </InputMask>
@@ -294,9 +483,11 @@ export function CadastroPaciente() {
                                 <InputMask
                                     mask="999.999.999-99"
                                     value={formatCpf(formState.cpf)}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, cpf: e.target.value }))
-                                    }
+                                    onChange={e => {
+                                        const maskedValue = e.target.value;
+                                        const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                        setFormState(prev => ({ ...prev, cpf: unmaskedValue }))
+                                    }}
                                     alwaysShowMask
                                 >
                                     {inputProps => (
@@ -317,9 +508,9 @@ export function CadastroPaciente() {
                                     placeholder="Rua José de Santana"
                                     value={formState.address}
                                     onChange={e =>
-                                        setFormState(prev => ({ ...prev, adress: e.target.value }))
+                                        setFormState(prev => ({ ...prev, address: e.target.value }))
                                     }
-                                    errorMessage={formErrors.adress}
+                                    errorMessage={formErrors.address}
                                 />
                             </VariableRowWrapper>
                         </ColumnCenterRowWrapper>
@@ -329,9 +520,11 @@ export function CadastroPaciente() {
                                 <InputMask
                                     mask="99-999-999"
                                     value={formatRg(formState.rg)}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, rg: e.target.value }))
-                                    }
+                                    onChange={e => {
+                                        const maskedValue = e.target.value;
+                                        const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                        setFormState(prev => ({ ...prev, rg: unmaskedValue }))
+                                    }}
                                     alwaysShowMask
                                 >
                                     {inputProps => (
@@ -365,15 +558,16 @@ export function CadastroPaciente() {
                                     placeholder="145"
                                     value={formState.addressNumber}
                                     onChange={e =>
-                                        setFormState(prev => ({ ...prev, adressNumber: e.target.value }))
+                                        setFormState(prev => ({ ...prev, addressNumber: e.target.value }))
                                     }
-                                    errorMessage={formErrors.adressNumber}
+                                    errorMessage={formErrors.addressNumber}
                                 />
                             </VariableRowWrapper>
 
                             <VariableRowWrapper style={{ width: '25%' }}>
                                 <SelectInput
-                                    elements={['MG', 'SP']}
+                                    elements={MockUf}
+                                    selectedOption={formState.uf}
                                     sizeType={'P'}
                                     canByOpen={canBeOpenSelect}
                                     label="UF"
@@ -384,15 +578,34 @@ export function CadastroPaciente() {
 
                         <ColumnCenterRowWrapper>
                             <VariableRowWrapper style={{ width: '30%' }}>
-                                <Input
-                                    sizeType="G"
-                                    inputType="date"
-                                    label="Data nascimento"
-                                    value={formState.birthDate}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, birthDate: e.target.value }))
+                                <DatePicker
+                                    selected={formState.birthDate}
+                                    onSelect={() => setIsVisibleDateModal(false)}
+                                    locale="ptBR"
+                                    showYearDropdown
+
+                                    dropdownMode="select"
+                                    onChange={(date) => {
+                                        setIsVisibleDateModal(false)
+
+                                        if (date)
+                                            setFormState(prev => ({
+                                                ...prev, birthDate: date
+                                            }))
+                                    }}
+                                    onInputClick={() => setIsVisibleDateModal(prev => !prev)}
+                                    open={isVisibleDateModal}
+                                    dateFormat="dd/MM/yyyy"
+                                    maxDate={new Date()}
+                                    customInput={
+                                        <Input
+                                            sizeType="G"
+                                            inputType="date"
+                                            onVisibleDateMenu={() => setIsVisibleDateModal(prev => !prev)}
+                                            label="Data nascimento"
+                                            errorMessage={formErrors.birthDate}
+                                        />
                                     }
-                                    errorMessage={formErrors.birthDate}
                                 />
                             </VariableRowWrapper>
 
@@ -400,6 +613,7 @@ export function CadastroPaciente() {
                                 <SelectInput
                                     elements={MockGender}
                                     sizeType={"G"}
+                                    selectedOption={GenderEnum[formState.gender as keyof typeof GenderEnum]}
                                     label="Sexo"
                                     canByOpen={canBeOpenSelect}
                                     onSelectOption={handleSelectGender}
@@ -410,16 +624,17 @@ export function CadastroPaciente() {
                                 <InputMask
                                     mask="99999-999"
                                     value={formState.cep}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, cep: e.target.value }))
-                                    }
+                                    onChange={e => {
+                                        const maskedValue = e.target.value;
+                                        const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                        setFormState(prev => ({ ...prev, cep: unmaskedValue }))
+                                    }}
                                     alwaysShowMask
                                 >
                                     {inputProps => (
                                         <Input
                                             sizeType="G"
                                             label="CEP"
-                                            placeholder="38780000"
                                             {...inputProps}
                                             errorMessage={formErrors.cep}
                                         />
@@ -429,11 +644,13 @@ export function CadastroPaciente() {
 
                             <VariableRowWrapper style={{ width: '25%' }}>
                                 <InputMask
-                                    mask="(99) 9999-9999"
+                                    mask="(99) 99999-9999"
                                     value={formatPhoneNumber(formState.phoneNumber)}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, phoneNumber: e.target.value }))
-                                    }
+                                    onChange={e => {
+                                        const maskedValue = e.target.value;
+                                        const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                        setFormState(prev => ({ ...prev, phoneNumber: unmaskedValue }))
+                                    }}
                                     alwaysShowMask
                                 >
                                     {inputProps => (
@@ -447,69 +664,6 @@ export function CadastroPaciente() {
                                 </InputMask>
                             </VariableRowWrapper>
                         </ColumnCenterRowWrapper>
-
-                        {/* ↓↓↓ Campos do Responsável ↓↓↓ */}
-                        {!isAgeOfMajority && (
-                            <ColumnCenterRowWrapper>
-                                <VariableRowWrapper style={{ width: '60%' }}>
-                                    <Input
-                                        sizeType="G"
-                                        label="Nome do Responsável"
-                                        placeholder="Maria Silva"
-                                        value={formState.guardianName}
-                                        onChange={e =>
-                                            setFormState(prev => ({ ...prev, guardianName: e.target.value }))
-                                        }
-                                        errorMessage={formErrors.guardianName}
-                                    />
-                                </VariableRowWrapper>
-
-                                <VariableRowWrapper style={{ width: '40%' }}>
-                                    <InputMask
-                                        mask="999.999.999-99"
-                                        value={formState.guardiancpf}
-                                        onChange={e =>
-                                            setFormState(prev => ({ ...prev, guardiancpf: e.target.value }))
-                                        }
-                                        alwaysShowMask
-                                    >
-                                        {inputProps => (
-                                            <Input
-                                                sizeType="MG"
-                                                label="CPF do Responsável"
-                                                {...inputProps}
-                                                errorMessage={formErrors.guardiancpf}
-                                            />
-                                        )}
-                                    </InputMask>
-                                </VariableRowWrapper>
-                            </ColumnCenterRowWrapper>
-                        )}
-
-                        {!isAgeOfMajority && (
-                            <ColumnCenterRowWrapper>
-                                <VariableRowWrapper style={{ width: '40%' }}>
-                                    <InputMask
-                                        mask="(99) 99999-9999"
-                                        value={formState.guardianPhoneNumber}
-                                        onChange={e =>
-                                            setFormState(prev => ({ ...prev, guardianPhoneNumber: e.target.value }))
-                                        }
-                                        alwaysShowMask
-                                    >
-                                        {inputProps => (
-                                            <Input
-                                                sizeType="G"
-                                                label="Celular do Responsável"
-                                                {...inputProps}
-                                                errorMessage={formErrors.guardianPhoneNumber}
-                                            />
-                                        )}
-                                    </InputMask>
-                                </VariableRowWrapper>
-                            </ColumnCenterRowWrapper>
-                        )}
-                        {/* ↑↑↑ Fim Campos do Responsável ↑↑↑ */}
                     </ColumnCenterWrapper>
                 </FormContentWrapper>
             </Form>

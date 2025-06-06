@@ -11,14 +11,13 @@ import { useAppStore } from 'store/appStore';
 import { ClipLoader } from "react-spinners";
 import theme from 'theme';
 import { findPatient } from '@api/patient';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from 'utils/query-keys';
 import { formatCpf } from 'utils/formatFunctions';
 import { PatientInterface } from '@api/patient/types';
 
 
 export function Pacientes() {
-  const contentRef = useRef<HTMLDivElement>(null);
   const isFullScreen = useAppStore().isFullScreen;
   const store = useAppStore();
   const navigator = useNavigate();
@@ -26,6 +25,7 @@ export function Pacientes() {
   const [rows, setRows] = useState(5);
   const [inputSize, setInputSize] = useState(400);
 
+  const queryClient = useQueryClient();
   const { data = [], error, isPending } = useQuery({
     queryKey: queryKeys.ALL_PATIENTS,
     queryFn: findPatient,
@@ -35,11 +35,45 @@ export function Pacientes() {
   const columns = Math.ceil((data?.length || 0) / rows);
 
   useEffect(() => {
-    const newRowsQtd = isFullScreen ? 8 : 5;
+    const newRowsQtd = isFullScreen ? 9 : 5;
     const newInputSize = isFullScreen ? 1000 : 400;
     setRows(newRowsQtd);
     setInputSize(newInputSize);
   }, [isFullScreen]);
+
+  useEffect(() => {
+    if (!store.isValidPatientCache) {
+      queryClient.invalidateQueries({ queryKey: queryKeys.ALL_PATIENTS });
+      store.setIsValidPatientCache(true);
+    }
+  }, []);
+
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const grid = contentRef.current;
+    if (!grid) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!grid) return;
+
+      e.preventDefault();
+
+      const SCROLL_SENSITIVITY = 0.2;
+      const nextScrollLeft = grid.scrollLeft + e.deltaY * SCROLL_SENSITIVITY;
+
+      grid.scrollLeft = Math.max(
+        0,
+        Math.min(grid.scrollWidth - grid.clientWidth, nextScrollLeft)
+      );
+    };
+
+    grid.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      grid.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   const cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
     const index = rows * columnIndex + rowIndex;
@@ -53,6 +87,7 @@ export function Pacientes() {
             title={element.name}
             subtitle={formatCpf(element.cpf)}
             onClick={() => {
+              console.log("ELEMENT", element);
               store.setSelectedPatient(element);
               navigator("/cadastroPaciente");
             }}

@@ -1,11 +1,11 @@
 import Icon from "@components/Icon";
 import { Container, OptionWrapper, SelectWrapper } from "./styles";
 import theme from "theme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text } from "@components/Text";
 import { SimpleSelectProps } from "./types";
 
-export function SimpleSelect({onChangeState, title, direction = "vertical"}: SimpleSelectProps) {
+export function SimpleSelect({onChangeState, title, direction = "vertical", state}: SimpleSelectProps) {
     const [isYesSelected, setIsYesSelected] = useState(false);
 
     const handleSetState = () => {
@@ -13,6 +13,12 @@ export function SimpleSelect({onChangeState, title, direction = "vertical"}: Sim
         setIsYesSelected(prev => !prev);
         onChangeState(state);
     }
+
+    useEffect(() => {
+        if(state){
+            setIsYesSelected(state);
+        }
+    },[state])
 
     return (
         <Container>

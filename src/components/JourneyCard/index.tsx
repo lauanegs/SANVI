@@ -1,35 +1,38 @@
 import { Text } from "@components/Text";
-import { Container, WrapperIcon } from "./styles";
-import Icon from "@components/Icon";
+import { Container, Content, DateHeader, WrapperInfo } from "./styles";
 import theme from "theme";
-import { JorneyCardProps } from "./types";
+import Icon from "@components/Icon";
 
-export function JourneyCard({count, startDate, title}: JorneyCardProps){
+export function JourneyCard(){
     return(
         <Container>
-            <Text
-                color="PRIMARY"
-                size={16}
-                text={`Tratamento ${count}`}
-            />
-            <Text
-                color="PRIMARY"
-                size={16}
-                text={`Título: ${title}`}
-            />
-            <Text
-                color="PRIMARY"
-                size={16}
-                text={`Data início: ${startDate}`}
-            />
-            <WrapperIcon>
+            <DateHeader>
+                <Text
+                    text="28 de fevereiro de 2025"
+                    size={14}
+                    color="PRIMARY"
+                />
+            </DateHeader>
+            <Content>
+                <WrapperInfo>
+                    <Text
+                    text="Descrição"
+                    size={12}
+                    color="PRIMARY"
+                />
+                <Text
+                    text="Profissional: Dr. Joaquim"
+                    size={12}
+                    color="PRIMARY"
+                />
                 <Icon
-                    iconLibName="fa6"
-                    icon="FaAngleRight"
-                    color={theme.COLORS.BRANCO}
+                    iconLibName="bs"
+                    icon="BsFolder2Open"
+                    color={theme.COLORS.CINZA_ESCURO}
                     size={15}
                 />
-            </WrapperIcon>
+                </WrapperInfo>
+            </Content>
         </Container>
     );
 }

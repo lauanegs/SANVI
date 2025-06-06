@@ -12,8 +12,8 @@ import { SelectInputProps } from "./types";
 import Icon from "@components/Icon";
 import theme from "theme";
 
-export function SelectInput({ elements, sizeType, label, canByOpen = true, onSelectOption }: SelectInputProps) {
-    const [value, setValue] = useState(elements[0]);
+export function SelectInput({ elements, sizeType, label, canByOpen = true, onSelectOption, selectedOption }: SelectInputProps) {
+    const [value, setValue] = useState('');
     const [showOptions, setShowOptions] = useState(false);
 
     const selectRef = useRef<HTMLDivElement>(null);
@@ -27,6 +27,12 @@ export function SelectInput({ elements, sizeType, label, canByOpen = true, onSel
         onSelectOption(option);
         setShowOptions(false);
     };
+
+    useEffect(() => {
+        if (selectedOption) {
+            setValue(selectedOption);
+        }
+    }, [selectedOption]);
 
     useEffect(() => {
         if (!canByOpen) setShowOptions(false);
@@ -71,11 +77,10 @@ export function SelectInput({ elements, sizeType, label, canByOpen = true, onSel
                         />
                     )}
                 </ContentWrapper>
-                {showOptions  &&
-                    <OptionsWrapper 
+                {showOptions &&
+                    <OptionsWrapper
+                        sizeType={sizeType}
                         style={{
-                            maxHeight: showOptions ? '150px' : '0',
-                            overflow: 'hidden',
                             transition: 'max-height 0.3s ease',
                         }}
                     >

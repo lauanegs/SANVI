@@ -15,15 +15,18 @@ export const Form = styled.div`
     flex-direction: column;
 
     align-items: center;
-    justify-content: center;
+
+    margin-bottom: 40px;
+    padding-bottom: 100px;
 
     overflow-y: auto;
+
 `;
 
 export const FormContent = styled.div`
     flex: 1;
     width: 90%;
-
+    padding-top: 30px;
 `;
 
 export const FormTitleRowWrapper = styled.div`

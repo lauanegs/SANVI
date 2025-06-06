@@ -1,34 +1,40 @@
 import styled from "styled-components";
 import theme from "theme";
 
-export const Container = styled.button`
+export const Container = styled.div`
     width: 100%;
-    height: 60px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
 
-    border: none;
-    padding: 0 15px;
-    border-radius: 8px;
-    border-left: 2.5px solid ${theme.COLORS.CINZA_NAVIO_DE_GUERRA};
     background-color: ${theme.COLORS.BRANCO};
-    cursor: pointer;
+    border-radius: 4px;
 
-    &:hover {
-        background-color: ${theme.COLORS.FUMACA_BRANCA_50};
-    }
 `;
 
-export const WrapperIcon = styled.div`
-    width: 46px;
-    height: 46px;
+export const DateHeader = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    padding: 10px 15px;
+    justify-content: flex-start;
+    
+    border-bottom: 1px solid ${theme.COLORS.CINZA_ESCURO};
+`;
 
-    border-radius: 23px;
-    background-color: ${theme.COLORS.AZUL_DA_FRANCA};
+export const Content = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+`;
+
+export const WrapperInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+    padding: 15px
+
 `;

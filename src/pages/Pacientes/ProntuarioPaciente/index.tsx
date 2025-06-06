@@ -5,79 +5,154 @@ import Input from "@components/Input";
 import { Text } from "@components/Text";
 import { AnamneseCard } from "@components/AnamneseCard";
 import { SimpleSelect } from "@components/SimpleSelect";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useAppStore } from "store/appStore";
-import { SelectInput } from "@components/SelectInput";
+import { FormStateTypeMedicalRecord } from "./types";
+import { persistMedicalRecord } from "@api/patient";
+import toast from "react-hot-toast";
 
 
 export function ProntuarioPaciente() {
-    const isFullScreen = useAppStore().isFullScreen;
-    
+    const store = useAppStore();
+    const isFullScreen = store.isFullScreen;
+
+    const patientId = useAppStore().selectedPatient.id;
+    const data = useAppStore().selectedPatient.medicalRecord;
+
+    const isFirstRecord = !data;
+
     const SIZE_TITLE = isFullScreen ? 14 : 12;
 
-    const [isPregnant, setIsPregnant] = useState(false);
-    const [hasHealthProblem, setHasHealthProblem] = useState(false);
-    const [isReceivingMedicalTreatment, setIsReceivingMedicalTreatment] = useState(false);
+    const [hasChanges, setHasChanges] = useState(true);
 
-    getCurrentWindow().listen("tauri://move", ({ event, payload }) => {
-    console.log("EXECUTOU");
-    console.log(event, payload);
-});
-
-
-    const [queixaPrincipal, setQueixaPrincipal] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
-    const [doencaAtual, setDoencaAtual] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
-    const [historiaMedicaAnterior, setHistoriaMedicaAnterior] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
-    const [historiaMedicaFamiliar, setHistoriaMedicaFamiliar] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
-    const [problemaDeSaude, setProblemaDeSaude] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
-    const [tratamentoMedico, setTratamentoMedico] = useState("Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus. Lorem ipsum dolor sit amet. Ut error aperiam ex recusandae eveniet et similique suscipit et consequatur perferendis aut laboriosam quos non aspernatur facilis ut molestiae temporibus.");
+    const [formState, setFormState] = useState<FormStateTypeMedicalRecord>({
+        id: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        hasHealthProblem: false,
+        hasMedicalTreatment: false,
+        isPregnant: false,
+        medicalRecordData: {
+            diseaseHistory: '',
+            mainComplaint: '',
+            medicalTreatment: '',
+            pastMedicalHistory: '',
+            healthProblem: '',
+            familyMedicalHistory: ''
+        }
+    });
 
     const formRef = useRef<HTMLDivElement>(null);
 
-    const handleChangeAnamneseCardheight = (value: number, isSum: boolean) => {
-        const form = formRef.current;
-        if(!form) return;
+    async function handleSubmitForm() {
+        try {
+            console.log("ASDASD", {
+                hasHealthProblem: formState.hasHealthProblem,
+                hasMedicalTreatment: formState.hasMedicalTreatment,
+                isPregnant: formState.isPregnant,
+                patientId: patientId,
+                MedicalRecordData: formState.medicalRecordData
+            })
+            const response = await persistMedicalRecord({
+                hasHealthProblem: formState.hasHealthProblem,
+                hasMedicalTreatment: formState.hasMedicalTreatment,
+                isPregnant: formState.isPregnant,
+                patientId: patientId,
+                data: formState.medicalRecordData
+            })
 
-        const prevHeight = Number(formRef.current.style.height);
-        if(isSum){
-            const newHeight = prevHeight + value;
-            formRef.current.style.height = `${newHeight}px`;
-        }else{
-            const newHeight = prevHeight - value;
-            formRef.current.style.height = `${newHeight}px`;
+            console.log("RESPONSE", response);
+            store.setIsValidPatientCache(false);
+
+            if (response.ok) {
+                toast.success("Paciente criado com sucesso!", {
+                    position: "bottom-right",
+                    duration: 2000
+                })
+            }
+
+            if (!response.ok) {
+                toast.error("Não foi possível criar o paciente", {
+                    position: "bottom-right",
+                    duration: 2000
+                })
+            }
+        } catch (error) {
+            console.log("ERRO persistMedicalRecord", error);
+            toast.error("Erro desconhecido", {
+                position: "bottom-right",
+                duration: 2000
+            })
         }
     }
 
-    const handleSetIsPregnant = (state: boolean) => {
-        setIsPregnant(state);
-    }
-    const handleSetHasHealthProblem = (state: boolean) => {
-        setHasHealthProblem(state);
-    }
-    const handleSetIsReceivingMedicalTreatment = (state: boolean) => {
-        setIsReceivingMedicalTreatment(state);
-    }
+    useEffect(() => {
+        const form = formRef.current;
+        if (!form) return;
 
-    const handleSetQueixaPrincipal = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setQueixaPrincipal(event.currentTarget.value);
-    }
-    const handleSetDoencaAtual = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setDoencaAtual(value.currentTarget.value);
-    }
-    const handleSetHistoriaMedicaAnterior = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setHistoriaMedicaAnterior(value.currentTarget.value);
-    }
-    const handleSetHistoriaMedicaFamiliar = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setHistoriaMedicaFamiliar(value.currentTarget.value);
-    }
-    const handleSetProblemaDeSaude = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setProblemaDeSaude(value.currentTarget.value);
-    }
-    const handleSetTratamentoMedico = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setTratamentoMedico(value.currentTarget.value);
-    }
+        let scrollTarget = 0;
+        let currentScroll = 0;
+        let isScrolling = false;
+
+        const handleWheel = (e: WheelEvent) => {
+            e.preventDefault(); // impede scroll nativo
+            scrollTarget += e.deltaY * 0.5; // ← reduz sensibilidade (0.5 == 50%)
+            scrollTarget = Math.max(0, Math.min(scrollTarget, form.scrollHeight));
+
+            if (!isScrolling) {
+                isScrolling = true;
+                smoothScroll();
+            }
+        };
+
+        const smoothScroll = () => {
+            currentScroll += (scrollTarget - currentScroll) * 0.1; // velocidade de aproximação
+            form.scrollTop = currentScroll;
+
+            if (Math.abs(scrollTarget - currentScroll) > 0.5) {
+                requestAnimationFrame(smoothScroll);
+            } else {
+                isScrolling = false;
+            }
+        };
+
+        form.addEventListener("wheel", handleWheel, { passive: false });
+
+        return () => {
+            form.removeEventListener("wheel", handleWheel);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (data && data.medicalRecordData)
+            setFormState({
+                createdAt: new Date(data.createdAt),
+                hasHealthProblem: data.hasHealthProblem,
+                hasMedicalTreatment: data.hasMedicalTreatment,
+                id: data.id.toString(),
+                isPregnant: data.isPregnant,
+                medicalRecordData: data.medicalRecordData,
+                updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date()
+            })
+    }, [])
+
+    useEffect(() => {
+        if (data && data.medicalRecordData && !isFirstRecord){
+            const dataObj = {
+                createdAt: new Date(data.createdAt),
+                hasHealthProblem: data.hasHealthProblem,
+                hasMedicalTreatment: data.hasMedicalTreatment,
+                id: data.id.toString(),
+                isPregnant: data.isPregnant,
+                medicalRecordData: data.medicalRecordData,
+                updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date()
+            }
+
+            const isNoChanges = JSON.stringify(dataObj) === JSON.stringify(formState);
+            setHasChanges(!isNoChanges);
+        }
+    }, [formState])
 
     return (
         <Container>
@@ -87,7 +162,8 @@ export function ProntuarioPaciente() {
                 secondSubScreen="jornadaPaciente"
                 thirdSubScreen="prontuarioPaciente"
                 buttonTitle="Salvar"
-                onPressButton={() => { }}
+                onPressButton={handleSubmitForm}
+                buttonDisabled={!hasChanges}
             />
             <Form
                 ref={formRef}
@@ -101,19 +177,18 @@ export function ProntuarioPaciente() {
                         />
                     </FormTitleRowWrapper>
                     <ContainerInfo>
+                        {!isFirstRecord &&
+                            <Input
+                                label="ID Prontuário"
+                                disabled
+                                value={formState.id}
+                                sizeType="MG"
+                            />}
                         <Input
-                            label="ID Prontuário"
-                            sizeType="MG"
-                        />
-                        <Input
-                            label="MRD Number"
+                            label="Última atualização"
                             sizeType="M"
-                            inputType="date"
-                        />
-                        <Input
-                            label="Motivo da Procura"
-                            sizeType="MG"
                             disabled
+                            value={formState.updatedAt.toLocaleDateString()}
                         />
                     </ContainerInfo>
 
@@ -128,17 +203,29 @@ export function ProntuarioPaciente() {
                         <ContainerAnamneseCard>
                             <AnamneseCard
                                 title="queixa principal"
-                                value={queixaPrincipal}
-                                onChange={handleSetQueixaPrincipal}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.mainComplaint}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, mainComplaint: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
                             <AnamneseCard
                                 title="hostória da doença atual"
-                                value={doencaAtual}
-                                onChange={handleSetDoencaAtual}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.diseaseHistory}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, diseaseHistory: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </ContainerAnamneseCard>
                     </VariableRowWrapper>
@@ -146,23 +233,40 @@ export function ProntuarioPaciente() {
                         <ContainerAnamneseCard>
                             <AnamneseCard
                                 title="história médica anterior"
-                                value={historiaMedicaAnterior}
-                                onChange={handleSetHistoriaMedicaAnterior}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.pastMedicalHistory}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, pastMedicalHistory: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
                             <AnamneseCard
                                 title="hostória médica familiar"
-                                value={historiaMedicaFamiliar}
-                                onChange={handleSetHistoriaMedicaFamiliar}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.familyMedicalHistory}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, familyMedicalHistory: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </ContainerAnamneseCard>
                         <FirstSelectStyleWrapper>
                             <SimpleSelect
                                 title="Se mulher, está grávida?"
-                                onChangeState={handleSetIsPregnant}
+                                state={formState.isPregnant}
+                                onChangeState={(state) => {
+                                    setFormState(prev => ({
+                                        ...prev, isPregnant: state
+                                    }))
+                                }}
                                 direction="horizontal"
                             />
                         </FirstSelectStyleWrapper>
@@ -172,28 +276,50 @@ export function ProntuarioPaciente() {
                             <SelectStyleWrapper>
                                 <SimpleSelect
                                     title="Possui algum problema de saúde?"
-                                    onChangeState={handleSetHasHealthProblem}
+                                    state={formState.hasHealthProblem}
+                                    onChangeState={(state) => {
+                                        setFormState(prev => ({
+                                            ...prev, hasHealthProblem: state
+                                        }))
+                                    }}
                                     direction="vertical"
                                 />
                             </SelectStyleWrapper>
                             <AnamneseCard
-                                value={problemaDeSaude}
-                                onChange={handleSetProblemaDeSaude}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.healthProblem}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, medicalTreatment: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </VerticalWrapper>
                         <VerticalWrapper>
                             <SelectStyleWrapper>
                                 <SimpleSelect
                                     title="Está fazendo algum tratamento médico?"
-                                    onChangeState={handleSetIsReceivingMedicalTreatment}
+                                    state={formState.hasMedicalTreatment}
+                                    onChangeState={(state) => {
+                                        setFormState(prev => ({
+                                            ...prev, hasMedicalTreatment: state
+                                        }))
+                                    }}
                                     direction="vertical"
                                 />
                             </SelectStyleWrapper>
                             <AnamneseCard
-                                value={tratamentoMedico}
-                                onChange={handleSetTratamentoMedico}
-                                onHeightChange={handleChangeAnamneseCardheight}
+                                value={formState.medicalRecordData.medicalTreatment}
+                                onChange={(e) => {
+                                    setFormState(prev => ({
+                                        ...prev, medicalRecordData: {
+                                            ...prev.medicalRecordData, medicalTreatment: e.target.value
+                                        }
+                                    }))
+                                }}
+                                onHeightChange={() => { }}
                             />
                         </VerticalWrapper>
                     </VariableRowWrapper>

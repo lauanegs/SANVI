@@ -11,3 +11,7 @@ export const Container = styled.div`
 export const ContentContainer = styled.div`
     flex: 1;
 `;
+
+export const WrapperA = styled.div`
+    width: 30%;
+`;

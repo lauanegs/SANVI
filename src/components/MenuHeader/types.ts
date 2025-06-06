@@ -6,4 +6,5 @@ export type MenuHeaderProps = {
     thirdSubScreen?: ScreenTypes;
     buttonTitle?: string;
     onPressButton?: () => void;
+    buttonDisabled?: boolean;
 }

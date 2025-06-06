@@ -103,3 +103,4 @@ export const ColumnCenterRowWrapper = styled.div`
 
 export const VariableRowWrapper = styled.div`
 `;
+

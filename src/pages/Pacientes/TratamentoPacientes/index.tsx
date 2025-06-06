@@ -1,14 +1,19 @@
 import { MenuHeader } from "@components/MenuHeader";
 import { Container } from "../styles";
-import { ContentContainer } from "./styles";
-import { JourneyCard } from "@components/JourneyCard";
+import { ContentContainer, WrapperA } from "./styles";
+import { TreatmentCard } from "@components/TreatmentCard";
 import { GenericHeader } from "@components/GenericHeader";
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import { useAppStore } from "store/appStore";
+import { JourneyCard } from "@components/JourneyCard";
 
-export function JornadaPaciente(){
-    const isFullScreen = useAppStore().isFullScreen;
+export function TratamentoPacientes(){
+    const store = useAppStore();
+
+    const isFullScreen = store.isFullScreen;
+
+    const treatments = store.selectedPatient.treatments;
 
     const PADDING_CONTAINER = isFullScreen ? 
         {paddingTop: 82, paddingLeft: 64}
@@ -31,7 +36,7 @@ export function JornadaPaciente(){
 
         return(
             <div style={{...style, ...PADDING_RIGHT_JOURNEY}}>
-                <JourneyCard
+                <TreatmentCard
                     count={element.count}
                     startDate={element.startDate}
                     title={element.title}
@@ -49,6 +54,7 @@ export function JornadaPaciente(){
                 buttonTitle="Novo tratamento"
                 onPressButton={() => {}}
             />
+            <WrapperA><JourneyCard/></WrapperA>
             <ContentContainer
                 style={PADDING_CONTAINER}
             >

@@ -1,9 +1,9 @@
 import { Container } from "./styles";
 import { ButtonProps } from "./types";
 
-function GenericButton({ color, onClick, title }: ButtonProps) {
+function GenericButton({ color, onClick, title, disabled }: ButtonProps) {
     return (
-        <Container onClick={onClick} color={color}>
+        <Container onClick={onClick} color={color} disabled={disabled}>
             {title}
         </Container>
     );
