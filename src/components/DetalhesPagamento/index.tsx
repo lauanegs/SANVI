@@ -115,7 +115,7 @@ export function DetalhesPagamento({
                         />
                     </div>
 
-                    <div className={classNames.formGroup}>
+                    {/* <div className={classNames.formGroup}>
                         <label className={classNames.label}>Parcelas</label>
                         <select
                             className={classNames.select}
@@ -129,7 +129,7 @@ export function DetalhesPagamento({
                             <option value="6">6</option>
                             <option value="12">12</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <button
                         className={classNames.button}
