@@ -1,0 +1,124 @@
+import { InputSizeStyle } from "@components/Input/types";
+import styled, { css } from "styled-components";
+import theme from "theme";
+
+export const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    position: relative;
+`;
+
+export const ContainerField = styled.div<InputSizeStyle>`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    ${({ sizeType }) => sizeType === "PP" && css`
+        width: 20%;
+    `};
+    ${({ sizeType }) => sizeType === "P" && css`
+        width: 50%;
+    `};
+    ${({ sizeType }) => sizeType === "M" && css`
+        width: 60%;
+    `};
+    ${({ sizeType }) => sizeType === "MG" && css`
+        width: 75%;
+    `};
+    ${({ sizeType }) => sizeType === "G" && css`
+        width: 100%;
+    `};
+    ${({ sizeType }) => typeof sizeType === "number" && css`
+        width: ${sizeType}px;
+    `};
+
+    height: 32px;
+
+    background-color: ${theme.COLORS.BRANCO};
+    border: 2px solid transparent;
+    border-radius: 5px;
+    box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
+
+    /* 🔥 Remove position: relative aqui */
+`;
+
+export const Label = styled.p`
+    font-size: 12px;
+    margin-bottom: 8px;
+`;
+
+export const ContentWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    cursor: pointer;
+`;
+
+export const TextElement = styled.p`
+    font-size: 12px;
+    text-align: left;
+    user-select: none;
+`;
+
+export const TouchableWrapper = styled.button`
+    border: none;
+    background: none;
+`;
+
+export const TouchableWrapperStyled = styled.button`
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+
+    &:hover {
+        background-color: ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}33;
+    }
+`;
+
+export const OptionsWrapper = styled.div<InputSizeStyle>`
+    display: flex;
+    flex-direction: column;
+    
+    ${({ sizeType }) => sizeType === "PP" && css`
+        width: 20%;
+    `};
+    ${({ sizeType }) => sizeType === "P" && css`
+        width: 50%;
+    `};
+    ${({ sizeType }) => sizeType === "M" && css`
+        width: 60%;
+    `};
+    ${({ sizeType }) => sizeType === "MG" && css`
+        width: 75%;
+    `};
+    ${({ sizeType }) => sizeType === "G" && css`
+        width: 100%;
+    `};
+    ${({ sizeType }) => typeof sizeType === "number" && css`
+        width: ${sizeType}px;
+    `};
+
+    max-height: 150px;
+
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    position: absolute;
+    top: 100%;
+    overflow-y: auto;
+
+    background-color: ${theme.COLORS.BRANCO};
+    border: 1px solid ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}33;
+    border-radius: 5px;
+    box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
+
+`;

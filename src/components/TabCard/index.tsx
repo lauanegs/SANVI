@@ -1,11 +1,12 @@
-import { BottomLine, Container, Title } from "./styles";
+import { Container, Title } from "./styles";
 import { TabCardProps } from "./types";
 
-export function TabCard({title}: TabCardProps){
+export function TabCard({title, ...rest}: TabCardProps){
     return(
-        <Container>
+        <Container
+            {...rest}
+        >
             <Title>{title}</Title>
-            <BottomLine/>
         </Container>
 
     );

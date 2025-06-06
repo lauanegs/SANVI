@@ -2,21 +2,36 @@ import { Container, ScreenCardTitleWrapper, ScreenCardWrapper, ScreenCardWrapper
 import { Text } from "@components/Text";
 import Icon from "@components/Icon";
 import theme from "theme";
-import { ScreenTypes } from "./SideBar.types";
 import { Link, useLocation } from "react-router-dom";
+import { useAppStore } from "store/appStore";
 
 function Sidebar() {
     const location = useLocation();
+    console.log(location);
 
-    const getScreenFromPath = (path: string): ScreenTypes => {
-        if (path.startsWith("/pacientes")) return "pacientes";
-        if (path.startsWith("/especialistas")) return "especialistas";
-        if (path.startsWith("/agendamentos")) return "agendamentos";
-        if (path.startsWith("/financas")) return "financas";
-        return "home";
+    const updateSelectedScreen = useAppStore((state) => state.setSelectedScreen);
+
+    const getScreenFromPath = (path: string) => {
+        if (path.startsWith("/pacientes")){
+            updateSelectedScreen("pacientes");
+        } 
+        if (path.startsWith("/especialistas")){
+            updateSelectedScreen("especialistas");
+        }
+        if (path.startsWith("/agendamentos")){
+            updateSelectedScreen("agendamentos");
+        }
+        if (path.startsWith("/financas")){
+            updateSelectedScreen("financas");
+        }
+        if (path.startsWith("/home")){
+            updateSelectedScreen("home");
+        }
     };
 
-    const screenSelected = getScreenFromPath(location.pathname);
+    getScreenFromPath(location.pathname);
+
+    const screenSelected = useAppStore((state) => state.selectedScreen);
 
     return (
         <Container>
