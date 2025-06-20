@@ -1,136 +1,106 @@
-    import styled from "styled-components";
-    import theme from "theme";
+import styled from "styled-components";
+import theme from "theme";
 
-    export const Container = styled.div`
-        display: flex;
-        flex: 1;
-        width: 100%;
-        
-        flex-direction: column;
-        background-color: ${theme.COLORS.FUMACA_BRANCA};
-    `;
-
-    export const HeaderTabs = styled.div`
-        display: flex;
-        flex-direction: row;
-        width: 90%;
-        align-self: center;
-
-        margin: 30px 0;
-        align-items: center;
-        justify-content: space-between;
-    `;
-
-    export const Tabs = styled.div`
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-    `;
-
-    export const TabWrapper = styled.div`
+export const Container = styled.div`
+    display: flex;
+    flex: 1;
+    width: 100%;
+    
+    flex-direction: column;
     background-color: ${theme.COLORS.FUMACA_BRANCA};
-        :hover {
-            background-color: ${theme.COLORS.FUMACA_BRANCA_50};
-        }
-    `;
+`;
 
+export const Form = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
+    margin-bottom: 40px;
+    padding-bottom: 100px;
 
-    export const DivMarginButton = styled.div`
-    `;
+    overflow-y: auto;
+`;
 
-    export const Form = styled.div`
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        margin: 0 5px;
+export const CheckBoxWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+`;
 
-        margin-bottom: 40px;
-        padding-bottom: 50px;
+export const CheckBox = styled.div``;
 
-        overflow-y: auto;
-    `;
+export const FormContentWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
 
-    export const CheckBoxWrapper = styled.div`
-        display: flex;
-        flex-direction: row;
-        gap: 5px;
-    `;
+`;
 
-    export const CheckBox = styled.div``;
+export const FormTitleRowWrapper = styled.div`
+    display: flex;
+    width: 90%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 
-    export const FormContentWrapper = styled.div`
-        width: 100%;
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        align-items: center;
+    margin-bottom: 20px;
+`;
 
-    `;
+export const ColunmsWrapper = styled.div`
+    width: 90%;
+    display: flex;
+    flex-direction: row;
 
-    export const FormTitleRowWrapper = styled.div`
-        display: flex;
-        width: 90%;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+    gap: 15px;
+    padding-bottom: 40px;
+`;
 
-        margin-bottom: 20px;
-    `;
+export const ColunmLeftWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 35%;
 
-    export const ColunmsWrapper = styled.div`
-        width: 90%;
-        display: flex;
-        flex-direction: row;
+    gap: 20px;
+`;
 
-        gap: 15px;
-        padding-bottom: 40px;
-    `;
+export const ColunmRightWrapper= styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 65%;
 
-    export const ColunmLeftWrapper = styled.div`
-        display: flex;
-        flex-direction: column;
-        width: 35%;
+    gap: 20px;
+`;
 
-        gap: 20px;
-    `;
+export const StyleWrapper = styled.div`
+    display: flex;
+    min-width: 100px;
+    flex-direction: column;
 
-    export const ColunmRightWrapper= styled.div`
-        display: flex;
-        flex-direction: column;
-        width: 65%;
+    gap: 20px;
+`;
 
-        gap: 20px;
-    `;
+export const WrapperInput = styled.div`
+`;
 
-    export const StyleWrapper = styled.div`
-        display: flex;
-        min-width: 100px;
-        flex-direction: column;
+export const ColumnCenterWrapper = styled.div`
+    width: 90%;
+    display: flex;
+    flex-direction: column;
 
-        gap: 20px;
-    `;
+    gap: 15px;
+    
+`;
 
-    export const WrapperInput = styled.div`
-    `;
+export const ColumnCenterRowWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 
-    export const ColumnCenterWrapper = styled.div`
-        width: 90%;
-        display: flex;
-        flex-direction: column;
+    gap: 15px;
+`;
 
-        gap: 15px;
-        
-    `;
+export const VariableRowWrapper = styled.div`
+`;
 
-    export const ColumnCenterRowWrapper = styled.div`
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-
-        gap: 15px;
-    `;
-
-    export const VariableRowWrapper = styled.div`
-    `;

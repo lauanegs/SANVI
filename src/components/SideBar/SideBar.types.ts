@@ -3,7 +3,10 @@ export type ScreenTypes =
     | "especialistas"
     | "agendamentos"
     | "financas"
-    | "home";
+    | "home"
+    | "cadastroPaciente"
+    | "jornadaPaciente"
+    | "prontuarioPaciente";
 
 export type ScreenCardStyles = {
     isSelected: boolean

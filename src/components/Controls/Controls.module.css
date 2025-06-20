@@ -1,6 +1,5 @@
 .parent {
     height: 5vh;
-    -ms-transform-origin-x: 5vh;
     user-select: none;
     display: flex;
     justify-content: space-between;
