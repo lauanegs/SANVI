@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type InputSizeType = 'PP' | 'P' | 'M' | 'MG' | 'G';
+export type InputSizeType = 'PP' | 'P' | 'M' | 'MG' | 'G' | number;
 export type InputType = 'text' | 'search' | 'date';
 
 export type InputSizeStyle = {
@@ -10,6 +10,7 @@ export type InputSizeStyle = {
 export type InputProps = {
   sizeType: InputSizeType;
   label?: string;
-  elements?: string[];
   inputType?: InputType;
+  errorMessage?: string;
+  onVisibleDateMenu?: () => void;
 } & React.InputHTMLAttributes<HTMLInputElement>;

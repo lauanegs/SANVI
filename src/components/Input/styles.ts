@@ -28,12 +28,16 @@ export const ContainerField = styled.div<InputSizeStyle>`
     ${({ sizeType }) => sizeType === "G" && css`
         width: 100%;
     `};
+    ${({ sizeType }) => typeof sizeType === "number" && css`
+        width: ${sizeType}px;
+    `};
     height: 32px;
 
     background-color: ${theme.COLORS.BRANCO};
     border: 2px solid transparent;
     border-radius: 5px;
-    box-shadow: 2px 3px 10px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA};
+    box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
+
 
 `;
 
@@ -52,6 +56,9 @@ export const InputText = styled.input`
     outline: none;
     box-sizing: border-box;
     
+    &::placeholder {
+        color: ${theme.COLORS.PLACEHOLDER};
+    }
 `;
 
 export const WrapperSearchIcon = styled.div`
@@ -64,5 +71,11 @@ export const WrapperGenericIcon = styled.div`
     &:hover {
         cursor: pointer;
     }
+`;
+
+export const ErrorText = styled.p`
+    height: 11px;
+    font-size: 11px;
+    color: ${theme.COLORS.ERROR};
 `;
 

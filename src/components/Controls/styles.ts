@@ -20,19 +20,19 @@ export const WrapperButtons = styled.div`
 `;
 
 export const ActionButton = styled.button`
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: ${theme.COLORS.AZUL_DA_FRANCA};
 
-    :hover{
-        opacity: 0.7;
+    &:hover{
+        background-color: ${theme.COLORS.AZUL_DA_FRANCA_60};
     }
 
 `;
