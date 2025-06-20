@@ -1,5 +1,4 @@
 type SimpleCardProps = {
     title: string,
     subtitle: string,
-    info?: string
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
