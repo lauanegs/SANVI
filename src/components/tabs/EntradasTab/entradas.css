@@ -1,0 +1,113 @@
+.entradasPageContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0px;
+}
+
+.ent_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.ent_content {
+}
+
+.cards-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.card-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: 0.3s;
+
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-left: 4px solid #ccc;
+
+    display: flex;
+    flex-direction: column;
+    height: 120px;
+    min-width: 48%;
+    max-width: 48%;
+
+    cursor: pointer;
+}
+
+.card-item:hover {
+    transform: scale(1.05);
+    z-index: 1;
+}
+
+/* .cards-container:hover .card-item:not(:hover) {
+    opacity: 0.5;
+} */
+
+.card-item:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 1rem;
+
+    flex-grow: 1;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status.pago {
+    background-color: #e6f5ec;
+    color: #1a8c3a;
+    border: 1px solid #1a8c3a;
+}
+
+.status.pendente {
+    background-color: #fff3e0;
+    color: #e67e22;
+    border: 1px solid #e67e22;
+}
+
+.card-body > .paciente {
+    white-space: nowrap; /* mantém em uma linha */
+    overflow: hidden; /* esconde o texto que ultrapassar */
+    text-overflow: ellipsis; /* mostra "..." no final */
+    max-width: 35%; /* limita a largura, ajuste conforme seu layout */
+    display: inline-block; /* para aplicar largura e cortes */
+    vertical-align: middle;
+}
