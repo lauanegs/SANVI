@@ -1,18 +1,29 @@
-import Input from "@components/Input";
-import SimpleCard from "@components/SimpleCard";
+import styles from './home.module.css';
+import AppointmentTable from "../../components/AppointmentTable/AppointmentTable";
+import PatientCard from "../../components/AppointmentTable/patient-card";
+import { DentistCardExample } from "../../components/AppointmentTable/dentist-card";
+import {GenericHeader} from "@components/GenericHeader"
 
 function Home() {
-    return(
-      <div>
-        <SimpleCard
-          title="João Santos Gomes"
-          subtitle="123.456.789-01"
-          info="Info"
-        />
-        <Input sizeType="G" placeholder="26/02/2024"/>
+  return (
+    <main className={styles.fin_AlterContainer}>
+      <GenericHeader></GenericHeader>
+      {/* Cards lado a lado */}
+      <div className={styles.cardsContainer}>
+        <div className={styles.patientsColumn}>
+          <PatientCard /> {/* exibe os 3 pacientes mais próximos */}
+        </div>
+        <div className={styles.dentistsColumn}>
+          <DentistCardExample />
+        </div>
       </div>
-    )
-  }
-  
-  export default Home;
-  
+
+      {/* Calendário abaixo, centralizado */}
+      <div className={styles.tableContainer}>
+        <AppointmentTable />
+      </div>
+    </main>
+  );
+}
+
+export default Home;

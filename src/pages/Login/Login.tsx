@@ -26,7 +26,6 @@ export default function Login() {
     const handleSubmit = () => {
         mutation.mutate({ username, password });
     };
-
     return (
         <div data-tauri-drag-region className={styles.bg}>
             <div className={styles.main}>
