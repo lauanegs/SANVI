@@ -26,12 +26,13 @@ import * as yup from 'yup';
 import InputMask from "react-input-mask";
 import { formatCpf, formatPhoneNumber, formatRg } from "utils/formatFunctions";
 import { SelectInput } from "@components/SelectInput";
-import { FormStateType, GenderEnum, GenderEnumPost, MockGender, MockUf } from "./types";
+import { FormStateType, GenderEnum, GenderEnumPost, MockGender, StateOptions, StateOptionType } from "./types";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import { ptBR } from 'date-fns/locale';
 import { editPatient, persistPatient } from "@api/patient";
 import toast from "react-hot-toast";
+import Select from "react-select";
 
 registerLocale("ptBR", ptBR);
 
@@ -62,7 +63,7 @@ export function CadastroPaciente() {
         profession: '',
         rg: '',
         cep: '',
-        uf: '',
+        uf: {label: '', value: ''} as StateOptionType,
         guardianName: null,
         guardianCPF: null,
         guardianPhoneNumber: null
@@ -78,7 +79,7 @@ export function CadastroPaciente() {
         setFormState(prev => ({ ...prev, gender: gender }));
     }
 
-    console.log("GENDER", formState.gender);
+    console.log("UF", formState.uf.value);
 
     function handleOpenSelectOptions() {
         setCanBeOpenSelect(false);
@@ -146,7 +147,7 @@ export function CadastroPaciente() {
                     profession: formState.profession,
                     rg: formState.rg,
                     treatments: data.treatments,
-                    uf: formState.uf,
+                    uf: formState.uf.value,
                     updatedAt: new Date().toISOString()
                 });
 
@@ -186,7 +187,7 @@ export function CadastroPaciente() {
                     profession: formState.profession,
                     rg: formState.rg,
                     treatments: data.treatments,
-                    uf: formState.uf,
+                    uf: formState.uf.value,
                     updatedAt: new Date().toISOString()
                 });
 
@@ -281,7 +282,7 @@ export function CadastroPaciente() {
             profession: data.profession ? data.profession : '',
             rg: data.rg ? data.rg : '',
             cep: data.cep ? data.cep : '',
-            uf: data.uf ? data.uf : '',
+            uf: data.uf ? {value: data.uf, label: data.uf} : {label: '', value: ''},
             guardianName: data.guardianName ? data.guardianName : '',
             guardianCPF: data.guardianCPF ? data.guardianCPF : '',
             guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
@@ -564,13 +565,12 @@ export function CadastroPaciente() {
                             </VariableRowWrapper>
 
                             <VariableRowWrapper style={{ width: '25%' }}>
-                                <SelectInput
-                                    elements={MockUf}
-                                    selectedOption={formState.uf}
-                                    sizeType={'P'}
-                                    canByOpen={canBeOpenSelect}
-                                    label="UF"
-                                    onSelectOption={value => setFormState(prev => ({ ...prev, uf: value }))}
+                                <Select
+                                    options={StateOptions}
+                                    value={formState.uf}
+                                    onChange={(newValue) => setFormState(prev => ({...prev, uf: newValue ? newValue : {label: '', value: ''}}))}
+                                    isSearchable
+                                    isClearable
                                 />
                             </VariableRowWrapper>
                         </ColumnCenterRowWrapper>
