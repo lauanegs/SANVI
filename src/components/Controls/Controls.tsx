@@ -1,4 +1,4 @@
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ActionButton, Container, WrapperButtons } from "./styles";
 import Icon from '@components/Icon';
 import { useAppStore } from 'store/appStore';
@@ -39,4 +39,5 @@ export function Controls() {
       </WrapperButtons>
     </Container>
   );
+
 }

@@ -11,10 +11,15 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/interaction": "^6.1.17",
+    "@fullcalendar/react": "^6.1.17",
     "@tanstack/react-query": "^5.76.1",
     "@tauri-apps/api": "^2.3.0",
     "@tauri-apps/plugin-opener": "^2",
     "date-fns": "^4.1.0",
+    "lucide-react": "^0.510.0",
     "react": "^18.3.1",
     "react-datepicker": "^8.3.0",
     "react-dom": "^18.3.1",
@@ -28,6 +33,7 @@
     "react-tabs": "^6.1.0",
     "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^1.8.11",
+    "recharts": "^2.15.3",
     "styled-components": "^6.1.16",
     "yup": "^1.6.1",
     "zustand": "^5.0.5"

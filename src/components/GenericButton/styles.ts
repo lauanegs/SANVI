@@ -28,4 +28,3 @@ export const Container = styled.button<ColorButtonProp>`
       }
     `}
 `;
-

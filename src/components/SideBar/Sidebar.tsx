@@ -50,7 +50,7 @@ function Sidebar() {
                 />
             </UserTitleWrapper>
 
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/home" style={{ textDecoration: 'none' }}>
                 <ScreenCardWrapper>
                     <ScreenCardWrapperHover isSelected={screenSelected === "home"}>
                         <ScreenCardTitleWrapper>
@@ -131,7 +131,7 @@ function Sidebar() {
                 </ScreenCardWrapper>
             </Link>
 
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/agendamentos" style={{ textDecoration: 'none' }}>
                 <ScreenCardWrapper>
                     <ScreenCardWrapperHover isSelected={screenSelected === "agendamentos"}>
                         <ScreenCardTitleWrapper>

@@ -9,11 +9,25 @@ interface CardProps {
         cor: string;
         textoNormal: string;
     };
+    positivo?: Boolean;
 }
 
-const Card: React.FC<CardProps> = ({ titulo, conteudo, textoInferior }) => {
+const Card: React.FC<CardProps> = ({
+    titulo,
+    conteudo,
+    textoInferior,
+    positivo,
+}) => {
     return (
-        <div className="card_Container">
+        <div
+            className={`card_Container ${
+                positivo
+                    ? "containerPositivo"
+                    : positivo == undefined
+                    ? ""
+                    : "containerNegativo"
+            }`}
+        >
             <h5 className="card-title">{titulo}</h5>
             <p className="card-content">{conteudo}</p>
             <small className="card-footer">
