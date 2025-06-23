@@ -10,38 +10,63 @@ export type PatientFormTypes = {
     rg: string,
 }
 
-export const MockUf = [
-    "AC",
-    "AL",
-    "AP",
-    "AM",
-    "BA",
-    "CE",
-    "DF",
-    "ES",
-    "GO",
-    "MA",
-    "MT",
-    "MS",
-    "MG",
-    "PA",
-    "PB",
-    "PR",
-    "PE",
-    "PI",
-    "RJ",
-    "RN",
-    "RS",
-    "RO",
-    "RR",
-    "SC",
-    "SP",
-    "SE",
-    "TO"
+export type FormStateType = {
+    address: string;
+    addressNumber: string;
+    birthDate: Date;
+    cpf: string;
+    createdAt: Date;
+    gender: string; // você usou "0", então presumo string
+    id: string;
+    name: string;
+    neighborhood: string;
+    phoneNumber: string;
+    profession: string;
+    rg: string;
+    cep: string;
+    uf: string;
+    guardianName: string | null;
+    guardianCPF: string | null;
+    guardianPhoneNumber: string | null;
+};
+
+export const mockStateAbbreviations: string[] = [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+    "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+    "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
 ];
 
+export enum StateEnum {
+    AC = "AC",
+    AL = "AL",
+    AP = "AP",
+    AM = "AM",
+    BA = "BA",
+    CE = "CE",
+    DF = "DF",
+    ES = "ES",
+    GO = "GO",
+    MA = "MA",
+    MT = "MT",
+    MS = "MS",
+    MG = "MG",
+    PA = "PA",
+    PB = "PB",
+    PR = "PR",
+    PE = "PE",
+    PI = "PI",
+    RJ = "RJ",
+    RN = "RN",
+    RS = "RS",
+    RO = "RO",
+    RR = "RR",
+    SC = "SC",
+    SP = "SP",
+    SE = "SE",
+    TO = "TO"
+}
 
-export const MockGender = [
+export const mockGender = [
     'Masculino',
     'Feminino'
 ]
@@ -54,24 +79,4 @@ export enum GenderEnumPost {
 export enum GenderEnum {
     H = "Masculino",
     M = "Feminino"
-}
-
-export type FormStateType = {
-        address: string,
-        addressNumber: string,
-        birthDate: Date,
-        cpf: string,
-        createdAt: Date,
-        gender: string,
-        id: string,
-        name: string,
-        neighborhood: string,
-        phoneNumber: string,
-        profession: string,
-        rg: string,
-        cep: string,
-        uf: string,
-        guardianName: string | null,
-        guardianCPF: string | null,
-        guardianPhoneNumber: string | null
 }

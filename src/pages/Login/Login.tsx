@@ -27,7 +27,6 @@ export default function Login() {
 
 
 
-
   return (
     <div data-tauri-drag-region  className={styles.bg}>
         <div className={styles.main}>

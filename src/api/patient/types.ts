@@ -1,7 +1,3 @@
-export interface TreatmentInterface {
-    treatment_id: number,
-
-}
 
 export interface PatientInterface {
     name: string,
@@ -72,13 +68,14 @@ export interface TreatmentInterface {
     endedAt: string,
     startedAt: string,
     title: string,
-    patientId: number
+    patientId: number,
+    events: any[],
 }
 export interface TreatmentInterfaceDTO {
     endedAt: string | null,
     startedAt: string,
     title: string,
-    patientId: number
+    patient: PatientInterface
 }
 
 export interface MedicalRecordDataInterfaceDTO {
@@ -88,4 +85,30 @@ export interface MedicalRecordDataInterfaceDTO {
     hasMedicalTreatment: boolean,
     data: MedicalRecordDataInterface
 }
+
+export interface SpecialistInterface {
+    id: number,
+    name: string
+}
+
+export interface JourneyInterface {
+    id: number,
+    description: string,
+    date: string,
+    specialist: { id: number, name: string }
+}
+export interface JourneyInterfaceDTO {
+    description: string,
+    date: string,
+    specialistId: number,
+    treatmentId: number
+}
+export interface JourneyInterfacePutDTO {
+    id: number,
+    description: string,
+    date: string,
+    specialistId: number,
+    treatmentId: number
+}
+
 

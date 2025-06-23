@@ -122,3 +122,20 @@ export const OptionsWrapper = styled.div<InputSizeStyle>`
     box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
 
 `;
+export const Input = styled.input`
+    width: 90%;
+    border: none;
+    outline: none;
+    font-size: 12px;
+    text-align: left;
+`;
+
+export const WrapperSimpleTouchable = styled.div`
+    
+`;
+
+export const ErrorText = styled.p`
+    height: 11px;
+    font-size: 11px;
+    color: ${theme.COLORS.ERROR};
+`;

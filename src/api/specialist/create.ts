@@ -1,7 +1,6 @@
 import { API_URL } from "../connection";
 
 export async function createSpecialist(specialistData: any, schedules: any) {
-	console.log(specialistData);
 	try {
 		// 1. Enviar especialista
 		const res = await fetch(`${API_URL}/specialist/create`, {

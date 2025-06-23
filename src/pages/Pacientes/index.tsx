@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ButtonWrapper, CommandHeader, Container, Content, LabelEntity, LoaderWrapper, SearchStyleWrapper } from './styles';
+import { ButtonWrapper, CleanWrapper, CommandHeader, Container, Content, EmptyWrapper, LabelEntity, LoaderWrapper, ReloadButton, ReloadWrapper, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
 import GenericButton from '@components/GenericButton';
@@ -15,6 +15,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from 'utils/query-keys';
 import { formatCpf } from 'utils/formatFunctions';
 import { PatientInterface } from '@api/patient/types';
+import Icon from '@components/Icon';
+import { Text } from '@components/Text';
+import { useDebounce } from 'hooks/useDebounce';
 
 
 export function Pacientes() {
@@ -25,16 +28,24 @@ export function Pacientes() {
   const [rows, setRows] = useState(5);
   const [inputSize, setInputSize] = useState(400);
 
+  const [filteredData, setFilteredData] = useState<PatientInterface[]>([]);
+  const [searchValue, setSearchValue] = useState('');
+
   const queryClient = useQueryClient();
-  const { data = [], error, isPending } = useQuery({
+  const { data = [], error, isPending, refetch } = useQuery({
     queryKey: queryKeys.ALL_PATIENTS,
     queryFn: findPatient,
     staleTime: 1000 * 60 * 5
   })
 
-  console.log("DATA NOVA", data);
-
   const columns = Math.ceil((data?.length || 0) / rows);
+
+  function searchOptions(searchText: string) {
+    const validOptions = data.filter(item => item.name.toLowerCase().normalize("NFD").includes(searchText.toLowerCase().normalize("NFD")))
+    setFilteredData(validOptions);
+  }
+
+  useDebounce(searchValue, 500, searchOptions);
 
   useEffect(() => {
     const newRowsQtd = isFullScreen ? 9 : 5;
@@ -77,10 +88,12 @@ export function Pacientes() {
     };
   }, []);
 
+  const currentData = searchValue ? filteredData : data;
+
   const cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
     const index = rows * columnIndex + rowIndex;
 
-    const element = data[index];
+    const element = currentData[index];
 
     return (
       <div style={{ ...style }}>
@@ -89,8 +102,8 @@ export function Pacientes() {
             title={element.name}
             subtitle={formatCpf(element.cpf)}
             onClick={() => {
-              console.log("ELEMENT", element);
               store.setSelectedPatient(element);
+              queryClient.invalidateQueries({ queryKey: queryKeys.ALL_PATIENT_TREATMENTS });
               navigator("/cadastroPaciente");
             }}
           />}
@@ -108,14 +121,27 @@ export function Pacientes() {
             sizeType={inputSize}
             inputType='search'
             placeholder='João Santos'
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
 
           />
+          <CleanWrapper
+            onClick={() => setSearchValue('')}
+          >
+            <Icon
+              iconLibName='io5'
+              icon='IoClose'
+              color={theme.COLORS.AZUL_DA_FRANCA}
+              size={25}
+            />
+          </CleanWrapper>
         </SearchStyleWrapper>
         <ButtonWrapper>
           <GenericButton
             color='PRIMARY'
             onClick={() => {
               store.setSelectedPatient({} as PatientInterface);
+              queryClient.invalidateQueries({ queryKey: queryKeys.ALL_PATIENT_TREATMENTS });
               navigator("/cadastroPaciente");
             }}
             title='Novo Cadastro'
@@ -132,30 +158,60 @@ export function Pacientes() {
             />
           </LoaderWrapper>
           :
-          <AutoSizer>
-            {({ height, width }) =>
-              <div
-                onWheel={e => {
-                  if (contentRef.current) {
-                    contentRef.current.scrollLeft += e.deltaY;
-                  }
-                }}
+          error ?
+            <ReloadWrapper>
+              <ReloadButton
+                onClick={() => refetch()}
               >
-                <FixedSizeGrid
-                  outerRef={contentRef}
-                  columnCount={columns}
-                  columnWidth={310}
-                  height={height}
-                  width={width}
-                  rowCount={rows}
-                  rowHeight={80}
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', }}
-                >
-                  {cell}
-                </FixedSizeGrid>
-              </div>
-            }
-          </AutoSizer>}
+                <Icon
+                  iconLibName='io5'
+                  icon='IoReload'
+                  size={40}
+                  color={theme.COLORS.AZUL_DA_FRANCA}
+                />
+              </ReloadButton>
+            </ReloadWrapper>
+            :
+            data.length === 0 ?
+              <EmptyWrapper>
+                <Icon
+                  iconLibName="lu"
+                  icon="LuCircleAlert"
+                  color={theme.COLORS.AZUL_DA_FRANCA}
+                  fill={theme.COLORS.BRANCO}
+                  size={25}
+                />
+                <Text
+                  color="PRIMARY"
+                  size={14}
+                  text="Não há tratamentos cadastros"
+                />
+              </EmptyWrapper>
+              :
+              <AutoSizer>
+                {({ height, width }) =>
+                  <div
+                    onWheel={e => {
+                      if (contentRef.current) {
+                        contentRef.current.scrollLeft += e.deltaY;
+                      }
+                    }}
+                  >
+                    <FixedSizeGrid
+                      outerRef={contentRef}
+                      columnCount={columns}
+                      columnWidth={310}
+                      height={height}
+                      width={width}
+                      rowCount={rows}
+                      rowHeight={80}
+                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', }}
+                    >
+                      {cell}
+                    </FixedSizeGrid>
+                  </div>
+                }
+              </AutoSizer>}
       </Content>
     </Container>
   );
