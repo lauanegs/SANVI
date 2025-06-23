@@ -11,6 +11,8 @@ import { useAppStore } from "store/appStore";
 import { FormStateTypeMedicalRecord } from "./types";
 import { persistMedicalRecord } from "@api/patient";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "utils/query-keys";
 
 
 export function ProntuarioPaciente() {
@@ -25,6 +27,7 @@ export function ProntuarioPaciente() {
     const SIZE_TITLE = isFullScreen ? 14 : 12;
 
     const [hasChanges, setHasChanges] = useState(true);
+    const queryCliente = useQueryClient();
 
     const [formState, setFormState] = useState<FormStateTypeMedicalRecord>({
         id: '',
@@ -66,14 +69,16 @@ export function ProntuarioPaciente() {
             store.setIsValidPatientCache(false);
 
             if (response.ok) {
-                toast.success("Paciente criado com sucesso!", {
+                toast.success("Prontuário do paciente editado com sucesso!", {
                     position: "bottom-right",
                     duration: 2000
                 })
+
+                queryCliente.invalidateQueries({queryKey: queryKeys.ALL_PATIENTS});
             }
 
             if (!response.ok) {
-                toast.error("Não foi possível criar o paciente", {
+                toast.error("Não foi editar o prontuário do paciente", {
                     position: "bottom-right",
                     duration: 2000
                 })

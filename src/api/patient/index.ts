@@ -174,3 +174,18 @@ export async function editJourneyEvent(event: JourneyInterfacePutDTO){
         throw new Error(`Erro ${error}`);
     }
 }
+
+export async function deleteJourneyEvent(eventId: number){
+    try {
+        const response = await fetch(`${API_URL}/journey/${eventId}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+
+        return response;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
+}
