@@ -48,12 +48,7 @@ function Financas() {
                         </button>
                     </div>
 
-                    <div className="fin_tabs">
-                        <GenericButton
-                            color="PRIMARY"
-                            title="Button"
-                        ></GenericButton>
-                    </div>
+                    <div className="fin_tabs"></div>
                 </nav>
             </div>
             <main className="fin_ContentAlterContainer">

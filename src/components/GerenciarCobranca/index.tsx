@@ -17,15 +17,27 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
     const [totalPaid, setTotalPaid] = useState(0);
     const [installments, setInstallments] = useState(0);
 
-    const updateValues = () => {
-        const total =
-            treatment?.paymentEntries?.reduce((sum, entry) => {
-                setInstallments(installments + 1);
-                return sum + (entry.billingPaid || 0);
-            }, 0) || 0;
+    // const updateValues = () => {
+    //     const total =
+    //         treatment?.paymentEntries?.reduce((sum, entry) => {
+    //             setInstallments(installments + 1);
+    //             return sum + (entry.billingPaid || 0);
+    //         }, 0) || 0;
 
-        setTotalPaid(total);
-    };
+    //     setTotalPaid(total);
+    // };
+
+    // const updateValues = () => {
+    //     const totalPaid =
+    //         treatment?.paymentEntries?.reduce(
+    //             (sum, entry) => sum + (entry.billingPaid || 0),
+    //             0
+    //         ) || 0;
+    //     const totalInstallments = treatment?.paymentEntries?.length || 0;
+
+    //     setTotalPaid(totalPaid);
+    //     setInstallments(totalInstallments);
+    // };
 
     const [status, setStatus] = useState<PaymentStatus>(
         firstPayment?.status || "Pendente"
@@ -42,7 +54,14 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
     }
 
     useEffect(() => {
-        updateValues();
+        if (treatment?.paymentEntries) {
+            const totalPaid = treatment.paymentEntries.reduce(
+                (sum, entry) => sum + (entry.billingPaid || 0),
+                0
+            );
+            setTotalPaid(totalPaid);
+            setInstallments(treatment.paymentEntries.length);
+        }
     }, [treatment]);
 
     return (
@@ -119,7 +138,7 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
                         <div className={styles.detailItem}>
                             <label className={styles.label}>Paciente</label>
                             <div className={styles.detailValue}>
-                                {firstPayment.patient.name}
+                                {treatment?.patient.name}
                             </div>
                         </div>
 
