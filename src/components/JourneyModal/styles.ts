@@ -22,8 +22,6 @@ export const Container = styled.div`
 export const ContentContainer = styled.div`
     display: flex;
     flex-direction: row;
-    width: 100%;
-    height: 100%;
     justify-content: center;
     align-items: center;
 
@@ -37,19 +35,26 @@ export const JourneyWrappers = styled.div`
 
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 `;
 
 export const JourneyMenuWrapper = styled.div`
     display: flex;
-
+    width: 350px;
     align-items: center;
     justify-content: center;
 `;
 
 export const ListContainer = styled.div`
     display: flex;
-    width: 300px;  
-    flex : 1;
+    flex-direction: column;
+
+    gap: 20px;
+    overflow-y: auto;
+    scrollbar-width: none;  
+    -ms-overflow-style: none;
+    width: 350px;  
+    height: 90vh;
 
 `;
 

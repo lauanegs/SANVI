@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ButtonWrapper, CommandHeader, Container, Content, EmptyWrapper, LabelEntity, LoaderWrapper, ReloadButton, ReloadWrapper, SearchStyleWrapper } from './styles';
+import { ButtonWrapper, CleanWrapper, CommandHeader, Container, Content, EmptyWrapper, LabelEntity, LoaderWrapper, ReloadButton, ReloadWrapper, SearchStyleWrapper } from './styles';
 import { GenericHeader } from '@components/GenericHeader';
 import Input from '@components/Input';
 import GenericButton from '@components/GenericButton';
@@ -17,6 +17,7 @@ import { formatCpf } from 'utils/formatFunctions';
 import { PatientInterface } from '@api/patient/types';
 import Icon from '@components/Icon';
 import { Text } from '@components/Text';
+import { useDebounce } from 'hooks/useDebounce';
 
 
 export function Pacientes() {
@@ -27,6 +28,9 @@ export function Pacientes() {
   const [rows, setRows] = useState(5);
   const [inputSize, setInputSize] = useState(400);
 
+  const [filteredData, setFilteredData] = useState<PatientInterface[]>();
+  const [searchValue, setSearchValue] = useState('');
+
   const queryClient = useQueryClient();
   const { data = [], error, isPending, refetch } = useQuery({
     queryKey: queryKeys.ALL_PATIENTS,
@@ -35,6 +39,13 @@ export function Pacientes() {
   })
 
   const columns = Math.ceil((data?.length || 0) / rows);
+
+  function searchOptions(searchText: string) {
+    const validOptions = data.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))
+    setFilteredData(validOptions);
+  }
+
+  useDebounce(searchValue, 500, searchOptions);
 
   useEffect(() => {
     const newRowsQtd = isFullScreen ? 9 : 5;
@@ -77,10 +88,12 @@ export function Pacientes() {
     };
   }, []);
 
+  const currentData = filteredData ? filteredData : data;
+
   const cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
     const index = rows * columnIndex + rowIndex;
 
-    const element = data[index];
+    const element = currentData[index];
 
     return (
       <div style={{ ...style }}>
@@ -108,8 +121,20 @@ export function Pacientes() {
             sizeType={inputSize}
             inputType='search'
             placeholder='João Santos'
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
 
           />
+          <CleanWrapper
+            onClick={() => setSearchValue('')}
+          >
+            <Icon
+              iconLibName='io5'
+              icon='IoClose'
+              color={theme.COLORS.AZUL_DA_FRANCA}
+              size={25}
+            />
+          </CleanWrapper>
         </SearchStyleWrapper>
         <ButtonWrapper>
           <GenericButton

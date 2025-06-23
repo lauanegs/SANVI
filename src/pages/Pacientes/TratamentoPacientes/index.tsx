@@ -37,6 +37,7 @@ export function TratamentoPacientes() {
         staleTime: 1000 * 60 * 5
     })
 
+    console.log("patient", patient)
     const { data: dataSpecialists = [], isPending: isPendingSpecialists } = useQuery({
         queryKey: queryKeys.ALL_SPECIALISTS,
         queryFn: findSpecialist,

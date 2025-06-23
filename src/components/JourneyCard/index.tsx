@@ -4,9 +4,9 @@ import theme from "theme";
 import Icon from "@components/Icon";
 import { FullMonths, JourneyCardProps } from "./types";
 
-export function JourneyCard({date, description, professional, onClick}: JourneyCardProps){
+export function JourneyCard({ date, description, professional, onClick }: JourneyCardProps) {
 
-    function formatDate(date: Date){
+    function formatDate(date: Date) {
         const day = date.getDate();
         const fullMonth = date.getMonth();
         const year = date.getFullYear();
@@ -14,7 +14,7 @@ export function JourneyCard({date, description, professional, onClick}: JourneyC
         return `${day} de ${FullMonths[fullMonth]} de ${year}`
     }
 
-    return(
+    return (
         <Container
             onClick={onClick}
         >
@@ -28,21 +28,22 @@ export function JourneyCard({date, description, professional, onClick}: JourneyC
             <Content>
                 <WrapperInfo>
                     <Text
-                    text={description}
-                    size={12}
-                    color="PRIMARY"
-                />
-                <Text
-                    text={`Profissional: ${professional}`}
-                    size={12}
-                    color="PRIMARY"
-                />
-                <Icon
-                    iconLibName="bs"
-                    icon="BsFolder2Open"
-                    color={theme.COLORS.CINZA_ESCURO}
-                    size={15}
-                />
+
+                        text={description}
+                        size={12}
+                        color="PRIMARY"
+                    />
+                    <Text
+                        text={`Profissional: ${professional}`}
+                        size={12}
+                        color="PRIMARY"
+                    />
+                    <Icon
+                        iconLibName="bs"
+                        icon="BsFolder2Open"
+                        color={theme.COLORS.CINZA_ESCURO}
+                        size={15}
+                    />
                 </WrapperInfo>
             </Content>
         </Container>

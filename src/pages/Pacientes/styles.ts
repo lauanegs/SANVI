@@ -83,3 +83,11 @@ export const EmptyWrapper = styled.div`
     align-items: center;
     justify-content: center;
 `;
+
+export const CleanWrapper = styled.button`
+    border: none;
+    background: none;
+    cursor: pointer;
+
+
+`;

@@ -38,31 +38,16 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
         staleTime: 1000 * 60 * 5
     })
 
-    function handleSelectJourneyEvent(event: JourneyInterface){
+    function handleSelectJourneyEvent(event: JourneyInterface) {
         setSelectedJourneyEvent(event);
         setIsVisibleNewJourneyModal(true);
-    }
-
-    const cell = ({ index, style }: { index: number, style: React.CSSProperties }) => {
-        const element = data[index];
-
-        return (
-            <div style={{ ...style }}>
-                <JourneyCard
-                    onClick={() => handleSelectJourneyEvent(element)}
-                    date={new Date(element.date)}
-                    description={element.description}
-                    professional={dataSpecialists.find(item => item.id === element.specialist.id)?.name || '-'}
-                />
-            </div>
-        );
     }
 
     if (!isOpen) return;
 
     return (
-        <Container>
-            <ContentContainer>
+        <Container onClick={onCloseModal}>
+            <ContentContainer onClick={(e) => e.stopPropagation()}>
                 <JourneyWrappers>
                     <ListContainer>
                         {isPending ?
@@ -103,22 +88,15 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
                                         />
                                     </EmptyWrapper>
                                     :
-                                    <AutoSizer>
-                                        {({ width, height }) => (
-                                            <FixedSizeList
-                                                height={height}
-                                                width={width}
-                                                itemSize={140}
-                                                itemCount={data.length}
-                                                style={{
-                                                    scrollbarWidth: 'none',
-                                                    msOverflowStyle: 'none'
-                                                }}
-                                            >
-                                                {cell}
-                                            </FixedSizeList>
-                                        )}
-                                    </AutoSizer>}
+                                    data.map((element, index) => (
+                                        <JourneyCard
+                                            onClick={() => handleSelectJourneyEvent(element)}
+                                            date={new Date(element.date)}
+                                            description={element.description}
+                                            professional={dataSpecialists.find(item => item.id === element.specialist.id)?.name || '-'}
+                                        />
+                                    ))
+                        }
                     </ListContainer>
                     {!isVisibleNewJourneyModal &&
                         <WrapperAddButton
@@ -133,19 +111,18 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
                         </WrapperAddButton>}
                 </JourneyWrappers>
 
-                {isVisibleNewJourneyModal && <JourneyMenuWrapper
-                    style={{ width: isFullScreen ? '20%' : '25%' }}
-                >
-                    <NewJourneyMenu
-                        selectedTreatment={selectedTreatment}
-                        selectedJourneyEvent={selectedJourneyEvent}
-                        onCloseModal={() => {
-                            setIsVisibleNewJourneyModal(false);
-                            setSelectedJourneyEvent(undefined);
-                            onCloseModal();
-                        }}
-                    />
-                </JourneyMenuWrapper>}
+                {isVisibleNewJourneyModal &&
+                    <JourneyMenuWrapper>
+                        <NewJourneyMenu
+                            selectedTreatment={selectedTreatment}
+                            selectedJourneyEvent={selectedJourneyEvent}
+                            onCloseModal={() => {
+                                setIsVisibleNewJourneyModal(false);
+                                setSelectedJourneyEvent(undefined)
+                                onCloseModal();
+                            }}
+                        />
+                    </JourneyMenuWrapper>}
             </ContentContainer>
         </Container>
     );

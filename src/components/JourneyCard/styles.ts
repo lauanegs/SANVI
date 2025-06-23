@@ -43,6 +43,9 @@ export const WrapperInfo = styled.div`
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    width: 100%;      
+    max-width: 100%;    
+    word-break: break-word; 
 
     gap: 5px;
     padding: 15px

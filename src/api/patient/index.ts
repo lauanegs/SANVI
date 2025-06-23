@@ -55,7 +55,7 @@ export async function findTreatmentsByPatient(patient: PatientInterface): Promis
 
 export async function findJourneyEventByTreatment(treatmentId: number): Promise<JourneyInterface[]> {
     try {
-        const response = await fetch(`${API_URL}/treatment/journey/${treatmentId}`, {
+        const response = await fetch(`${API_URL}/journey/treatment/${treatmentId}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
