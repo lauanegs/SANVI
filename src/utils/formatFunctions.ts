@@ -1,5 +1,7 @@
-export function formatCpf(cpf: string){
-    return cpf.replace(/\D/, '').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+export function formatCpf(cpf: string = ""): string {
+  if (!cpf) return "";
+  const onlyNumbers = cpf.replace(/\D/g, "");
+  return onlyNumbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 }
 
 export function formatRg(rg: string){

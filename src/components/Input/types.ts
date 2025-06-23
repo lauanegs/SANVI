@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type InputSizeType = 'PP' | 'P' | 'M' | 'MG' | 'G' | number;
-export type InputType = 'text' | 'search' | 'date';
+export type InputType = 'text' | 'search' | 'date' | 'time';
 
 export type InputSizeStyle = {
     sizeType: InputSizeType;

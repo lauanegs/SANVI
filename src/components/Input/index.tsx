@@ -39,6 +39,16 @@ export default function Input({ sizeType, label, inputType, errorMessage, onVisi
                         />
                     </WrapperGenericIcon>
                 }
+                {inputType === "time" && (
+                    <WrapperGenericIcon>
+                        <Icon
+                            color={theme.COLORS.CINZA_ESCURO}
+                            iconLibName="pi"
+                            icon="PiClockBold"
+                            size={20}
+                        />
+                    </WrapperGenericIcon>
+                )}
             </ContainerField>
             <ErrorText>
                 {errorMessage && errorMessage}

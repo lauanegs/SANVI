@@ -49,7 +49,7 @@ export default function AppointmentTable() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await fetch(`${API_URL}/appointments`)
+        const response = await fetch(`${API_URL}/appointments/dto`)
         if (!response.ok) throw new Error("Erro ao buscar agendamentos")
         const data = await response.json()
         console.log(data)

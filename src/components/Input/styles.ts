@@ -58,6 +58,7 @@ export const InputText = styled.input`
     
     &::placeholder {
         color: ${theme.COLORS.PLACEHOLDER};
+        font-size: 12px;
     }
 `;
 

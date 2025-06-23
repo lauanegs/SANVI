@@ -1,3 +1,11 @@
+.eventTime {
+  display: flex;
+  align-items: center;
+  gap: 4px;        /* Espaço entre ícone e texto */
+  font-size: 12px; /* Tamanho da fonte da hora */
+  color: #eee;     /* Cor da hora, ajuste conforme seu design */
+}
+
 /* Container do calendário */
 .calendarContainer {
   width: 80%;
@@ -8,27 +16,26 @@
   border-radius: 12px;
 }
 
-/* Cabeçalho do calendário */
+/* Cabeçalho do calendário (reduzido) */
 .calendarHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background-color: rgba(0, 0, 0, 0.08);;
+  padding: 8px 12px; /* Reduzido para menor altura */
+  background-color: rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  width: 100%;
   box-sizing: border-box;
 }
 
-/* Navegação do mês (nome do mês e botões) */
+/* Navegação do mês (reduzida) */
 .monthNavigation {
   display: flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px; /* menor para não ocupar tanto verticalmente */
   font-weight: 500;
-  width: 280px;
+  width: 260px;
   justify-content: flex-start;
 }
 
@@ -66,8 +73,9 @@
 /* Estilização dos dias da semana */
 .dayHeader {
   font-weight: 500;
-  padding: 10px 0;
+  padding: 8px 0;
   text-align: center;
+  font-size: 14px;
 }
 
 /* Estilização das células dos dias */
@@ -80,19 +88,19 @@
   overflow: hidden;
   box-sizing: border-box;
   cursor: pointer;
+  background-color: var(--fumaca-branca);
 }
 
-/* Estilização do número do dia */
+/* Estilização do número do dia (reduzida) */
 .dayNumber {
-  font-size: 14px;
-  padding: 4px;
+  font-size: 12px;
+  padding: 2px; /* Antes era 4px, reduzido para 2px */
   text-align: center;
   color: #666;
 }
 
 /* Estilização dos eventos */
 :global(.fc-daygrid-day-events) {
-  margin-top: 2px !important;
   overflow-y: auto;
   max-height: 60px;
   padding-right: 4px;
@@ -101,7 +109,7 @@
 :global(.fc-daygrid-event) {
   width: 100% !important;
   max-width: none !important;
-  padding: 6px 10px !important;
+  padding: 6px 6px !important;
   height: auto !important;
   box-sizing: border-box;
   white-space: nowrap;
@@ -153,7 +161,7 @@
 }
 
 :global(.fc-daygrid-event-harness) {
-  margin-bottom: 2px !important;
+  margin-bottom: 0px !important;
 }
 
 .eventContent {
@@ -184,4 +192,8 @@
 
 .eventCancelado {
   background-color: #FFA630;
+}
+
+:global(.fc .fc-daygrid-body-natural .fc-daygrid-day-events) {
+  margin: 0 !important;
 }
