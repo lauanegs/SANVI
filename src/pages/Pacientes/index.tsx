@@ -28,7 +28,7 @@ export function Pacientes() {
   const [rows, setRows] = useState(5);
   const [inputSize, setInputSize] = useState(400);
 
-  const [filteredData, setFilteredData] = useState<PatientInterface[]>();
+  const [filteredData, setFilteredData] = useState<PatientInterface[]>([]);
   const [searchValue, setSearchValue] = useState('');
 
   const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export function Pacientes() {
   const columns = Math.ceil((data?.length || 0) / rows);
 
   function searchOptions(searchText: string) {
-    const validOptions = data.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))
+    const validOptions = data.filter(item => item.name.toLowerCase().normalize("NFD").includes(searchText.toLowerCase().normalize("NFD")))
     setFilteredData(validOptions);
   }
 
@@ -88,7 +88,7 @@ export function Pacientes() {
     };
   }, []);
 
-  const currentData = filteredData ? filteredData : data;
+  const currentData = searchValue ? filteredData : data;
 
   const cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
     const index = rows * columnIndex + rowIndex;
