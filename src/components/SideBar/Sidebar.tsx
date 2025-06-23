@@ -57,7 +57,8 @@ function Sidebar() {
                             <Icon
                                 iconLibName="lu"
                                 icon="LuFolderClosed"
-                                color={theme.COLORS.AZUL_CELESTE_CLARO}
+                                color={theme.COLORS.CINZA_ESCURO}
+                                fill={theme.COLORS.AZUL_CELESTE_CLARO}
                                 size={14}
                             />
                             <Text
@@ -84,7 +85,8 @@ function Sidebar() {
                             <Icon
                                 iconLibName="lu"
                                 icon="LuFolderClosed"
-                                color={theme.COLORS.AZUL_CELESTE_CLARO}
+                                color={theme.COLORS.CINZA_ESCURO}
+                                fill={theme.COLORS.AZUL_CELESTE_CLARO}
                                 size={14}
                             />
                             <Text
@@ -111,7 +113,8 @@ function Sidebar() {
                             <Icon
                                 iconLibName="lu"
                                 icon="LuFolderClosed"
-                                color={theme.COLORS.AZUL_CELESTE_CLARO}
+                                color={theme.COLORS.CINZA_ESCURO}
+                                fill={theme.COLORS.AZUL_CELESTE_CLARO}
                                 size={14}
                             />
                             <Text
@@ -138,7 +141,8 @@ function Sidebar() {
                             <Icon
                                 iconLibName="lu"
                                 icon="LuFolderClosed"
-                                color={theme.COLORS.AZUL_CELESTE_CLARO}
+                                color={theme.COLORS.CINZA_ESCURO}
+                                fill={theme.COLORS.AZUL_CELESTE_CLARO}
                                 size={14}
                             />
                             <Text
@@ -165,7 +169,8 @@ function Sidebar() {
                             <Icon
                                 iconLibName="lu"
                                 icon="LuFolderClosed"
-                                color={theme.COLORS.AZUL_CELESTE_CLARO}
+                                color={theme.COLORS.CINZA_ESCURO}
+                                fill={theme.COLORS.AZUL_CELESTE_CLARO}
                                 size={14}
                             />
                             <Text

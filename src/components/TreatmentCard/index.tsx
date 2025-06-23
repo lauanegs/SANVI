@@ -4,9 +4,18 @@ import Icon from "@components/Icon";
 import theme from "theme";
 import { JorneyCardProps } from "./types";
 
-export function TreatmentCard({count, startDate, title}: JorneyCardProps){
+export function TreatmentCard({count, startDate, title, onClick, disabled = false}: JorneyCardProps){
+
+    function formatDate(date: string){
+        const d = date.split('-');
+        return `${d[2]}/${d[1]}/${d[0]}`
+    }
+
     return(
-        <Container>
+        <Container
+            onClick={onClick}
+            disabled={disabled}
+        >
             <Text
                 color="PRIMARY"
                 size={16}
@@ -20,7 +29,7 @@ export function TreatmentCard({count, startDate, title}: JorneyCardProps){
             <Text
                 color="PRIMARY"
                 size={16}
-                text={`Data início: ${startDate}`}
+                text={`Data início: ${formatDate(startDate)}`}
             />
             <WrapperIcon>
                 <Icon

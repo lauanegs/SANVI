@@ -12,9 +12,6 @@ export function Controls() {
     return isFullScreen;
   }
 
-  console.log("IS FULL SCREEN",checkIsFullScreen());
-  console.log("IS FULL SCREEN",checkIsFullScreen());
-
   return (
     <Container>
       <WrapperButtons>

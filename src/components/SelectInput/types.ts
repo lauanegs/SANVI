@@ -7,4 +7,5 @@ export type SelectInputProps = {
     label?: string;
     elements: string[];
     onSelectOption: (option: string) => void;
+    errorMessage?: string
 }

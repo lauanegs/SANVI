@@ -1,46 +1,65 @@
 import { MenuHeader } from "@components/MenuHeader";
-import { Container } from "../styles";
-import { ContentContainer, WrapperA } from "./styles";
+import { Container, ContentContainer, EmptyWrapper, LoaderWrapper, ReloadButton, ReloadWrapper } from "./styles";
 import { TreatmentCard } from "@components/TreatmentCard";
 import { GenericHeader } from "@components/GenericHeader";
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import { useAppStore } from "store/appStore";
-import { JourneyCard } from "@components/JourneyCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { findTreatmentsByPatientId, persistTreatment } from "@api/patient";
+import { findSpecialist, findTreatmentsByPatient } from "@api/patient";
 import { queryKeys } from "utils/query-keys";
-import toast from "react-hot-toast";
+import { TreatmentModal } from "@components/TreatmentModal";
+import { useEffect, useState } from "react";
+import { JourneyModal } from "@components/JourneyModal";
+import { ClipLoader } from "react-spinners";
+import theme from "theme";
+import { TreatmentInterface } from "@api/patient/types";
+import Icon from "@components/Icon";
+import { Text } from "@components/Text";
 
 export function TratamentoPacientes() {
     const store = useAppStore();
 
     const isFullScreen = store.isFullScreen;
 
-    const idPatient = store.selectedPatient.id;
+    const patient = store.selectedPatient;
+
+    const [isOpenTreatmentModal, setIsOpenTreatmentModal] = useState(false);
+    const [isOpenJourneyModal, setIsOpenJourneyModal] = useState(false);
+    const [selectedTreatment, setSelectedTreatment] = useState<TreatmentInterface>();
 
     const queryClient = useQueryClient();
-    const { data = [], error, isPending} = useQuery({
+    const { data = [], error, isPending, refetch } = useQuery({
         queryKey: queryKeys.ALL_PATIENT_TREATMENTS,
-        queryFn: () => {},
+        queryFn: () => findTreatmentsByPatient({
+            ...patient
+        }),
         staleTime: 1000 * 60 * 5
     })
 
-    async function createTreatment(){
-        try {
-            const response = await persistTreatment({
-                patientId: 1,
-                startedAt: '2023-03-04',
-                title: 'Tratamento aparelho',
-                endedAt: null,
-            });
-            console.log("CREATE RESPONSE", response);
-        } catch (error) {
-            
-        }
+    console.log("patient", patient)
+    const { data: dataSpecialists = [], isPending: isPendingSpecialists } = useQuery({
+        queryKey: queryKeys.ALL_SPECIALISTS,
+        queryFn: findSpecialist,
+        staleTime: 1000 * 60 * 5
+    })
+
+    function handleOpenJourneyModal(selected: TreatmentInterface) {
+        setSelectedTreatment(selected);
+        setIsOpenJourneyModal(true);
     }
 
-    console.log("DATA TREATMENTS", data);
+    function handleOpenTreatmentModal() {
+        setIsOpenTreatmentModal(true);
+    }
+
+    function handleCloseTreatmentModal() {
+        setIsOpenTreatmentModal(false);
+    }
+
+    function handleCloseJourneyModal() {
+        setIsOpenJourneyModal(false);
+    }
 
     const PADDING_CONTAINER = isFullScreen ?
         { paddingTop: 82, paddingLeft: 64 }
@@ -58,13 +77,20 @@ export function TratamentoPacientes() {
         return (
             <div style={{ ...style, ...PADDING_RIGHT_JOURNEY }}>
                 <TreatmentCard
-                    count={0}
-                    startDate={''}
-                    title={''}
+                    disabled={isPendingSpecialists}
+                    onClick={() => handleOpenJourneyModal(element)}
+                    count={index + 1}
+                    startDate={element.startedAt}
+                    title={element.title}
                 />
             </div>
         );
     }
+
+    useEffect(() => {
+        queryClient.invalidateQueries({queryKey: queryKeys.ALL_TREATMENT_JOURNEYS});
+    },[])
+
     return (
         <Container>
             <GenericHeader />
@@ -73,26 +99,74 @@ export function TratamentoPacientes() {
                 secondSubScreen="jornadaPaciente"
                 thirdSubScreen="prontuarioPaciente"
                 buttonTitle="Novo tratamento"
-                onPressButton={() => { }}
+                onPressButton={handleOpenTreatmentModal}
             />
-            <WrapperA><JourneyCard /></WrapperA>
             <ContentContainer
                 style={PADDING_CONTAINER}
             >
-                <AutoSizer>
-                    {({ width, height }) => (
-                        <FixedSizeList
-                            height={height}
-                            width={width}
-                            itemSize={75}
-                            itemCount={data.length}
+                {isPending ?
+                    <LoaderWrapper>
+                        <ClipLoader
+                            color={theme.COLORS.AZUL_DA_FRANCA}
+                            size={80}
+                        />
+                    </LoaderWrapper>
+                    :
+                    error ?
+                        <ReloadWrapper>
+                            <ReloadButton
+                                onClick={() => refetch()}
+                            >
+                                <Icon
+                                    iconLibName='io5'
+                                    icon='IoReload'
+                                    size={40}
+                                    color={theme.COLORS.AZUL_DA_FRANCA}
+                                />
+                            </ReloadButton>
+                        </ReloadWrapper>
+                        :
+                        data.length === 0 ?
+                            <EmptyWrapper>
+                                <Icon
+                                    iconLibName="lu"
+                                    icon="LuCircleAlert"
+                                    color={theme.COLORS.AZUL_DA_FRANCA}
+                                    fill={theme.COLORS.BRANCO}
+                                    size={25}
+                                />
+                                <Text
+                                    color="PRIMARY"
+                                    size={14}
+                                    text="Não há tratamentos cadastros"
+                                />
+                            </EmptyWrapper>
+                            :
+                            <AutoSizer>
+                                {({ width, height }) => (
+                                    <FixedSizeList
+                                        height={height}
+                                        width={width}
+                                        itemSize={75}
+                                        itemCount={data.length}
 
-                        >
-                            {cell}
-                        </FixedSizeList>
-                    )}
-                </AutoSizer>
+                                    >
+                                        {cell}
+                                    </FixedSizeList>
+                                )}
+                            </AutoSizer>}
             </ContentContainer>
+            <TreatmentModal
+                isOpen={isOpenTreatmentModal}
+                onCloseModal={handleCloseTreatmentModal}
+            />
+            {selectedTreatment &&
+                <JourneyModal
+                    selectedTreatment={selectedTreatment}
+                    isOpen={isOpenJourneyModal}
+                    onCloseModal={handleCloseJourneyModal}
+                />
+            }
         </Container>
     );
 }

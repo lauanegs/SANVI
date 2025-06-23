@@ -9,6 +9,8 @@ import * as cg from "react-icons/cg";
 import * as bs from "react-icons/bs";
 import * as fa6 from "react-icons/fa6";
 import * as io6 from "react-icons/io5";
+import * as hi2 from "react-icons/hi2";
+import * as fi from "react-icons/fi";
 
 export const libs = {
     fa,
@@ -21,14 +23,16 @@ export const libs = {
     bs,
     fa6,
     io6,
+    hi2,
+    fi
 }
 
-function Icon<T extends LibNames>({color, iconLibName, icon, size}:IconProps<T>){
+function Icon<T extends LibNames>({color, fill, iconLibName, icon, size}:IconProps<T>){
     const IconComponent = libs[iconLibName][icon] as React.ElementType;
     return(
         <IconComponent
             color={color}
-            fill={color}
+            fill={fill ? fill : color}
             size={size}
         />
     );

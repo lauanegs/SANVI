@@ -1,5 +1,5 @@
 import { API_URL } from "@api/connection";
-import { MedicalRecordDataInterfaceDTO, PatientInterface, PatientInterfaceDTO, TreatmentInterface, TreatmentInterfaceDTO } from "./types";
+import { JourneyInterface, JourneyInterfaceDTO, JourneyInterfacePutDTO, MedicalRecordDataInterfaceDTO, PatientInterface, PatientInterfaceDTO, SpecialistInterface, TreatmentInterface, TreatmentInterfaceDTO } from "./types";
 
 export async function findPatient(): Promise<PatientInterface[]> {
     try {
@@ -10,17 +10,31 @@ export async function findPatient(): Promise<PatientInterface[]> {
         }
 
         const data = await response.json();
-        console.log("DATA AAA", data)
         return data;
     } catch (error) {
         throw new Error(`Erro ${error}`);
     }
 }
 
-export async function findTreatmentsByPatientId(patient: { id: number }): Promise<TreatmentInterface[]> {
+export async function findSpecialist(): Promise<SpecialistInterface[]> {
     try {
-        const response = await fetch(`${API_URL}/treatment`, {
-            method: "PUT",
+        const response = await fetch(`${API_URL}/specialist`);
+
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}: ${response.statusText}`)
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
+}
+
+export async function findTreatmentsByPatient(patient: PatientInterface): Promise<TreatmentInterface[]> {
+    try {
+        const response = await fetch(`${API_URL}/patient/treatment`, {
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -32,7 +46,28 @@ export async function findTreatmentsByPatientId(patient: { id: number }): Promis
         }
 
         const data = await response.json();
-        console.log("RESPONSE TREATMENTS", data)
+        
+        return data;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
+}
+
+export async function findJourneyEventByTreatment(treatmentId: number): Promise<JourneyInterface[]> {
+    try {
+        const response = await fetch(`${API_URL}/journey/treatment/${treatmentId}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}: ${response.statusText}`)
+        }
+
+        const data = await response.json();
+        
         return data;
     } catch (error) {
         throw new Error(`Erro ${error}`);
@@ -55,7 +90,7 @@ export async function editPatient(patient: PatientInterface): Promise<any> {
     }
 }
 
-export async function persistPatient(patient: PatientInterfaceDTO): Promise<any> {
+export async function persistPatient(patient: PatientInterfaceDTO): Promise<{ok: boolean, patient: PatientInterface}> {
     try {
         const response = await fetch(`${API_URL}/patient/create`, {
             method: "POST",
@@ -65,7 +100,12 @@ export async function persistPatient(patient: PatientInterfaceDTO): Promise<any>
             body: JSON.stringify(patient)
         })
 
-        return response;
+        const ok = response.ok;
+        const patientRes: PatientInterface = await response.json();
+        return {
+            ok: ok,
+            patient: patientRes
+        }
     } catch (error) {
         throw new Error(`Erro ${error}`);
     }
@@ -103,15 +143,34 @@ export async function persistMedicalRecord(medicalRecord: MedicalRecordDataInter
     }
 }
 
-
-
-export async function findPatientById(id: number) {
+export async function persistJourneyEvent(event: JourneyInterfaceDTO){
     try {
-        const patient = await fetch(`${API_URL}/patient/${id}`);
+        const response = await fetch(`${API_URL}/journey/create`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(event)
+        })
 
-        const data: PatientInterface = await patient.json();
-        return data;
+        return response;
     } catch (error) {
+        throw new Error(`Erro ${error}`);
+    }
+}
 
+export async function editJourneyEvent(event: JourneyInterfacePutDTO){
+    try {
+        const response = await fetch(`${API_URL}/journey`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(event)
+        })
+
+        return response;
+    } catch (error) {
+        throw new Error(`Erro ${error}`);
     }
 }

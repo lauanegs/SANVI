@@ -1,6 +1,6 @@
 import {create} from "zustand";
 import { AppStoreActions, AppStoreStates } from "./appStore.types";
-import { PatientInterface } from "@api/patient/types";
+import { PatientInterface, SpecialistInterface, TreatmentInterface } from "@api/patient/types";
 
 export const useAppStore = create<AppStoreStates & AppStoreActions>((set) => ({
     selectedScreen: "home",
@@ -13,6 +13,6 @@ export const useAppStore = create<AppStoreStates & AppStoreActions>((set) => ({
     setSelectedPatient: (selectedPatient) => set(() => ({selectedPatient: selectedPatient})),
 
     isValidPatientCache: true,
-    setIsValidPatientCache: (isValidPatientCache) => set(() => ({isValidPatientCache: isValidPatientCache}))
+    setIsValidPatientCache: (isValidPatientCache) => set(() => ({isValidPatientCache: isValidPatientCache})),
 
 }));
