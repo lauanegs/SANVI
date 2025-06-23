@@ -10,4 +10,5 @@ export type IconProps<T extends LibNames> = {
 	icon: LibIconNames<T>;
 	color: string;
 	size: number;
+	fill?: string
 };

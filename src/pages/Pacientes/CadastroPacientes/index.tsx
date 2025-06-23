@@ -26,13 +26,12 @@ import * as yup from 'yup';
 import InputMask from "react-input-mask";
 import { formatCpf, formatPhoneNumber, formatRg } from "utils/formatFunctions";
 import { SelectInput } from "@components/SelectInput";
-import { FormStateType, GenderEnum, GenderEnumPost, MockGender, StateOptions, StateOptionType } from "./types";
+import { FormStateType, GenderEnum, GenderEnumPost, mockGender, mockStateAbbreviations, StateEnum } from "./types";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import { ptBR } from 'date-fns/locale';
 import { editPatient, persistPatient } from "@api/patient";
 import toast from "react-hot-toast";
-import Select from "react-select";
 
 registerLocale("ptBR", ptBR);
 
@@ -47,7 +46,7 @@ export function CadastroPaciente() {
     const [isMinor, setIsMinor] = useState(false);
     const [isVisibleDateModal, setIsVisibleDateModal] = useState(false);
 
-    const isNewRegistration = Object.keys(data).length < 1;
+    const [isNewRegistration, setIsNewRegistration] = useState(Object.keys(data).length < 1);
 
     const [formState, setFormState] = useState<FormStateType>({
         address: '',
@@ -63,7 +62,7 @@ export function CadastroPaciente() {
         profession: '',
         rg: '',
         cep: '',
-        uf: {label: '', value: ''} as StateOptionType,
+        uf: mockStateAbbreviations[0],
         guardianName: null,
         guardianCPF: null,
         guardianPhoneNumber: null
@@ -79,7 +78,9 @@ export function CadastroPaciente() {
         setFormState(prev => ({ ...prev, gender: gender }));
     }
 
-    console.log("UF", formState.uf.value);
+    function handleSelectState(state: string) {
+        setFormState(prev => ({ ...prev, uf: state }));
+    }
 
     function handleOpenSelectOptions() {
         setCanBeOpenSelect(false);
@@ -126,8 +127,6 @@ export function CadastroPaciente() {
             await formSchema.validate({ ...fields }, { abortEarly: false });
             setFormErrors({});
 
-            console.log('Formulário válido:', formState);
-
             if (isNewRegistration) {
                 const response = await persistPatient({
                     address: formState.address,
@@ -147,17 +146,20 @@ export function CadastroPaciente() {
                     profession: formState.profession,
                     rg: formState.rg,
                     treatments: data.treatments,
-                    uf: formState.uf.value,
+                    uf: formState.uf,
                     updatedAt: new Date().toISOString()
                 });
 
-                store.setIsValidPatientCache(false);
 
                 if (response.ok) {
                     toast.success("Paciente criado com sucesso!", {
                         position: "bottom-right",
                         duration: 2000
                     })
+                    store.setIsValidPatientCache(false);
+                    store.setSelectedPatient(response.patient);
+                    setIsNewRegistration(false);
+
                 }
 
                 if (!response.ok) {
@@ -187,7 +189,7 @@ export function CadastroPaciente() {
                     profession: formState.profession,
                     rg: formState.rg,
                     treatments: data.treatments,
-                    uf: formState.uf.value,
+                    uf: formState.uf,
                     updatedAt: new Date().toISOString()
                 });
 
@@ -220,7 +222,6 @@ export function CadastroPaciente() {
                 return;
             }
 
-            console.log("ERRO persistMedicalRecord", error);
             toast.error("Erro desconhecido", {
                 position: "bottom-right",
                 duration: 2000
@@ -228,34 +229,39 @@ export function CadastroPaciente() {
         }
     }
 
+    function isElementScrollable(element: HTMLElement): boolean {
+
+        if (!element) {
+            return false;
+        }
+
+        const style = window.getComputedStyle(element);
+        const overflowY = style.overflowY;
+
+        const isOverflowSet = overflowY.includes('auto') || overflowY.includes('scroll');
+        const hasScrollableContent = element.scrollHeight > element.clientHeight + 1;
+
+        return isOverflowSet && hasScrollableContent;
+    }
+
     useEffect(() => {
         const form = formRef.current;
         if (!form) return;
 
-        let scrollTarget = 0;
-        let currentScroll = 0;
-        let isScrolling = false;
-
         const handleWheel = (e: WheelEvent) => {
-            e.preventDefault(); // impede scroll nativo
-            scrollTarget += e.deltaY * 0.5; // ← reduz sensibilidade (0.5 == 50%)
-            scrollTarget = Math.max(0, Math.min(scrollTarget, form.scrollHeight));
+            let currentTarget = e.target as HTMLElement;
 
-            if (!isScrolling) {
-                isScrolling = true;
-                smoothScroll();
+
+            while (currentTarget && currentTarget !== form) {
+                if (isElementScrollable(currentTarget)) {
+                    return;
+                }
+                currentTarget = currentTarget.parentElement as HTMLElement;
             }
-        };
 
-        const smoothScroll = () => {
-            currentScroll += (scrollTarget - currentScroll) * 0.1; // velocidade de aproximação
-            form.scrollTop = currentScroll;
-
-            if (Math.abs(scrollTarget - currentScroll) > 0.5) {
-                requestAnimationFrame(smoothScroll);
-            } else {
-                isScrolling = false;
-            }
+            e.preventDefault();
+            const scrollAmount = e.deltaY * 0.7;
+            form.scrollTop += scrollAmount;
         };
 
         form.addEventListener("wheel", handleWheel, { passive: false });
@@ -282,7 +288,7 @@ export function CadastroPaciente() {
             profession: data.profession ? data.profession : '',
             rg: data.rg ? data.rg : '',
             cep: data.cep ? data.cep : '',
-            uf: data.uf ? {value: data.uf, label: data.uf} : {label: '', value: ''},
+            uf: data.uf ? data.uf : mockStateAbbreviations[0],
             guardianName: data.guardianName ? data.guardianName : '',
             guardianCPF: data.guardianCPF ? data.guardianCPF : '',
             guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
@@ -337,14 +343,23 @@ export function CadastroPaciente() {
     return (
         <Container>
             <GenericHeader />
-            <MenuHeader
-                firstSubScreen="cadastroPaciente"
-                secondSubScreen="jornadaPaciente"
-                thirdSubScreen="prontuarioPaciente"
-                buttonTitle="Salvar"
-                onPressButton={handleSubmitForm}
-                buttonDisabled={!hasChanges}
-            />
+            {isNewRegistration ?
+                <MenuHeader
+                    firstSubScreen="cadastroPaciente"
+                    buttonTitle="Salvar"
+                    onPressButton={handleSubmitForm}
+                    buttonDisabled={!hasChanges}
+                />
+                :
+                <MenuHeader
+                    firstSubScreen="cadastroPaciente"
+                    secondSubScreen="jornadaPaciente"
+                    thirdSubScreen="prontuarioPaciente"
+                    buttonTitle="Salvar"
+                    onPressButton={handleSubmitForm}
+                    buttonDisabled={!hasChanges}
+                />
+            }
 
             <Form onScroll={handleOpenSelectOptions} style={{ paddingTop: PADDING_TOP }} ref={formRef}>
                 <FormContentWrapper>
@@ -565,12 +580,13 @@ export function CadastroPaciente() {
                             </VariableRowWrapper>
 
                             <VariableRowWrapper style={{ width: '25%' }}>
-                                <Select
-                                    options={StateOptions}
-                                    value={formState.uf}
-                                    onChange={(newValue) => setFormState(prev => ({...prev, uf: newValue ? newValue : {label: '', value: ''}}))}
-                                    isSearchable
-                                    isClearable
+                                <SelectInput
+                                    selectedOption={StateEnum[formState.uf as keyof typeof StateEnum]}
+                                    elements={mockStateAbbreviations}
+                                    onSelectOption={handleSelectState}
+                                    sizeType="G"
+                                    canByOpen={canBeOpenSelect}
+                                    label="UF"
                                 />
                             </VariableRowWrapper>
                         </ColumnCenterRowWrapper>
@@ -610,7 +626,7 @@ export function CadastroPaciente() {
 
                             <VariableRowWrapper style={{ width: '20%' }}>
                                 <SelectInput
-                                    elements={MockGender}
+                                    elements={mockGender}
                                     sizeType={"G"}
                                     selectedOption={GenderEnum[formState.gender as keyof typeof GenderEnum]}
                                     label="Sexo"

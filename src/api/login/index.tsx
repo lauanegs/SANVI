@@ -15,10 +15,6 @@ export async function fetchLogin(user: User){
             body: JSON.stringify(user),
         });
 
-        console.log("User: ", JSON.stringify(user));
-        console.log("Response: ", response);
-
-
         if (!response.ok) {
             const errorMessage = await response.text(); // ou .json() dependendo da API
             throw new Error(errorMessage || "Erro ao fazer login");

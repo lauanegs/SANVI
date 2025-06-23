@@ -1,13 +1,21 @@
 import styled from "styled-components";
 import theme from "theme";
 
-export const Container = styled.div`
+export const Container = styled.button`
     width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 
+    border: none;
     background-color: ${theme.COLORS.BRANCO};
     border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: ${theme.COLORS.FUMACA_BRANCA};
+    }
 
 `;
 
@@ -33,6 +41,8 @@ export const Content = styled.div`
 export const WrapperInfo = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 
     gap: 5px;
     padding: 15px

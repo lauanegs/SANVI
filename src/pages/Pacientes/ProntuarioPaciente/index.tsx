@@ -91,34 +91,15 @@ export function ProntuarioPaciente() {
         const form = formRef.current;
         if (!form) return;
 
-        let scrollTarget = 0;
-        let currentScroll = 0;
-        let isScrolling = false;
-
         const handleWheel = (e: WheelEvent) => {
-            e.preventDefault(); // impede scroll nativo
-            scrollTarget += e.deltaY * 0.5; // ← reduz sensibilidade (0.5 == 50%)
-            scrollTarget = Math.max(0, Math.min(scrollTarget, form.scrollHeight));
+            e.preventDefault();
+            const scrollAmount = e.deltaY * 0.7;
 
-            if (!isScrolling) {
-                isScrolling = true;
-                smoothScroll();
-            }
-        };
-
-        const smoothScroll = () => {
-            currentScroll += (scrollTarget - currentScroll) * 0.1; // velocidade de aproximação
-            form.scrollTop = currentScroll;
-
-            if (Math.abs(scrollTarget - currentScroll) > 0.5) {
-                requestAnimationFrame(smoothScroll);
-            } else {
-                isScrolling = false;
-            }
+            form.scrollTop += scrollAmount;
         };
 
         form.addEventListener("wheel", handleWheel, { passive: false });
-
+        
         return () => {
             form.removeEventListener("wheel", handleWheel);
         };
@@ -211,7 +192,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
@@ -225,7 +206,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </ContainerAnamneseCard>
                     </VariableRowWrapper>
@@ -241,7 +222,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
@@ -255,7 +236,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </ContainerAnamneseCard>
                         <FirstSelectStyleWrapper>
@@ -294,7 +275,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </VerticalWrapper>
                         <VerticalWrapper>
@@ -319,7 +300,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                onHeightChange={() => { }}
+                                
                             />
                         </VerticalWrapper>
                     </VariableRowWrapper>
