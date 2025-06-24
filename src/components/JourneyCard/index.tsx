@@ -6,12 +6,10 @@ import { FullMonths, JourneyCardProps } from "./types";
 
 export function JourneyCard({ date, description, professional, onClick }: JourneyCardProps) {
 
-    function formatDate(date: Date) {
-        const day = date.getDate();
-        const fullMonth = date.getMonth();
-        const year = date.getFullYear();
+    function formatDate() {
+        const dateArr = date.split('-');
 
-        return `${day} de ${FullMonths[fullMonth]} de ${year}`
+        return `${dateArr[2]} de ${FullMonths[Number(dateArr[1])]} de ${dateArr[0]}`
     }
 
     return (
@@ -20,7 +18,7 @@ export function JourneyCard({ date, description, professional, onClick }: Journe
         >
             <DateHeader>
                 <Text
-                    text={formatDate(date)}
+                    text={formatDate()}
                     size={14}
                     color="PRIMARY"
                 />

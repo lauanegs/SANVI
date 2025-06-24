@@ -18,7 +18,7 @@ export interface PatientInterface {
     guardianCPF: string | null,
     guardianName: string | null,
     guardianPhoneNumber: number | null,
-    medicalRecord: MedicalRecordInterface | null,
+    medicalRecord: MedicalRecordInterface,
     treatments: Array<any>
 }
 
@@ -26,6 +26,16 @@ export interface MedicalRecordInterface {
     createdAt: Date,
     updatedAt: Date | null,
     id: number,
+    hasHealthProblem: boolean,
+    data: MedicalRecordDataInterface,
+    hasMedicalTreatment: boolean,
+    isPregnant: boolean
+    medicalRecordData: MedicalRecordDataInterface
+}
+
+export interface MedicalRecordInterfacePutDTO {
+    patientId: number,
+    updatedAt: Date | null,
     hasHealthProblem: boolean,
     hasMedicalTreatment: boolean,
     isPregnant: boolean
@@ -39,6 +49,15 @@ export interface MedicalRecordDataInterface {
     pastMedicalHistory: string,
     healthProblem: string,
     familyMedicalHistory: string
+}
+
+export interface MedicalRecordInterfaceDTO {
+    isPregnant: boolean,
+    hasHealthProblem: boolean,
+    hasMedicalTreatment: boolean,
+    medicalRecordData: MedicalRecordDataInterface,
+    createdAt: Date,
+    updatedAt: Date | null,
 }
 
 export interface PatientInterfaceDTO {
@@ -59,7 +78,7 @@ export interface PatientInterfaceDTO {
     guardianCPF: string | null,
     guardianName: string | null,
     guardianPhoneNumber: number | null,
-    medicalRecord: MedicalRecordInterface | null,
+    medicalRecord: MedicalRecordInterfaceDTO,
     treatments: Array<any>
 }
 
@@ -69,21 +88,12 @@ export interface TreatmentInterface {
     startedAt: string,
     title: string,
     patientId: number,
-    events: any[],
 }
 export interface TreatmentInterfaceDTO {
     endedAt: string | null,
     startedAt: string,
     title: string,
-    patient: PatientInterface
-}
-
-export interface MedicalRecordDataInterfaceDTO {
-    patientId: number;
-    isPregnant: boolean,
-    hasHealthProblem: boolean,
-    hasMedicalTreatment: boolean,
-    data: MedicalRecordDataInterface
+    patientId: number
 }
 
 export interface SpecialistInterface {
