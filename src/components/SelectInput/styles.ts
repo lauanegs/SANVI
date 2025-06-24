@@ -122,7 +122,6 @@ export const OptionsWrapper = styled.div<InputSizeStyle>`
     box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
 
 `;
-
 export const Input = styled.input`
     width: 90%;
     border: none;

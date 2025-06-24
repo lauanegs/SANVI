@@ -16,7 +16,7 @@ export default function PatientCard() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${API_URL}/appointments`);
+        const response = await fetch(`${API_URL}/appointments/dto`);
         if (!response.ok) throw new Error("Erro ao buscar eventos");
         const data = await response.json();
         console.log(data);

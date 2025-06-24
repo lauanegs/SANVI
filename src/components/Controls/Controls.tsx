@@ -36,5 +36,4 @@ export function Controls() {
       </WrapperButtons>
     </Container>
   );
-
 }

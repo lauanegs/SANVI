@@ -1,3 +1,5 @@
+import { MedicalRecordInterface } from "@api/patient/types";
+
 export type PatientFormTypes = {
     name: string,
     cpf: string,
@@ -16,7 +18,7 @@ export type FormStateType = {
     birthDate: Date;
     cpf: string;
     createdAt: Date;
-    gender: string; // você usou "0", então presumo string
+    gender: string;
     id: string;
     name: string;
     neighborhood: string;
@@ -28,7 +30,24 @@ export type FormStateType = {
     guardianName: string | null;
     guardianCPF: string | null;
     guardianPhoneNumber: string | null;
+    medicalRecord: {
+        createdAt: Date;
+        updatedAt: Date | null;
+        id: string; 
+        hasHealthProblem: boolean;
+        hasMedicalTreatment: boolean;
+        isPregnant: boolean;
+        medicalRecordData: {
+            diseaseHistory: string;
+            mainComplaint: string;
+            medicalTreatment: string;
+            pastMedicalHistory: string;
+            healthProblem: string;
+            familyMedicalHistory: string;
+        };
+    };
 };
+
 
 export const mockStateAbbreviations: string[] = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",

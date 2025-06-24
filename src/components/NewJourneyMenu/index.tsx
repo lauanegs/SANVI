@@ -203,7 +203,7 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
                                 sizeType="G"
                                 inputType="date"
                                 onVisibleDateMenu={() => setIsVisibleDateModal(prev => !prev)}
-                                label="Data nascimento"
+                                label="Data"
                             />
                         }
                     />

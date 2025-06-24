@@ -5,7 +5,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
-import { Clock } from "lucide-react";
+import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../Button/Button";
 import EventModal, { CalendarEvent } from "./event-modal";
 import styles from "./calendar.module.css";
@@ -24,14 +24,30 @@ export default function Calendar() {
     fetchEvents();
   }, []);
 
-  // Função para buscar eventos da API
   const fetchEvents = async () => {
     try {
-      const response = await fetch(`${API_URL}/appointments`); // Ajuste a rota conforme seu backend
+      const response = await fetch(`${API_URL}/appointments/dto`);
       if (!response.ok) throw new Error("Erro ao buscar eventos");
       const data = await response.json();
-      console.log("Eventos da API:", data);
-      setEvents(data);
+      console.log("Eventos atualizados:", data);
+
+      // Mapear eventos para usar confirmPhoneNumber, fallback para phoneNumber do paciente
+      const mappedEvents = data.map((event: any) => {
+        console.log("Evento do backend:", event); // veja aqui se tem confirmPhoneNumber
+        return {
+          id: event.id,
+          date: event.date,
+          time: new Date(event.date).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' }),
+          patient: event.patient,
+          specialist: event.specialist,
+          phone: event.confirmPhoneNumber || "",
+          status: event.status,
+          valor: event.value,
+        };
+      });
+
+      setEvents(mappedEvents);
+
     } catch (error) {
       console.error("Erro ao carregar eventos:", error);
     }
@@ -45,8 +61,7 @@ export default function Calendar() {
         month: "long",
         year: "numeric",
       });
-      const formattedMonthYear = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
-      setCurrentMonth(formattedMonthYear);
+      setCurrentMonth(monthYear.charAt(0).toUpperCase() + monthYear.slice(1));
     }
   };
 
@@ -80,48 +95,55 @@ export default function Calendar() {
     setSelectedEvent(null);
   };
 
+  const handleDelete = async (eventId: string) => {
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir este agendamento?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API_URL}/appointments/${eventId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ao excluir: ${response.status} - ${errorText}`);
+      }
+
+      await fetchEvents();
+      handleCloseModal();
+    } catch (error) {
+      console.error("Erro ao excluir o evento:", error);
+      alert("Não foi possível excluir o agendamento.");
+    }
+  };
+
   const handleSaveEvent = async (eventData: CalendarEvent | Omit<CalendarEvent, "id">) => {
     try {
-      let updatedEvent: CalendarEvent;
+      setIsModalOpen(false);
+      setSelectedEvent(null);
 
-      if ("id" in eventData) {
-        // Edição
-        const response = await fetch(`${API_URL}/appointments/${eventData.id}`, {
+      // Verifica se é edição (id válido) ou criação
+      if ("id" in eventData && eventData.id) {
+        await fetch(`${API_URL}/appointments/${eventData.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(eventData),
         });
-
-        if (!response.ok) throw new Error("Erro ao atualizar evento");
-
-        updatedEvent = await response.json();
-
-        setEvents((prevEvents) =>
-          prevEvents.map((ev) => (ev.id === updatedEvent.id ? updatedEvent : ev))
-        );
       } else {
-        // Criação
-        const response = await fetch(`${API_URL}/appointments/create`, {
+        await fetch(`${API_URL}/appointments/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(eventData),
         });
-
-        if (!response.ok) throw new Error("Erro ao criar evento");
-
-        updatedEvent = await response.json();
-
-        setEvents((prev) => [...prev, updatedEvent]);
       }
 
-      setIsModalOpen(false);
-      setSelectedEvent(null);
-    } catch (error) {
-      console.error("Erro ao salvar evento:", error);
+      await fetchEvents();
+    } catch {
+      // Silenciosamente ignora erros (pode registrar se quiser no futuro)
     }
   };
 
@@ -146,8 +168,6 @@ export default function Calendar() {
       valor: extended.valor,
     };
 
-    console.log("Evento selecionado:", clickedEvent);
-
     setSelectedEvent(clickedEvent);
     setIsModalOpen(true);
   };
@@ -155,29 +175,25 @@ export default function Calendar() {
   const renderEventContent = (eventInfo: any) => {
     const patient = eventInfo.event.extendedProps.patient;
     const patientName = patient?.name || "Paciente";
-
-    // A data está no formato ISO com hora e fuso, então extraia só a hora para mostrar:
     const eventDateStr = eventInfo.event.start || eventInfo.event.extendedProps.date;
     const eventTime = eventDateStr
       ? new Date(eventDateStr).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
       : "";
 
-
     const status = eventInfo.event.extendedProps.status;
 
     return (
-      <div className={`${styles.eventContent} ${status === "Criado" ? styles.eventPendente :
-          status === "Concluído" ? styles.eventConcluido :
-            status === "Confirmado" ? styles.eventConfirmado :
-              status === "Cancelado" ? styles.eventCancelado : ""
+      <div className={`${styles.eventContent} ${status === "Pendente" ? styles.eventPendente :
+        status === "Concluído" ? styles.eventConcluido :
+          status === "Confirmado" ? styles.eventConfirmado :
+            status === "Cancelado" ? styles.eventCancelado : ""
         }`}>
         <div className={styles.eventTitle}>{patientName}</div>
         <div className={styles.eventTime}>
-          <Clock className={styles.clockIcon} size={14} />
+          <Clock className={styles.clockIcon} size={12} />
           <span>{eventTime}</span>
         </div>
       </div>
-
     );
   };
 
@@ -188,10 +204,10 @@ export default function Calendar() {
           <span>{currentMonth}</span>
           <div className={styles.navigationButtons}>
             <button className={styles.navButton} onClick={handlePrevMonth}>
-              &lt;
+              <ChevronLeft size={20} />
             </button>
             <button className={styles.navButton} onClick={handleNextMonth}>
-              &gt;
+              <ChevronRight size={20} />
             </button>
           </div>
         </div>
@@ -202,6 +218,7 @@ export default function Calendar() {
 
       <div className={styles.calendar}>
         <FullCalendar
+          key={events.length} // 👈 força rerender ao mudar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -217,6 +234,7 @@ export default function Calendar() {
               specialist: event.specialist,
               phone: event.phone,
               status: event.status,
+              valor: event.valor,
             },
           }))}
           eventContent={renderEventContent}
@@ -233,6 +251,7 @@ export default function Calendar() {
       <EventModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onDelete={() => handleDelete(selectedEvent?.id ?? "")}
         onSave={handleSaveEvent}
         selectedDate={selectedDate}
         selectedEvent={selectedEvent}

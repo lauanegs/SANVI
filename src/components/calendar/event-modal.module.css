@@ -1,73 +1,152 @@
-/* event-modal.module.css */
+.container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
 
-.form {
+.card {
+  background-color: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 700px; /* aumentei para acomodar as duas colunas */
+  overflow: hidden;
+}
+
+.header {
+  padding: 20px 0 16px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.title {
+  color: #2563eb;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.content {
+  padding: 24px;
+}
+
+.formRow {
+  display: flex;
+  gap: 24px; /* espaçamento entre colunas */
+  align-items: flex-start;
+}
+
+.leftColumn,
+.rightColumn {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 20px;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-
-  max-height: 400px;    /* altura máxima que o container pode ter */
-  overflow-y: auto;     /* adiciona scroll vertical automático */
 }
 
-.form input,
-.form select {
-  padding: 14px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  font-size: 15px;
-  outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
-  background: #fafafa;
+.formGroup {
+  margin-bottom: 20px;
 }
 
-.form input:focus,
-.form select:focus {
-  border-color: #1a154b;
-  box-shadow: 0 0 0 3px rgba(26, 21, 75, 0.15);
-  background: #fff;
+.label {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 
-.form input[type="color"] {
-  padding: 3px;
-  height: 40px;
-  width: 60px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+.errorText {
+  font-size: 12px;
+  color: #dc2626; /* vermelho (usado no Tailwind para erros) */
+  margin-top: 4px;
 }
 
-.dialogFooter {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.dialogFooter button {
-  padding: 12px 24px;
-  border-radius: 8px;
-  background: #1a154b;
-  color: white;
-  border: none;
-  cursor: pointer;
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   font-size: 14px;
-  transition: background 0.3s ease;
+  background-color: white;
+  box-sizing: border-box;
+  color: #374151;
 }
 
-.dialogFooter button:hover {
-  background: #2a2370;
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  box-sizing: border-box;
+  color: #374151;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
 }
 
-.addButton {
-  background-color: #1976d2;
+.dateInputContainer {
+  position: relative;
+}
+
+.dateInput {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+  box-sizing: border-box;
+  color: #374151;
+}
+
+.calendarIcon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.button {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #2563eb;
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+  margin-top: 8px;
+  transition: all ease 0.2s;
+}
+
+.button:hover {
+  transform: scale(0.95);
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--azul-da-franca);
+
+    height: 2.5rem;
+    width: 2.5rem;
+
+    border-radius: 1000px;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.3);
+
+    transition: all ease 0.4s;
+}
+
+.modal-close:hover {
+    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
 }

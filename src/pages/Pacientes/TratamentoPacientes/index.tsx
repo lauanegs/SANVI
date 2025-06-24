@@ -6,7 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from "react-window";
 import { useAppStore } from "store/appStore";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { findSpecialist, findTreatmentsByPatient } from "@api/patient";
+import { findSpecialist, findTreatmentsByPatientId } from "@api/patient";
 import { queryKeys } from "utils/query-keys";
 import { TreatmentModal } from "@components/TreatmentModal";
 import { useEffect, useState } from "react";
@@ -31,13 +31,10 @@ export function TratamentoPacientes() {
     const queryClient = useQueryClient();
     const { data = [], error, isPending, refetch } = useQuery({
         queryKey: queryKeys.ALL_PATIENT_TREATMENTS,
-        queryFn: () => findTreatmentsByPatient({
-            ...patient
-        }),
+        queryFn: () => findTreatmentsByPatientId(patient.id),
         staleTime: 1000 * 60 * 5
     })
 
-    console.log("patient", patient)
     const { data: dataSpecialists = [], isPending: isPendingSpecialists } = useQuery({
         queryKey: queryKeys.ALL_SPECIALISTS,
         queryFn: findSpecialist,
@@ -87,9 +84,6 @@ export function TratamentoPacientes() {
         );
     }
 
-    useEffect(() => {
-        queryClient.invalidateQueries({queryKey: queryKeys.ALL_TREATMENT_JOURNEYS});
-    },[])
 
     return (
         <Container>

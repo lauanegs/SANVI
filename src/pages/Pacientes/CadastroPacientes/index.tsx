@@ -65,7 +65,23 @@ export function CadastroPaciente() {
         uf: mockStateAbbreviations[0],
         guardianName: null,
         guardianCPF: null,
-        guardianPhoneNumber: null
+        guardianPhoneNumber: null,
+        medicalRecord: {
+            createdAt: new Date(),
+            updatedAt: null,
+            hasHealthProblem: false,
+            hasMedicalTreatment: false,
+            isPregnant: false,
+            id: '',
+            medicalRecordData: {
+                diseaseHistory: '',
+                familyMedicalHistory: '',
+                healthProblem: '',
+                mainComplaint: '',
+                medicalTreatment: '',
+                pastMedicalHistory: ''
+            }
+        }
     });
 
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -128,6 +144,7 @@ export function CadastroPaciente() {
             setFormErrors({});
 
             if (isNewRegistration) {
+                
                 const response = await persistPatient({
                     address: formState.address,
                     addressNumber: Number(formState.addressNumber),
@@ -139,7 +156,7 @@ export function CadastroPaciente() {
                     guardianCPF: formState.guardianCPF,
                     guardianName: formState.guardianName,
                     guardianPhoneNumber: typeof formState.guardianPhoneNumber === "string" ? Number(formState.guardianPhoneNumber) : null,
-                    medicalRecord: data.medicalRecord,
+                    medicalRecord: formState.medicalRecord,
                     name: formState.name,
                     neighborhood: formState.neighborhood,
                     phoneNumber: Number(formState.phoneNumber),
@@ -170,6 +187,7 @@ export function CadastroPaciente() {
                 }
 
             } else {
+               
                 const response = await editPatient({
                     address: formState.address,
                     addressNumber: Number(formState.addressNumber),
@@ -272,29 +290,45 @@ export function CadastroPaciente() {
     }, []);
 
     useEffect(() => {
-        if (!data) return;
+        if (isNewRegistration) return;
 
         setFormState({
-            address: data.address ? data.address : '',
-            addressNumber: data.addressNumber ? data.addressNumber.toString() : '',
-            birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
-            cpf: data.cpf ? data.cpf : '',
-            createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
-            gender: data.gender ? data.gender : '',
-            id: data.id ? data.id.toString() : '',
-            name: data.name ? data.name : '',
-            neighborhood: data.neighborhood ? data.neighborhood : '',
+            address: data.address,
+            addressNumber: data.addressNumber.toString(),
+            birthDate: new Date(data.birthDate),
+            cpf: data.cpf,
+            createdAt: new Date(data.createdAt),
+            gender: data.gender,
+            id: data.id.toString(),
+            name: data.name,
+            neighborhood: data.neighborhood,
             phoneNumber: data.phoneNumber ? data.phoneNumber.toString() : '',
-            profession: data.profession ? data.profession : '',
-            rg: data.rg ? data.rg : '',
-            cep: data.cep ? data.cep : '',
-            uf: data.uf ? data.uf : mockStateAbbreviations[0],
-            guardianName: data.guardianName ? data.guardianName : '',
-            guardianCPF: data.guardianCPF ? data.guardianCPF : '',
-            guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
+            profession: data.profession,
+            rg: data.rg,
+            cep: data.cep,
+            uf: data.uf,
+            guardianName: data.guardianName,
+            guardianCPF: data.guardianCPF,
+            guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : null,
+            medicalRecord: {
+                createdAt: data.medicalRecord.createdAt,
+                hasHealthProblem: data.medicalRecord.hasHealthProblem,
+                hasMedicalTreatment: data.medicalRecord.hasMedicalTreatment,
+                id: data.medicalRecord.id.toString(),
+                isPregnant: data.medicalRecord.isPregnant,
+                medicalRecordData: {
+                    diseaseHistory: data.medicalRecord.medicalRecordData.diseaseHistory,
+                    familyMedicalHistory: data.medicalRecord.medicalRecordData.familyMedicalHistory,
+                    healthProblem: data.medicalRecord.medicalRecordData.healthProblem,
+                    mainComplaint: data.medicalRecord.medicalRecordData.mainComplaint,
+                    medicalTreatment: data.medicalRecord.medicalRecordData.medicalTreatment,
+                    pastMedicalHistory: data.medicalRecord.medicalRecordData.pastMedicalHistory,
+                },
+                updatedAt: data.medicalRecord.updatedAt,
+            }
         });
 
-        if (data.guardianName && data.guardianName.length > 0) {
+        if (data.guardianName) {
             setIsMinor(true);
         }
     }, [data]);
@@ -314,7 +348,7 @@ export function CadastroPaciente() {
     }, [isMinor])
 
     useEffect(() => {
-        if (data && !isNewRegistration) {
+        if (data && !isNewRegistration && hasChanges) {
             const dataObj = {
                 address: data.address ? data.address : '',
                 addressNumber: data.addressNumber ? data.addressNumber.toString() : '',
@@ -329,16 +363,32 @@ export function CadastroPaciente() {
                 profession: data.profession ? data.profession : '',
                 rg: data.rg ? data.rg : '',
                 cep: data.cep ? data.cep : '',
-                uf: data.uf ? data.uf : '',
+                uf: data.uf ? data.uf : mockStateAbbreviations[0],
                 guardianName: data.guardianName ? data.guardianName : '',
                 guardianCPF: data.guardianCPF ? data.guardianCPF : '',
                 guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
+                medicalRecord: {
+                    createdAt: data.medicalRecord ? data.medicalRecord.createdAt : new Date(),
+                    hasHealthProblem: data.medicalRecord ? data.medicalRecord.hasHealthProblem : false,
+                    hasMedicalTreatment: data.medicalRecord ? data.medicalRecord.hasMedicalTreatment : false,
+                    id: data.medicalRecord ? data.medicalRecord.id.toString() : '',
+                    isPregnant: data.medicalRecord ? data.medicalRecord.isPregnant : false,
+                    medicalRecordData: data.medicalRecord ? data.medicalRecord.medicalRecordData : {
+                        diseaseHistory: '',
+                        familyMedicalHistory: '',
+                        healthProblem: '',
+                        mainComplaint: '',
+                        medicalTreatment: '',
+                        pastMedicalHistory: '',
+                    },
+                    updatedAt: data.medicalRecord ? data.medicalRecord.updatedAt : new Date(),
+                }
             }
 
             const isNoChanges = JSON.stringify(dataObj) === JSON.stringify(formState);
             setHasChanges(!isNoChanges);
         }
-    }, [formState])
+    }, [formState]);
 
     return (
         <Container>

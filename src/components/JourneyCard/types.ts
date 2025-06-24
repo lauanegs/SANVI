@@ -1,5 +1,5 @@
 export type JourneyCardProps = {
-    date: Date,
+    date: string,
     description: string,
     professional: string,
     onClick: () => void,

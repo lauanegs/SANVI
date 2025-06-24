@@ -26,6 +26,7 @@ function App() {
           {/* Rotas dentro do layout */}
           <Route path="/" element={<Layout />}>
             <Route path="/home" element={<Home />} />
+              <Route path="/agendamentos" element={<Calendario />} />
             <Route path="/agendamentos" element={<Calendario />} />
             <Route path="/pacientes" element={<Pacientes />} />
             <Route path="/especialistas" element={<Especialistas />} />
@@ -38,7 +39,6 @@ function App() {
       </Router>
       <Toaster />
     </QueryClientProvider>
-
   );
 
 }

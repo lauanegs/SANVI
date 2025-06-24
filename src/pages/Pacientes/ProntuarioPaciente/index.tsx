@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useAppStore } from "store/appStore";
 import { FormStateTypeMedicalRecord } from "./types";
-import { persistMedicalRecord } from "@api/patient";
+import { editMedicalRecord } from "@api/patient";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "utils/query-keys";
@@ -19,7 +19,6 @@ export function ProntuarioPaciente() {
     const store = useAppStore();
     const isFullScreen = store.isFullScreen;
 
-    const patientId = useAppStore().selectedPatient.id;
     const data = useAppStore().selectedPatient.medicalRecord;
 
     const isFirstRecord = !data;
@@ -50,30 +49,23 @@ export function ProntuarioPaciente() {
 
     async function handleSubmitForm() {
         try {
-            console.log("ASDASD", {
+            const response = await editMedicalRecord({
+                patientId: Number(formState.id),
                 hasHealthProblem: formState.hasHealthProblem,
                 hasMedicalTreatment: formState.hasMedicalTreatment,
                 isPregnant: formState.isPregnant,
-                patientId: patientId,
-                MedicalRecordData: formState.medicalRecordData
-            })
-            const response = await persistMedicalRecord({
-                hasHealthProblem: formState.hasHealthProblem,
-                hasMedicalTreatment: formState.hasMedicalTreatment,
-                isPregnant: formState.isPregnant,
-                patientId: patientId,
-                data: formState.medicalRecordData
+                medicalRecordData: formState.medicalRecordData,
+                updatedAt: formState.updatedAt,
+
             })
 
-            console.log("RESPONSE", response);
-            store.setIsValidPatientCache(false);
-
+            
             if (response.ok) {
                 toast.success("Prontuário do paciente editado com sucesso!", {
                     position: "bottom-right",
                     duration: 2000
                 })
-
+                
                 queryCliente.invalidateQueries({queryKey: queryKeys.ALL_PATIENTS});
             }
 
@@ -202,7 +194,7 @@ export function ProntuarioPaciente() {
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
                             <AnamneseCard
-                                title="hostória da doença atual"
+                                title="história da doença atual"
                                 value={formState.medicalRecordData.diseaseHistory}
                                 onChange={(e) => {
                                     setFormState(prev => ({
@@ -276,7 +268,7 @@ export function ProntuarioPaciente() {
                                 onChange={(e) => {
                                     setFormState(prev => ({
                                         ...prev, medicalRecordData: {
-                                            ...prev.medicalRecordData, medicalTreatment: e.target.value
+                                            ...prev.medicalRecordData, healthProblem: e.target.value
                                         }
                                     }))
                                 }}

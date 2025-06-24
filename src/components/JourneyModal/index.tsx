@@ -3,15 +3,13 @@ import { Container, ContentContainer, EmptyWrapper, JourneyMenuWrapper, JourneyW
 import { NewJourneyMenu } from "@components/NewJourneyMenu";
 import { useAppStore } from "store/appStore";
 import { JorneyModalProps } from "./types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@components/Icon";
 import theme from "theme";
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList } from "react-window";
 import { Text } from "@components/Text";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "utils/query-keys";
-import { findJourneyEventByTreatment, findSpecialist } from "@api/patient";
+import { findJourneyEventByTreatmentId, findSpecialist } from "@api/patient";
 import { ClipLoader } from "react-spinners";
 import { JourneyInterface } from "@api/patient/types";
 
@@ -24,11 +22,10 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
     const [isVisibleNewJourneyModal, setIsVisibleNewJourneyModal] = useState(false);
     const [selectedJourneyEvent, setSelectedJourneyEvent] = useState<JourneyInterface>();
 
-    console.log("selectedJourneyEvent", selectedJourneyEvent)
     const queryClient = useQueryClient();
     const { data = [], error, isPending, refetch } = useQuery({
         queryKey: queryKeys.ALL_TREATMENT_JOURNEYS,
-        queryFn: () => findJourneyEventByTreatment(selectedTreatment.id),
+        queryFn: () => findJourneyEventByTreatmentId(selectedTreatment.id),
         staleTime: 1000 * 60 * 5
     })
 
@@ -42,8 +39,13 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
         setSelectedJourneyEvent(event);
         setIsVisibleNewJourneyModal(true);
     }
+    
+    useEffect(() => {
+        queryClient.invalidateQueries({queryKey: queryKeys.ALL_TREATMENT_JOURNEYS})
+    })
 
     if (!isOpen) return;
+
 
     return (
         <Container onClick={onCloseModal}>
@@ -91,7 +93,7 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
                                     data.map((element, index) => (
                                         <JourneyCard
                                             onClick={() => handleSelectJourneyEvent(element)}
-                                            date={new Date(element.date)}
+                                            date={element.date}
                                             description={element.description}
                                             professional={dataSpecialists.find(item => item.id === element.specialist.id)?.name || '-'}
                                         />
@@ -118,7 +120,7 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
                             selectedJourneyEvent={selectedJourneyEvent}
                             onCloseModal={() => {
                                 setIsVisibleNewJourneyModal(false);
-                                setSelectedJourneyEvent(undefined)
+                                setSelectedJourneyEvent(undefined);
                                 onCloseModal();
                             }}
                         />

@@ -37,9 +37,9 @@ export function NewTreatmentMenu({ onCloseModal }: NewTreatmentMenuProps) {
 
             const response = await persistTreatment({
                 endedAt: null,
-                patient: patient,
+                patientId: patient.id,
                 title: formState.title,
-                startedAt: new Date().toISOString()
+                startedAt: formState.date.toISOString()
             });
 
             if (response.ok) {
@@ -81,7 +81,6 @@ export function NewTreatmentMenu({ onCloseModal }: NewTreatmentMenuProps) {
             ...prev, date: date
         }))
     }
-    
 
     return (
         <Container>
@@ -134,7 +133,7 @@ export function NewTreatmentMenu({ onCloseModal }: NewTreatmentMenuProps) {
                                 sizeType="G"
                                 inputType="date"
                                 onVisibleDateMenu={() => setIsVisibleDateModal(prev => !prev)}
-                                label="Data nascimento"
+                                label="Data de início"
                             />
                         }
                     />
