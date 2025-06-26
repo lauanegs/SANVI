@@ -8,9 +8,25 @@ interface GerenciarCobrancaProps {
 }
 
 export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
+	const CalcularValorParcela = (): number => {
+		if (
+			treatment &&
+			treatment.totalValue > 0 &&
+			treatment.totalInstallments > 0
+		) {
+			let valorDaParcela =
+				treatment?.totalValue / treatment?.totalInstallments;
+			return valorDaParcela;
+		} else {
+			return 0;
+		}
+	};
+
 	const [totalPaid, setTotalPaid] = useState(0);
 	// const [installments, setInstallments] = useState(0);
 	const [status, setStatus] = useState<PaymentStatus>("Pendente");
+	const [valorParcela, setValorParcela] =
+		useState<number>(CalcularValorParcela);
 
 	const paymentOptions: { label: string; value: PaymentMethod }[] = [
 		{ label: "Dinheiro", value: "Dinheiro" },
@@ -49,9 +65,7 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 							<label className={styles.label}>Valor</label>
 							<input
 								className={styles.input}
-								defaultValue={`R$ ${treatment.totalValue.toFixed(
-									2
-								)}`}
+								defaultValue={`R$ ${valorParcela.toFixed(2)}`}
 								readOnly
 							/>
 						</div>
