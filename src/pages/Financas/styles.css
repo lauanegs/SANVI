@@ -1,57 +1,57 @@
 .fin_AlterContainer {
-    height: 90vh;
-    width: 100%;
+	height: 95vh;
+	width: 100%;
 
-    background-color: var(--cinza-claro);
+	background-color: var(--cinza-claro);
 
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .fin_AlterContainer .fin_TabContainer {
 }
 
 .fin_TabContainer nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 32px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 14px 32px;
 }
 
 .fin_TabContainer .fin_tabs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .fin_TabContainer .fin_tabs .fin_tabButton {
-    border-bottom: 2px solid var(--azul-da-franca);
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-    border-radius: 0px;
+	border-bottom: 2px solid var(--azul-da-franca);
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-radius: 0px;
 
-    padding: 5px 16px 16px 5px;
-    width: 110px;
-    text-align: left;
-    background-color: transparent;
+	padding: 5px 16px 16px 5px;
+	width: 110px;
+	text-align: left;
+	background-color: transparent;
 
-    font-size: 0.9em;
-    color: var(--cinza-escuro);
-    cursor: pointer;
+	font-size: 0.9em;
+	color: var(--cinza-escuro);
+	cursor: pointer;
 }
 
 .fin_AlterContainer .fin_ContentAlterContainer {
-    padding: 20px 10px;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-    flex: 1;
+	padding: 20px 10px;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+	flex: 1;
 }
 
 .fin_tabButton.ativo {
-    background-color: var(--azul-da-franca) !important;
-    color: #fff !important;
-    border-top-right-radius: 5px !important;
+	background-color: var(--azul-da-franca) !important;
+	color: #fff !important;
+	border-top-right-radius: 5px !important;
 }
