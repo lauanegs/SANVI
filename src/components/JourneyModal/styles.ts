@@ -53,8 +53,8 @@ export const ListContainer = styled.div`
     overflow-y: auto;
     scrollbar-width: none;  
     -ms-overflow-style: none;
+    padding: 30px 0;
     width: 350px;  
-    height: 90vh;
 
 `;
 

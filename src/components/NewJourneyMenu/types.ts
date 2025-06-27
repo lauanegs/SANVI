@@ -10,4 +10,5 @@ export type NewJourneyMenuProps = {
     onCloseModal: () => void;
     selectedTreatment: TreatmentInterface;
     selectedJourneyEvent?: JourneyInterface;
+    onClearSelection: () => void;
 }

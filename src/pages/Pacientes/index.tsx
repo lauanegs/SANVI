@@ -19,7 +19,6 @@ import Icon from '@components/Icon';
 import { Text } from '@components/Text';
 import { useDebounce } from 'hooks/useDebounce';
 
-
 export function Pacientes() {
   const isFullScreen = useAppStore().isFullScreen;
   const store = useAppStore();
@@ -41,6 +40,8 @@ export function Pacientes() {
   const columns = Math.ceil((data?.length || 0) / rows);
 
   function searchOptions(searchText: string) {
+    if(error || isPending) return;
+    
     const validOptions = data.filter(item => item.name.toLowerCase().normalize("NFD").includes(searchText.toLowerCase().normalize("NFD")))
     setFilteredData(validOptions);
   }
@@ -125,16 +126,17 @@ export function Pacientes() {
             onChange={(e) => setSearchValue(e.target.value)}
 
           />
-          <CleanWrapper
-            onClick={() => setSearchValue('')}
-          >
-            <Icon
-              iconLibName='io5'
-              icon='IoClose'
-              color={theme.COLORS.AZUL_DA_FRANCA}
-              size={25}
-            />
-          </CleanWrapper>
+          {searchValue !== "" &&
+            <CleanWrapper
+              onClick={() => setSearchValue('')}
+            >
+              <Icon
+                iconLibName='io5'
+                icon='IoClose'
+                color={theme.COLORS.AZUL_DA_FRANCA}
+                size={25}
+              />
+            </CleanWrapper>}
         </SearchStyleWrapper>
         <ButtonWrapper>
           <GenericButton
@@ -184,7 +186,7 @@ export function Pacientes() {
                 <Text
                   color="PRIMARY"
                   size={14}
-                  text="Não há tratamentos cadastros"
+                  text="Não há pacientes cadastros"
                 />
               </EmptyWrapper>
               :

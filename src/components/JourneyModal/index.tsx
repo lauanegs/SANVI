@@ -123,6 +123,7 @@ export function JourneyModal({ onCloseModal, isOpen, selectedTreatment }: Jorney
                                 setSelectedJourneyEvent(undefined);
                                 onCloseModal();
                             }}
+                            onClearSelection={() => setSelectedJourneyEvent(undefined)}
                         />
                     </JourneyMenuWrapper>}
             </ContentContainer>

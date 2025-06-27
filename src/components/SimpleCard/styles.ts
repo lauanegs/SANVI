@@ -6,7 +6,7 @@ export const Container = styled.button`
 
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-around;
 
     border: none;
@@ -21,19 +21,30 @@ export const Container = styled.button`
     cursor: pointer;
 
     &:hover {
-        background-color: ${theme.COLORS.FUMACA_BRANCA_50};
-    }
+    background-color: ${theme.COLORS.FUMACA_BRANCA_50};
+}
 `;
 
-export const InfoTitle = styled.text`
+export const InfoTitle = styled.span`
     color: ${theme.COLORS.CINZA_ESCURO};
     font-size: 15px;
     font-weight: 500;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: left;
 `;
 
-export const InfoText = styled.text`
+export const InfoText = styled.span`
     color: ${theme.COLORS.CINZA_ESCURO};
     font-size: 12px;
     font-weight: 400;
-`;
 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: left;
+`;

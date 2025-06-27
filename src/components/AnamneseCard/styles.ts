@@ -18,6 +18,7 @@ export const TextFieldWrapper = styled.div`
     background-color: ${theme.COLORS.BRANCO};
     padding: 8px 15px;
     border-radius: 5px;
+    box-shadow: 1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44;
 `;
 
 export const TextField = styled.textarea`
@@ -27,5 +28,6 @@ export const TextField = styled.textarea`
     border-radius: 5px;
     resize: none;
     outline: none;
+    background-color: ${theme.COLORS.BRANCO};
 
 `;

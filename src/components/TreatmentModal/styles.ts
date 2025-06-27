@@ -21,11 +21,11 @@ export const Container = styled.div`
 export const ContentContainer = styled.div`
     display: flex;
     flex-direction: row;
-    width: 100%;
     justify-content: center;
     align-items: flex-start;
 
     gap: 30px;
+    border-radius: 4px;
     background: none;
 `;
 
@@ -42,4 +42,5 @@ export const JourneyMenuWrapper = styled.div`
 
 export const TreatmentMenuWrapper = styled.div`
     display: flex;
+    width: 350px;
 `;

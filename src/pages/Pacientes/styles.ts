@@ -61,7 +61,7 @@ export const ReloadWrapper = styled.div`
 
     align-items: center;
     justify-content: center;
-    background-color: ${theme.COLORS.FUMACA_BRANCA};
+    background-color: ${theme.COLORS.BACKGROUND};
 
 `;
 

@@ -21,11 +21,8 @@ export function ProntuarioPaciente() {
 
     const data = useAppStore().selectedPatient.medicalRecord;
 
-    const isFirstRecord = !data;
-
     const SIZE_TITLE = isFullScreen ? 14 : 12;
 
-    const [hasChanges, setHasChanges] = useState(true);
     const queryCliente = useQueryClient();
 
     const [formState, setFormState] = useState<FormStateTypeMedicalRecord>({
@@ -59,14 +56,14 @@ export function ProntuarioPaciente() {
 
             })
 
-            
+
             if (response.ok) {
                 toast.success("Prontuário do paciente editado com sucesso!", {
                     position: "bottom-right",
                     duration: 2000
                 })
-                
-                queryCliente.invalidateQueries({queryKey: queryKeys.ALL_PATIENTS});
+
+                queryCliente.invalidateQueries({ queryKey: queryKeys.ALL_PATIENTS });
             }
 
             if (!response.ok) {
@@ -96,7 +93,7 @@ export function ProntuarioPaciente() {
         };
 
         form.addEventListener("wheel", handleWheel, { passive: false });
-        
+
         return () => {
             form.removeEventListener("wheel", handleWheel);
         };
@@ -115,22 +112,8 @@ export function ProntuarioPaciente() {
             })
     }, [])
 
-    useEffect(() => {
-        if (data && data.medicalRecordData && !isFirstRecord){
-            const dataObj = {
-                createdAt: new Date(data.createdAt),
-                hasHealthProblem: data.hasHealthProblem,
-                hasMedicalTreatment: data.hasMedicalTreatment,
-                id: data.id.toString(),
-                isPregnant: data.isPregnant,
-                medicalRecordData: data.medicalRecordData,
-                updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date()
-            }
-
-            const isNoChanges = JSON.stringify(dataObj) === JSON.stringify(formState);
-            setHasChanges(!isNoChanges);
-        }
-    }, [formState])
+    console.log("DATA", data);
+    console.log("FORMSTATE", formState);
 
     return (
         <Container>
@@ -141,7 +124,6 @@ export function ProntuarioPaciente() {
                 thirdSubScreen="prontuarioPaciente"
                 buttonTitle="Salvar"
                 onPressButton={handleSubmitForm}
-                buttonDisabled={!hasChanges}
             />
             <Form
                 ref={formRef}
@@ -155,13 +137,12 @@ export function ProntuarioPaciente() {
                         />
                     </FormTitleRowWrapper>
                     <ContainerInfo>
-                        {!isFirstRecord &&
-                            <Input
-                                label="ID Prontuário"
-                                disabled
-                                value={formState.id}
-                                sizeType="MG"
-                            />}
+                        <Input
+                            label="ID Prontuário"
+                            disabled
+                            value={formState.id}
+                            sizeType="MG"
+                        />
                         <Input
                             label="Última atualização"
                             sizeType="M"
@@ -189,7 +170,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                
+
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
@@ -203,7 +184,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                
+
                             />
                         </ContainerAnamneseCard>
                     </VariableRowWrapper>
@@ -219,7 +200,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                
+
                             />
                         </ContainerAnamneseCard>
                         <ContainerAnamneseCard>
@@ -233,7 +214,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                
+
                             />
                         </ContainerAnamneseCard>
                         <FirstSelectStyleWrapper>
@@ -259,6 +240,24 @@ export function ProntuarioPaciente() {
                                         setFormState(prev => ({
                                             ...prev, hasHealthProblem: state
                                         }))
+
+                                        if (!state) {
+                                            setFormState(prev => ({
+                                                ...prev, medicalRecordData: {
+                                                    ...prev.medicalRecordData, healthProblem: ''
+                                                }
+                                            }))
+                                            return;
+                                        }
+
+                                        if(data && data.medicalRecordData.healthProblem !== ''){
+
+                                            setFormState(prev => ({
+                                                ...prev, medicalRecordData: {
+                                                    ...prev.medicalRecordData, healthProblem: data.medicalRecordData.healthProblem
+                                                }
+                                            }))
+                                        }
                                     }}
                                     direction="vertical"
                                 />
@@ -272,7 +271,7 @@ export function ProntuarioPaciente() {
                                         }
                                     }))
                                 }}
-                                
+                                isDisabled={!formState.hasHealthProblem}
                             />
                         </VerticalWrapper>
                         <VerticalWrapper>
@@ -284,6 +283,24 @@ export function ProntuarioPaciente() {
                                         setFormState(prev => ({
                                             ...prev, hasMedicalTreatment: state
                                         }))
+
+                                        if (!state) {
+                                            setFormState(prev => ({
+                                                ...prev, medicalRecordData: {
+                                                    ...prev.medicalRecordData, medicalTreatment: ''
+                                                }
+                                            }))
+                                            return;
+                                        }
+
+                                        if(data && data.medicalRecordData.medicalTreatment !== ''){
+
+                                            setFormState(prev => ({
+                                                ...prev, medicalRecordData: {
+                                                    ...prev.medicalRecordData, medicalTreatment: data.medicalRecordData.medicalTreatment
+                                                }
+                                            }))
+                                        }
                                     }}
                                     direction="vertical"
                                 />
@@ -296,8 +313,9 @@ export function ProntuarioPaciente() {
                                             ...prev.medicalRecordData, medicalTreatment: e.target.value
                                         }
                                     }))
+                                    
                                 }}
-                                
+                                isDisabled={!formState.hasMedicalTreatment}
                             />
                         </VerticalWrapper>
                     </VariableRowWrapper>
