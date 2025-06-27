@@ -6,7 +6,7 @@ export const Container = styled.div`
     flex: 1;
 
     flex-direction: column;
-    background-color: ${theme.COLORS.FUMACA_BRANCA};
+    background-color: ${theme.COLORS.BACKGROUND};
 `;
 
 export const CommandHeader = styled.div`

@@ -13,7 +13,7 @@ export const Container = styled.div`
 `;
 
 export const WrapperLogo = styled.div`
-    padding: 1px 10px;
+    padding: 0 10px;
 `;
 
 export const DefaultTitle = styled.p`

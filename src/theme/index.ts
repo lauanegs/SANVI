@@ -14,6 +14,7 @@ export default {
         BRANCO: "#FFFFFF",
         CINZA_NAVIO_DE_GUERRA: "#888888",
         ERROR: "#DC2626",
+        BACKGROUND: "#E4E4E4",
     }
 }
 

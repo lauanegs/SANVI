@@ -10,6 +10,9 @@ import styles from "./event-modal.module.css";
 import * as Yup from "yup";
 import { formatPhoneNumber } from "utils/formatFunctions";
 import InputMask from "react-input-mask";
+import DatePicker from "react-datepicker";
+import { NumericFormat } from "react-number-format";
+import theme from "theme";
 
 const eventSchema = Yup.object().shape({
   patientId: Yup.string().required("Paciente é obrigatório."),
@@ -88,7 +91,8 @@ export default function EventModal({
   const [patientName, setPatientName] = useState('');
   const [specialistId, setSpecialistId] = useState<string>('');
   const [specialistName, setSpecialistName] = useState('');
-  const [treatmentId, setTreatmentId] = useState<string>(""); // antes era treatment
+  const [treatmentId, setTreatmentId] = useState<string>("");
+  const [isVisibleDateModal, setIsVisibleDateModal] = useState(false);
 
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -413,16 +417,34 @@ export default function EventModal({
             <div className={styles.formGroup}>
               <div style={{ display: "flex", gap: "12px" }}>
                 <div className={styles.dateInputContainer} style={{ flex: 1 }}>
-                  <Input
-                    label="Data"
-                    inputType="date"
-                    id="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    sizeType={"G"}
+                  <DatePicker
+                    selected={date ? new Date(date) : null}
+                    onSelect={() => setIsVisibleDateModal(false)}
+                    locale="ptBR"
+                    showYearDropdown
+                    dropdownMode="select"
+                    onChange={(selectedDate) => {
+                      setIsVisibleDateModal(false);
+                      if (selectedDate) {
+                        setDate(selectedDate.toISOString().split("T")[0]);
+                      }
+                    }}
+                    onInputClick={() => setIsVisibleDateModal((prev) => !prev)}
+                    open={isVisibleDateModal}
+                    dateFormat="dd/MM/yyyy"
+                    customInput={
+                      <Input
+                        sizeType="G"
+                        inputType="date"
+                        label="Data"
+                        errorMessage={errors.date}
+                        onVisibleDateMenu={() => setIsVisibleDateModal((prev) => !prev)}
+                      />
+                    }
                   />
                   {errors.date && <p className={styles.error}>{errors.date}</p>}
                 </div>
+
                 <div style={{ flex: 1 }}>
                   <Input
                     label="Hora"
@@ -515,18 +537,35 @@ export default function EventModal({
                 </div>
 
                 <div className={styles.formGroup}>
-                  <Input
-                    label="Valor"
-                    id="value"
-                    placeholder="Valor"
-                    type="number"
-                    className={styles.input}
+
+                  <NumericFormat
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    sizeType={"G"}
+                    onValueChange={(e) => setValue(e.value)}
+                    isAllowed={(values) => {
+                      const { floatValue } = values;
+                      return floatValue === undefined || floatValue <= 10000000;
+                    }}
+                    thousandSeparator="."
+                    prefix="R$ "
+                    decimalSeparator=","
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
+                    placeholder="R$ 0,00"
+                    style={{
+                      width: "100%",
+                      outline: "none",
+                      border: "none",
+                      height: "32px",
+                      backgroundColor: theme.COLORS.BRANCO,
+                      paddingLeft: 10,
+                      borderRadius: "5px",
+                      boxShadow: `1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44`,
+                    }}
                   />
-                  {errors.value && <p className={styles.error}>{errors.value}</p>}
+
                 </div>
+
               </>
             )}
 

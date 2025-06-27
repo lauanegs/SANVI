@@ -18,7 +18,7 @@ export function Controls() {
         <ActionButton onClick={async () => {
           await appWindow.minimize();
         }}>
-          <Icon color="#fff" iconLibName="fa" icon="FaWindowMinimize" size={14} />
+          <Icon color="#fff" iconLibName="bs" icon="BsDash" size={30} />
         </ActionButton>
         <ActionButton onClick={async () => {
           await appWindow.toggleMaximize();
@@ -26,7 +26,7 @@ export function Controls() {
           console.log(isFullScreen);
           store.setIsFullScreen(isFullScreen);
         }}>
-          <Icon color="#fff" iconLibName="fa" icon="FaClone" size={14} />
+          <Icon color="#fff" iconLibName="fa" icon="FaClone" size={12} />
         </ActionButton>
         <ActionButton onClick={async () => {
           await appWindow.close();

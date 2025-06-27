@@ -52,7 +52,7 @@ export default function DentistList() {
                 return {
                   ...specialist,
                   status: "indisponivel",
-                  timeRange: "Não disponível"
+                  timeRange: "Não disponível hoje"
                 }
               }
 

@@ -10,9 +10,10 @@ import {
     Form,
     FormContentWrapper,
     FormTitleRowWrapper,
-    StyleWrapper,
+    
     VariableRowWrapper,
-    WrapperInput
+    WrapperInput,
+    WrapperInputStyle
 } from "./styles";
 import { GenericHeader } from "@components/GenericHeader";
 import { Text } from "@components/Text";
@@ -144,7 +145,7 @@ export function CadastroPaciente() {
             setFormErrors({});
 
             if (isNewRegistration) {
-                
+
                 const response = await persistPatient({
                     address: formState.address,
                     addressNumber: Number(formState.addressNumber),
@@ -187,7 +188,7 @@ export function CadastroPaciente() {
                 }
 
             } else {
-               
+
                 const response = await editPatient({
                     address: formState.address,
                     addressNumber: Number(formState.addressNumber),
@@ -351,27 +352,27 @@ export function CadastroPaciente() {
         if (data && !isNewRegistration && hasChanges) {
             const dataObj = {
                 address: data.address ? data.address : '',
-                addressNumber: data.addressNumber ? data.addressNumber.toString() : '',
+                addressNumber: data.addressNumber ? data.addressNumber : '',
                 birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
                 cpf: data.cpf ? data.cpf : '',
                 createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
                 gender: data.gender ? data.gender : '',
-                id: data.id ? data.id.toString() : '',
+                id: data.id ? data.id : '',
                 name: data.name ? data.name : '',
                 neighborhood: data.neighborhood ? data.neighborhood : '',
-                phoneNumber: data.phoneNumber ? data.phoneNumber.toString() : '',
+                phoneNumber: data.phoneNumber ? data.phoneNumber : '',
                 profession: data.profession ? data.profession : '',
                 rg: data.rg ? data.rg : '',
                 cep: data.cep ? data.cep : '',
                 uf: data.uf ? data.uf : mockStateAbbreviations[0],
                 guardianName: data.guardianName ? data.guardianName : '',
                 guardianCPF: data.guardianCPF ? data.guardianCPF : '',
-                guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber.toString() : '',
+                guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber : '',
                 medicalRecord: {
                     createdAt: data.medicalRecord ? data.medicalRecord.createdAt : new Date(),
                     hasHealthProblem: data.medicalRecord ? data.medicalRecord.hasHealthProblem : false,
                     hasMedicalTreatment: data.medicalRecord ? data.medicalRecord.hasMedicalTreatment : false,
-                    id: data.medicalRecord ? data.medicalRecord.id.toString() : '',
+                    id: data.medicalRecord ? data.medicalRecord.id : '',
                     isPregnant: data.medicalRecord ? data.medicalRecord.isPregnant : false,
                     medicalRecordData: data.medicalRecord ? data.medicalRecord.medicalRecordData : {
                         diseaseHistory: '',
@@ -413,102 +414,7 @@ export function CadastroPaciente() {
 
             <Form onScroll={handleOpenSelectOptions} style={{ paddingTop: PADDING_TOP }} ref={formRef}>
                 <FormContentWrapper>
-                    <FormTitleRowWrapper>
-                        <Text color="TERTIARY" size={SIZE_TITLE} text="Informações Gerais" />
-                        <Text color="TERTIARY" size={SIZE_TITLE} text="Informações do Responsável" />
-                        <CheckBoxWrapper>
-                            <CheckBox onClick={handleCheckAgeOfMajority}>
-                                {isMinor ? (
-                                    <Icon iconLibName="md" icon="MdCheckBox" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
-                                ) : (
-                                    <Icon iconLibName="md" icon="MdCheckBoxOutlineBlank" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
-                                )}
-                            </CheckBox>
-                            <Text color="TERTIARY" size={SIZE_TITLE} text="Declaro que o Paciente é menor de idade" />
-                        </CheckBoxWrapper>
-                    </FormTitleRowWrapper>
 
-                    <ColunmsWrapper>
-                        <ColunmLeftWrapper>
-                            {!isNewRegistration && (
-                                <Input
-                                    sizeType="G"
-                                    label="ID Paciente"
-                                    value={data.id}
-                                    disabled
-                                />
-                            )}
-                            <Input
-                                sizeType="MG"
-                                label="Data de registro" value={formState.createdAt ? formState.createdAt.toLocaleDateString() : new Date().toLocaleDateString()}
-                                disabled
-                            />
-                        </ColunmLeftWrapper>
-
-                        <ColunmRightWrapper>
-                            <Input
-                                sizeType="G"
-                                label="Nome completo"
-                                placeholder={isMinor ? "João Ribeiro dos Santos" : ""}
-                                disabled={!isMinor}
-                                value={formState.guardianName || ""}
-                                onChange={e =>
-                                    setFormState(prev => ({ ...prev, guardianName: e.target.value }))
-                                }
-                                errorMessage={formErrors.guardianName}
-                            />
-
-                            <StyleWrapper>
-                                <WrapperInput>
-                                    <InputMask
-                                        mask="999.999.999-99"
-                                        value={formState.guardianCPF || ""}
-                                        disabled={!isMinor}
-                                        onChange={e => {
-                                            const maskedValue = e.target.value;
-                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
-                                            setFormState(prev => ({ ...prev, guardianCPF: unmaskedValue }))
-                                        }}
-                                        alwaysShowMask={isMinor}
-                                    >
-                                        {inputProps => (
-                                            <Input
-                                                sizeType="M"
-                                                label="CPF"
-                                                disabled={!isMinor}
-                                                {...inputProps}
-                                                errorMessage={formErrors.guardianCPF}
-                                            />
-                                        )}
-                                    </InputMask>
-                                </WrapperInput>
-
-                                <WrapperInput style={{ marginLeft: '20%' }}>
-                                    <InputMask
-                                        mask="(99) 99999-9999"
-                                        value={formState.guardianPhoneNumber || ""}
-                                        disabled={!isMinor}
-                                        onChange={e => {
-                                            const maskedValue = e.target.value;
-                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
-                                            setFormState(prev => ({ ...prev, guardianPhoneNumber: unmaskedValue }))
-                                        }}
-                                        alwaysShowMask={isMinor}
-                                    >
-                                        {inputProps => (
-                                            <Input
-                                                sizeType="P"
-                                                disabled={!isMinor}
-                                                label="Celular"
-                                                {...inputProps}
-                                                errorMessage={formErrors.guardianPhoneNumber}
-                                            />
-                                        )}
-                                    </InputMask>
-                                </WrapperInput>
-                            </StyleWrapper>
-                        </ColunmRightWrapper>
-                    </ColunmsWrapper>
 
                     <FormTitleRowWrapper>
                         <Text color="TERTIARY" size={SIZE_TITLE} text="Informações do paciente" />
@@ -730,6 +636,106 @@ export function CadastroPaciente() {
                             </VariableRowWrapper>
                         </ColumnCenterRowWrapper>
                     </ColumnCenterWrapper>
+
+                    <FormTitleRowWrapper>
+                        <Text color="TERTIARY" size={SIZE_TITLE} text="Informações Gerais" />
+                        <Text color="TERTIARY" size={SIZE_TITLE} text="Informações do Responsável" />
+                        <CheckBoxWrapper>
+                            <CheckBox onClick={handleCheckAgeOfMajority}>
+                                {isMinor ? (
+                                    <Icon iconLibName="md" icon="MdCheckBox" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
+                                ) : (
+                                    <Icon iconLibName="md" icon="MdCheckBoxOutlineBlank" color={theme.COLORS.AZUL_DA_FRANCA} size={15} />
+                                )}
+                            </CheckBox>
+                            <Text color="TERTIARY" size={SIZE_TITLE} text="Declaro que o Paciente é menor de idade" />
+                        </CheckBoxWrapper>
+                    </FormTitleRowWrapper>
+
+                    <ColunmsWrapper>
+                        <ColunmLeftWrapper>
+                            {!isNewRegistration && (
+                                <Input
+                                    sizeType="G"
+                                    label="ID Paciente"
+                                    value={data.id}
+                                    disabled
+                                />
+                            )}
+                            <Input
+                                sizeType="MG"
+                                label="Data de registro" value={formState.createdAt ? formState.createdAt.toLocaleDateString() : new Date().toLocaleDateString()}
+                                disabled
+                            />
+                        </ColunmLeftWrapper>
+
+                        <ColunmRightWrapper>
+                            <Input
+                                sizeType="G"
+                                label="Nome completo"
+                                placeholder={isMinor ? "João Ribeiro dos Santos" : ""}
+                                disabled={!isMinor}
+                                value={formState.guardianName || ""}
+                                onChange={e =>
+                                    setFormState(prev => ({ ...prev, guardianName: e.target.value }))
+                                }
+                                errorMessage={formErrors.guardianName}
+                            />
+
+
+                            <WrapperInput>
+                                <WrapperInputStyle>
+                                    <InputMask
+                                        mask="999.999.999-99"
+                                        value={formState.guardianCPF || ""}
+                                        disabled={!isMinor}
+                                        onChange={e => {
+                                            const maskedValue = e.target.value;
+                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                            setFormState(prev => ({ ...prev, guardianCPF: unmaskedValue }))
+                                        }}
+                                        alwaysShowMask={isMinor}
+                                    >
+                                        {inputProps => (
+                                            <Input
+                                                sizeType="MG"
+                                                label="CPF"
+                                                disabled={!isMinor}
+                                                {...inputProps}
+                                                errorMessage={formErrors.guardianCPF}
+                                            />
+                                        )}
+                                    </InputMask>
+                                </WrapperInputStyle>
+                                <WrapperInputStyle>
+                                    <InputMask
+                                        mask="(99) 99999-9999"
+                                        value={formState.guardianPhoneNumber || ""}
+                                        disabled={!isMinor}
+                                        onChange={e => {
+                                            const maskedValue = e.target.value;
+                                            const unmaskedValue = maskedValue.replace(/\D/g, '');
+                                            setFormState(prev => ({ ...prev, guardianPhoneNumber: unmaskedValue }))
+                                        }}
+                                        alwaysShowMask={isMinor}
+                                    >
+                                        {inputProps => (
+                                            <Input
+                                                sizeType="G"
+                                                disabled={!isMinor}
+                                                label="Celular"
+                                                {...inputProps}
+                                                errorMessage={formErrors.guardianPhoneNumber}
+                                            />
+                                        )}
+                                    </InputMask>
+                                </WrapperInputStyle>
+
+                            </WrapperInput>
+
+
+                        </ColunmRightWrapper>
+                    </ColunmsWrapper>
                 </FormContentWrapper>
             </Form>
         </Container>

@@ -6,7 +6,7 @@ export function TabCard({title, ...rest}: TabCardProps){
         <Container
             {...rest}
         >
-            <Title>{title}</Title>
+            {title}
         </Container>
 
     );

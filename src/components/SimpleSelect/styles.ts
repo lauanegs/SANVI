@@ -28,7 +28,7 @@ export const OptionWrapper = styled.button`
     align-items: center;
     justify-content: flex-start;
 
-    background-color: ${theme.COLORS.FUMACA_BRANCA};
+    background-color: ${theme.COLORS.BACKGROUND};
     border: none;
     gap: 2px;
 `;

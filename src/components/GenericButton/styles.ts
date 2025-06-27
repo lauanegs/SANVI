@@ -13,7 +13,7 @@ export const Container = styled.button<ColorButtonProp>`
     border: none;
     width: 127px;
     height: 32px;
-    padding: 5px;
+
     border-radius: 4px;
     
     ${({color}) => color === "TERTIARY" ? css`` : css`
