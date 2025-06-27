@@ -5,7 +5,7 @@ export const Container = styled.div`
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: ${theme.COLORS.FUMACA_BRANCA};
+    background-color: ${theme.COLORS.BACKGROUND};
 `;
 
 export const ContentContainer = styled.div`

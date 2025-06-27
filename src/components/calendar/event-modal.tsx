@@ -11,6 +11,8 @@ import * as Yup from "yup";
 import { formatPhoneNumber } from "utils/formatFunctions";
 import InputMask from "react-input-mask";
 import DatePicker from "react-datepicker";
+import { NumericFormat } from "react-number-format";
+import theme from "theme";
 
 const eventSchema = Yup.object().shape({
   patientId: Yup.string().required("Paciente é obrigatório."),
@@ -535,17 +537,33 @@ export default function EventModal({
                 </div>
 
                 <div className={styles.formGroup}>
-                  <Input
-                    label="Valor"
-                    id="value"
-                    placeholder="Valor"
-                    type="number"
-                    className={styles.input}
+
+                  <NumericFormat
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    sizeType={"G"}
+                    onValueChange={(e) => setValue(e.value)}
+                    isAllowed={(values) => {
+                      const { floatValue } = values;
+                      return floatValue === undefined || floatValue <= 10000000;
+                    }}
+                    thousandSeparator="."
+                    prefix="R$ "
+                    decimalSeparator=","
+                    decimalScale={2}
+                    fixedDecimalScale
+                    allowNegative={false}
+                    placeholder="R$ 0,00"
+                    style={{
+                      width: "100%",
+                      outline: "none",
+                      border: "none",
+                      height: "32px",
+                      backgroundColor: theme.COLORS.BRANCO,
+                      paddingLeft: 10,
+                      borderRadius: "5px",
+                      boxShadow: `1px 2px 8px ${theme.COLORS.CINZA_NAVIO_DE_GUERRA}44`,
+                    }}
                   />
-                  {errors.value && <p className={styles.error}>{errors.value}</p>}
+
                 </div>
 
               </>

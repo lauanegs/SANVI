@@ -6,7 +6,7 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
 
-    background-color: ${theme.COLORS.FUMACA_BRANCA};
+    background-color: ${theme.COLORS.BACKGROUND};
 `;
 
 export const Form = styled.div`

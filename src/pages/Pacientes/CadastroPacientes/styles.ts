@@ -54,7 +54,7 @@ export const ColunmsWrapper = styled.div`
     flex-direction: row;
 
     gap: 15px;
-    padding-bottom: 40px;
+
 `;
 
 export const ColunmLeftWrapper = styled.div`
@@ -73,15 +73,16 @@ export const ColunmRightWrapper= styled.div`
     gap: 20px;
 `;
 
-export const StyleWrapper = styled.div`
+export const WrapperInput = styled.div`
     display: flex;
-    min-width: 100px;
-    flex-direction: column;
+    flex-direction: row;
 
-    gap: 20px;
+    width: 100%
 `;
 
-export const WrapperInput = styled.div`
+export const WrapperInputStyle = styled.div`
+    width: 50%
+
 `;
 
 export const ColumnCenterWrapper = styled.div`
@@ -89,6 +90,7 @@ export const ColumnCenterWrapper = styled.div`
     display: flex;
     flex-direction: column;
 
+    margin-bottom: 40px;
     gap: 15px;
     
 `;

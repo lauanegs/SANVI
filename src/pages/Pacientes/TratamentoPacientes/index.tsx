@@ -16,6 +16,7 @@ import theme from "theme";
 import { TreatmentInterface } from "@api/patient/types";
 import Icon from "@components/Icon";
 import { Text } from "@components/Text";
+import toast from "react-hot-toast";
 
 export function TratamentoPacientes() {
     const store = useAppStore();
@@ -74,8 +75,18 @@ export function TratamentoPacientes() {
         return (
             <div style={{ ...style, ...PADDING_RIGHT_JOURNEY }}>
                 <TreatmentCard
-                    disabled={isPendingSpecialists}
-                    onClick={() => handleOpenJourneyModal(element)}
+                    onClick={() => {
+                        if (dataSpecialists.length === 0) {
+                            toast.success("Cadastre um especialista para criar jornadas", {
+                                position: "bottom-right",
+                                duration: 2000,
+
+                                icon: <Icon iconLibName="io" icon="IoIosWarning" color={theme.COLORS.AZUL_DA_FRANCA_60} size={30}/>
+                            });
+                            return;
+                        }
+                        handleOpenJourneyModal(element)
+                    }}
                     count={index + 1}
                     startDate={element.startedAt}
                     title={element.title}

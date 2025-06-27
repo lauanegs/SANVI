@@ -10,8 +10,8 @@ export function GenericHeader() {
         </DefaultTitle>
         <WrapperLogo>
             <LogoSANVI
-                height='55'
-                width='55'
+                height='44'
+                width='44'
             />
         </WrapperLogo>
 

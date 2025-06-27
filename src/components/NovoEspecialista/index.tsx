@@ -2,6 +2,8 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import "./NovoEspecialista.css";
 import { createSpecialist } from "@api/specialist/create";
 import generateSchedulesForToday from "lib/gerarSchedules";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "utils/query-keys";
 
 export const NovoEspecialista = forwardRef((props, ref) => {
 	const [formData, setFormData] = useState({
@@ -20,6 +22,7 @@ export const NovoEspecialista = forwardRef((props, ref) => {
 	});
 
 	const [schedules, setSchedules] = useState(generateSchedulesForToday);
+	const queryClient = useQueryClient();
 
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -67,6 +70,7 @@ export const NovoEspecialista = forwardRef((props, ref) => {
 
 		try {
 			await createSpecialist(payload, schedules);
+			queryClient.invalidateQueries({queryKey: queryKeys.ALL_SPECIALISTS});
 			return true;
 		} catch {
 			alert("Erro ao cadastrar especialista");
