@@ -10,7 +10,7 @@ import {
     Form,
     FormContentWrapper,
     FormTitleRowWrapper,
-    
+
     VariableRowWrapper,
     WrapperInput,
     WrapperInputStyle
@@ -87,7 +87,6 @@ export function CadastroPaciente() {
 
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
     const [canBeOpenSelect, setCanBeOpenSelect] = useState(true);
-    const [hasChanges, setHasChanges] = useState(true);
 
     const formRef = useRef<HTMLDivElement>(null);
 
@@ -188,7 +187,6 @@ export function CadastroPaciente() {
                 }
 
             } else {
-
                 const response = await editPatient({
                     address: formState.address,
                     addressNumber: Number(formState.addressNumber),
@@ -200,14 +198,16 @@ export function CadastroPaciente() {
                     guardianCPF: formState.guardianCPF,
                     guardianName: formState.guardianName,
                     guardianPhoneNumber: typeof formState.guardianPhoneNumber === "string" ? Number(formState.guardianPhoneNumber) : null,
-                    id: Number(formState.id),
-                    medicalRecord: data.medicalRecord,
+                    id: data.id,
+                    medicalRecord: {
+                        ...data.medicalRecord,
+                        patientId: data.id
+                    },
                     name: formState.name,
                     neighborhood: formState.neighborhood,
                     phoneNumber: Number(formState.phoneNumber),
                     profession: formState.profession,
                     rg: formState.rg,
-                    treatments: data.treatments,
                     uf: formState.uf,
                     updatedAt: new Date().toISOString()
                 });
@@ -348,49 +348,6 @@ export function CadastroPaciente() {
         }
     }, [isMinor])
 
-    useEffect(() => {
-        if (data && !isNewRegistration && hasChanges) {
-            const dataObj = {
-                address: data.address ? data.address : '',
-                addressNumber: data.addressNumber ? data.addressNumber : '',
-                birthDate: data.birthDate ? new Date(data.birthDate) : new Date(),
-                cpf: data.cpf ? data.cpf : '',
-                createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
-                gender: data.gender ? data.gender : '',
-                id: data.id ? data.id : '',
-                name: data.name ? data.name : '',
-                neighborhood: data.neighborhood ? data.neighborhood : '',
-                phoneNumber: data.phoneNumber ? data.phoneNumber : '',
-                profession: data.profession ? data.profession : '',
-                rg: data.rg ? data.rg : '',
-                cep: data.cep ? data.cep : '',
-                uf: data.uf ? data.uf : mockStateAbbreviations[0],
-                guardianName: data.guardianName ? data.guardianName : '',
-                guardianCPF: data.guardianCPF ? data.guardianCPF : '',
-                guardianPhoneNumber: data.guardianPhoneNumber ? data.guardianPhoneNumber : '',
-                medicalRecord: {
-                    createdAt: data.medicalRecord ? data.medicalRecord.createdAt : new Date(),
-                    hasHealthProblem: data.medicalRecord ? data.medicalRecord.hasHealthProblem : false,
-                    hasMedicalTreatment: data.medicalRecord ? data.medicalRecord.hasMedicalTreatment : false,
-                    id: data.medicalRecord ? data.medicalRecord.id : '',
-                    isPregnant: data.medicalRecord ? data.medicalRecord.isPregnant : false,
-                    medicalRecordData: data.medicalRecord ? data.medicalRecord.medicalRecordData : {
-                        diseaseHistory: '',
-                        familyMedicalHistory: '',
-                        healthProblem: '',
-                        mainComplaint: '',
-                        medicalTreatment: '',
-                        pastMedicalHistory: '',
-                    },
-                    updatedAt: data.medicalRecord ? data.medicalRecord.updatedAt : new Date(),
-                }
-            }
-
-            const isNoChanges = JSON.stringify(dataObj) === JSON.stringify(formState);
-            setHasChanges(!isNoChanges);
-        }
-    }, [formState]);
-
     return (
         <Container>
             <GenericHeader />
@@ -399,7 +356,6 @@ export function CadastroPaciente() {
                     firstSubScreen="cadastroPaciente"
                     buttonTitle="Salvar"
                     onPressButton={handleSubmitForm}
-                    buttonDisabled={!hasChanges}
                 />
                 :
                 <MenuHeader
@@ -408,7 +364,6 @@ export function CadastroPaciente() {
                     thirdSubScreen="prontuarioPaciente"
                     buttonTitle="Salvar"
                     onPressButton={handleSubmitForm}
-                    buttonDisabled={!hasChanges}
                 />
             }
 
@@ -428,8 +383,12 @@ export function CadastroPaciente() {
                                     label="Nome completo"
                                     placeholder="João Ribeiro dos Santos"
                                     value={formState.name}
-                                    onChange={e =>
+                                    onChange={e => {
+                                        const isOutLength = e.target.value.length > 150;
+
+                                        if (isOutLength) return;
                                         setFormState(prev => ({ ...prev, name: e.target.value }))
+                                    }
                                     }
                                     errorMessage={formErrors.name}
                                 />
@@ -478,8 +437,12 @@ export function CadastroPaciente() {
                                     label="Logradouro"
                                     placeholder="Rua José de Santana"
                                     value={formState.address}
-                                    onChange={e =>
+                                    onChange={e => {
+                                        const isOutLength = e.target.value.length > 255;
+
+                                        if (isOutLength) return;
                                         setFormState(prev => ({ ...prev, address: e.target.value }))
+                                    }
                                     }
                                     errorMessage={formErrors.address}
                                 />
@@ -515,8 +478,12 @@ export function CadastroPaciente() {
                                     label="Bairro"
                                     placeholder="Belo Horizonte"
                                     value={formState.neighborhood}
-                                    onChange={e =>
+                                    onChange={e => {
+                                        const isOutLength = e.target.value.length > 255;
+
+                                        if (isOutLength) return;
                                         setFormState(prev => ({ ...prev, neighborhood: e.target.value }))
+                                    }
                                     }
                                     errorMessage={formErrors.neighborhood}
                                 />
@@ -528,9 +495,15 @@ export function CadastroPaciente() {
                                     label="Número"
                                     placeholder="145"
                                     value={formState.addressNumber}
-                                    onChange={e =>
-                                        setFormState(prev => ({ ...prev, addressNumber: e.target.value }))
-                                    }
+                                    onChange={e => {
+                                        const numericValue = e.target.value.replace(/\D/g, '');
+                                        const isOutLength = numericValue.length > 9;
+
+                                        if (isOutLength) return;
+
+                                        setFormState(prev => ({ ...prev, addressNumber: numericValue }))
+
+                                    }}
                                     errorMessage={formErrors.addressNumber}
                                 />
                             </VariableRowWrapper>
@@ -676,8 +649,12 @@ export function CadastroPaciente() {
                                 placeholder={isMinor ? "João Ribeiro dos Santos" : ""}
                                 disabled={!isMinor}
                                 value={formState.guardianName || ""}
-                                onChange={e =>
+                                onChange={e => {
+                                    const isOutLength = e.target.value.length > 150;
+
+                                    if (isOutLength) return;
                                     setFormState(prev => ({ ...prev, guardianName: e.target.value }))
+                                }
                                 }
                                 errorMessage={formErrors.guardianName}
                             />

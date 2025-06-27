@@ -4,7 +4,7 @@ import { AnamneseCardProps } from "./types";
 import { useEffect, useRef } from "react";
 import { useAppStore } from "store/appStore";
 
-export function AnamneseCard({ title, ...rest }: AnamneseCardProps) {
+export function AnamneseCard({ title, isDisabled = false, ...rest }: AnamneseCardProps) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const isFullScreen = useAppStore().isFullScreen;
 
@@ -12,7 +12,6 @@ export function AnamneseCard({ title, ...rest }: AnamneseCardProps) {
         const textArea = textAreaRef.current;
         if(textArea){
             textArea.style.height = 'auto';
-            console.log("EXECUTOU")
             textArea.style.height = `${textArea.scrollHeight}px`;
         }
 
@@ -31,6 +30,7 @@ export function AnamneseCard({ title, ...rest }: AnamneseCardProps) {
                 <TextField
                     ref={textAreaRef}
                     spellCheck={false}
+                    disabled={isDisabled}
                     {...rest}
                 />
             </TextFieldWrapper>

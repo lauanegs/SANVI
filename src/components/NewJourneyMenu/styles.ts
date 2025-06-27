@@ -60,3 +60,17 @@ export const SaveButtonWrapper = styled.div`
     align-self: center;
     margin: 10px 0;
 `;
+
+export const CleanWrapper = styled.button`
+    border: none;
+    background: none;
+    cursor: pointer;
+`;
+
+export const ButtonsWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+`;

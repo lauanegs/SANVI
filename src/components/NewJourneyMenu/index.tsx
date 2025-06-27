@@ -1,5 +1,5 @@
 import Icon from "@components/Icon";
-import { CloseButton, Container, ContentContainer, HeaderLine, IconFolderWrapper, InputWrapper, SaveButtonWrapper } from "./styles";
+import { ButtonsWrapper, CleanWrapper, CloseButton, Container, ContentContainer, HeaderLine, IconFolderWrapper, InputWrapper, SaveButtonWrapper } from "./styles";
 import theme from "theme";
 import { Text } from "@components/Text";
 import Input from "@components/Input";
@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { queryKeys } from "utils/query-keys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourneyEvent }: NewJourneyMenuProps) {
+export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourneyEvent, onClearSelection }: NewJourneyMenuProps) {
 
     const [specialistOptions, setSpecialistOptions] = useState<string[]>([]);
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -30,6 +30,7 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
         staleTime: 1000 * 60 * 5
     })
 
+
     const [formState, setFormState] = useState<FormStateType>({
         date: new Date(),
         description: '',
@@ -37,7 +38,7 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
     });
 
     const formSchema = yup.object().shape({
-        description: yup.string().required('Informe a descrição'),
+        description: yup.string().required('Informe a descrição').max(255, 'A descrição deve ter no máximo 255 caracteres'),
         professional: yup.string().required('Informe o especialista'),
     })
 
@@ -108,11 +109,7 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
                     queryClient.invalidateQueries({ queryKey: queryKeys.ALL_PATIENT_TREATMENTS });
                     queryClient.invalidateQueries({ queryKey: queryKeys.ALL_TREATMENT_JOURNEYS });
 
-                    setFormState({
-                        date: new Date(),
-                        description: '',
-                        professional: dataSpecialists[0].name
-                    });
+                    onClearSelection();
                 }
 
                 if (!response.ok) {
@@ -149,7 +146,14 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
                 description: selectedJourneyEvent.description,
                 professional: selectedJourneyEvent.specialist.name
             })
+            return;
         }
+
+        setFormState({
+            date: new Date(),
+            description: '',
+            professional: dataSpecialists[0].name
+        })
     }, [selectedJourneyEvent]);
 
     return (
@@ -176,9 +180,15 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
                         label="Descrição"
                         sizeType="G"
                         value={formState.description}
-                        onChange={(e) => setFormState(prev => ({
-                            ...prev, description: e.target.value
-                        }))}
+                        onChange={(e) => {
+                            const isOutLength = e.target.value.length > 255;
+
+                            if (isOutLength) return;
+
+                            setFormState(prev => ({
+                                ...prev, description: e.target.value
+                            }))
+                        }}
                         errorMessage={formErrors.description}
                     />
                 </InputWrapper>
@@ -230,14 +240,27 @@ export function NewJourneyMenu({ onCloseModal, selectedTreatment, selectedJourne
 
                 </IconFolderWrapper>
 
-                <SaveButtonWrapper>
-                    <GenericButton
-                        title="Salvar"
-                        color="PRIMARY"
-                        onClick={handleSubmitForm}
-                    />
-                </SaveButtonWrapper>
+                <ButtonsWrapper>
+                    <SaveButtonWrapper>
+                        <GenericButton
+                            title="Salvar"
+                            color="PRIMARY"
+                            onClick={handleSubmitForm}
+                        />
+                    </SaveButtonWrapper>
+                    {selectedJourneyEvent &&
+                        <CleanWrapper
+                            onClick={onClearSelection}
+                        >
+                            <Icon
+                                iconLibName='io5'
+                                icon='IoClose'
+                                color={theme.COLORS.AZUL_DA_FRANCA}
+                                size={25}
+                            />
+                        </CleanWrapper>}
+                </ButtonsWrapper>
             </ContentContainer>
-        </Container>
+        </Container >
     );
 }

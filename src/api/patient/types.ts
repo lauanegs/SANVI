@@ -33,15 +33,6 @@ export interface MedicalRecordInterface {
     medicalRecordData: MedicalRecordDataInterface
 }
 
-export interface MedicalRecordInterfacePutDTO {
-    patientId: number,
-    updatedAt: Date | null,
-    hasHealthProblem: boolean,
-    hasMedicalTreatment: boolean,
-    isPregnant: boolean
-    medicalRecordData: MedicalRecordDataInterface
-}
-
 export interface MedicalRecordDataInterface {
     diseaseHistory: string,
     mainComplaint: string,
@@ -57,6 +48,14 @@ export interface MedicalRecordInterfaceDTO {
     hasMedicalTreatment: boolean,
     medicalRecordData: MedicalRecordDataInterface,
     createdAt: Date,
+    updatedAt: Date | null,
+}
+export interface MedicalRecordInterfacePutDTO {
+    patientId: number,
+    isPregnant: boolean,
+    hasHealthProblem: boolean,
+    hasMedicalTreatment: boolean,
+    medicalRecordData: MedicalRecordDataInterface,
     updatedAt: Date | null,
 }
 
@@ -80,6 +79,27 @@ export interface PatientInterfaceDTO {
     guardianPhoneNumber: number | null,
     medicalRecord: MedicalRecordInterfaceDTO,
     treatments: Array<any>
+}
+export interface PatientInterfacePutDTO {
+    name: string,
+    address: string,
+    id: number,
+    addressNumber: number,
+    birthDate: string,
+    cpf: string,
+    gender: string,
+    neighborhood: string,
+    phoneNumber: number,
+    rg: string,
+    updatedAt: string | null,
+    createdAt: string,
+    profession: string,
+    cep: string,
+    uf: string,
+    guardianCPF: string | null,
+    guardianName: string | null,
+    guardianPhoneNumber: number | null,
+    medicalRecord: MedicalRecordInterfacePutDTO,
 }
 
 export interface TreatmentInterface {

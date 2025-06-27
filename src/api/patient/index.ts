@@ -1,5 +1,5 @@
 import { API_URL } from "@api/connection";
-import { JourneyInterface, JourneyInterfaceDTO, JourneyInterfacePutDTO, MedicalRecordInterfaceDTO, MedicalRecordInterfacePutDTO, PatientInterface, PatientInterfaceDTO, SpecialistInterface, TreatmentInterface, TreatmentInterfaceDTO } from "./types";
+import { JourneyInterface, JourneyInterfaceDTO, JourneyInterfacePutDTO, MedicalRecordInterfaceDTO, MedicalRecordInterfacePutDTO, PatientInterface, PatientInterfaceDTO, PatientInterfacePutDTO, SpecialistInterface, TreatmentInterface, TreatmentInterfaceDTO } from "./types";
 
 export async function findPatient(): Promise<PatientInterface[]> {
     try {
@@ -73,7 +73,7 @@ export async function findJourneyEventByTreatmentId(treatmentId: number): Promis
     }
 }
 
-export async function editPatient(patient: PatientInterface): Promise<any> {
+export async function editPatient(patient: PatientInterfacePutDTO): Promise<any> {
     try {
         const response = await fetch(`${API_URL}/patient`, {
             method: "PUT",

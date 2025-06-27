@@ -11,6 +11,8 @@ export const Container = styled.button`
     border: none; /* Remove todas as outras bordas */
     border-bottom: 2px solid ${theme.COLORS.AZUL_DA_FRANCA};
 
+    background-color: ${theme.COLORS.BACKGROUND};
+
     border-top-right-radius: 4px;
     padding: 5px 45px 16px 5px;
     gap: 16px;
