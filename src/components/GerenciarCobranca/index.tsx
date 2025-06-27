@@ -87,6 +87,8 @@ export function GerenciarCobranca({ treatmentProp }: GerenciarCobrancaProps) {
 				position: "bottom-right",
 				duration: 2000,
 			});
+
+			window.location.reload();
 		} else {
 			toast.error("Falha ao processar o pagamento.", {
 				id: toastId,

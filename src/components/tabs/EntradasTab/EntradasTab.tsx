@@ -28,8 +28,7 @@ export default function EntradasTab() {
 
 	const filteredDados = treatments.filter((treatment) => {
 		return (
-			treatment.totalValue !== null &&
-			treatment.totalValue !== undefined &&
+			treatment.totalInstallments !== null &&
 			treatment.patient?.name
 				?.toLowerCase()
 				.includes(searchTerm.toLowerCase())
@@ -84,7 +83,9 @@ export default function EntradasTab() {
 										<span
 											className={`status ${
 												treatment?.paymentStatus ==
-												"Pago"
+													"Pago" ||
+												treatment?.totalValue <=
+													treatment?.amountPaid
 													? "pago"
 													: "pendente"
 											}`}

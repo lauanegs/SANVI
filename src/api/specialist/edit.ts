@@ -1,8 +1,6 @@
 import { API_URL } from "../connection";
 
-export async function createSpecialist(specialistData: any, schedules: any) {
-	console.log("specialist", specialistData);
-	console.log("schedules", schedules);
+export async function editSpecialist(specialistData: any, schedules: any) {
 	try {
 		// 1. Enviar especialista
 		const res = await fetch(`${API_URL}/specialist/create`, {
@@ -15,7 +13,6 @@ export async function createSpecialist(specialistData: any, schedules: any) {
 
 		if (!res.ok) throw new Error("Erro ao criar especialista");
 		const savedSpecialist = await res.json();
-		console.log("SLAVO", savedSpecialist);
 
 		// 2. Converter horários
 		const weekDayMap: Record<string, number> = {
@@ -30,7 +27,7 @@ export async function createSpecialist(specialistData: any, schedules: any) {
 
 		const scheduleList = Object.entries(schedules).map(
 			([day, values]: any) => ({
-				specialist: { Id: savedSpecialist.id },
+				specialist: { id: savedSpecialist.id },
 				weekDay: weekDayMap[day],
 				startTime: values.inicio?.split("T")[1],
 				startInterval: values.inicioInt?.split("T")[1],

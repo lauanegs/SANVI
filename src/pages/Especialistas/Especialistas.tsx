@@ -10,13 +10,22 @@ import { getAllSpecialists } from "@api/specialist/getAll";
 
 import { useRef } from "react";
 import SearchInput from "@components/search";
+import { EditarEspecialista } from "@components/EditarEspecialista";
 
 function Especialistas() {
 	const novoEspecialistaRef = useRef<any>(null);
+	const [selectedSpecialist, setSelectedSpecialist] =
+		useState<Specialist | null>(null);
+
+	const editarEspecialistaRef = useRef<any>(null);
+
+	const [tabEspecialista, setTabEspecialista] = useState<"lista" | "novo">(
+		"lista"
+	);
 
 	const [searchTerm, setSearchTerm] = useState("");
 
-	const [tabEspecialista, setTabEspecialista] = useState(false);
+	//const [tabEspecialista, setTabEspecialista] = useState(false);
 	const [especialistas, setEspecialistas] = useState<Specialist[]>([]);
 
 	useEffect(() => {
@@ -28,7 +37,7 @@ function Especialistas() {
 			const result = await novoEspecialistaRef.current.handleSave();
 
 			if (result) {
-				setTabEspecialista(false);
+				setTabEspecialista("lista");
 				const novos = await getAllSpecialists();
 				setEspecialistas(novos);
 			}
@@ -44,7 +53,7 @@ function Especialistas() {
 			className={s.Esp_container}
 			style={{ backgroundColor: theme.COLORS.FUMACA_BRANCA }}
 		>
-			{!tabEspecialista ? (
+			{tabEspecialista == "lista" ? (
 				<>
 					<GenericHeader />
 					<div className={s.esp_headerContainer}>
@@ -58,7 +67,7 @@ function Especialistas() {
 						<GenericButton
 							color="PRIMARY"
 							title="Novo Especialista"
-							onClick={() => setTabEspecialista(true)}
+							onClick={() => setTabEspecialista("novo")}
 						/>
 					</div>
 
@@ -68,15 +77,17 @@ function Especialistas() {
 								<div className={s.card} key={e.id}>
 									<SimpleCard
 										title={e.name}
-										subtitle={e.CPF}
-										info={e.specialistType}
+										subtitle={e.specialistType}
+										onClick={() => {
+											setSelectedSpecialist(e);
+										}}
 									/>
 								</div>
 							))}
 						</div>
 					</div>
 				</>
-			) : (
+			) : tabEspecialista == "novo" ? (
 				<>
 					<GenericHeader />
 					<div className={s.esp_headerContainer}>
@@ -85,7 +96,7 @@ function Especialistas() {
 							<GenericButton
 								color="SECONDARY"
 								title="Voltar"
-								onClick={() => setTabEspecialista(false)}
+								onClick={() => setTabEspecialista("lista")}
 							/>
 
 							<GenericButton
@@ -97,7 +108,7 @@ function Especialistas() {
 					</div>
 					<NovoEspecialista ref={novoEspecialistaRef} />
 				</>
-			)}
+			) : undefined}
 		</div>
 	);
 }

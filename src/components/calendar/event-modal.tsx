@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { API_URL } from "@api/connection.tsx";
-import Input from "@components/Input/index"
+import Input from "@components/Input/index";
 import Modal from "@components/Modal/Modal";
 import { Button } from "../Button/Button";
 import { SelectInputPesquisar } from "@components/SelectInputPesquisar";
@@ -12,545 +12,638 @@ import { formatPhoneNumber } from "utils/formatFunctions";
 import InputMask from "react-input-mask";
 
 const eventSchema = Yup.object().shape({
-  patientId: Yup.string().required("Paciente é obrigatório."),
-  specialistId: Yup.string().required("Especialista é obrigatório."),
-  date: Yup.string().required("Data é obrigatória."),
-  time: Yup.string().required("Hora é obrigatória."),
-  status: Yup.string().required("Status é obrigatório."),
-  value: Yup.number()
-    .min(0, "O valor não pode ser negativo.")
-    .required("Valor é obrigatório."),
-  treatmentId: Yup.string().nullable(),
-  hasTreatment: Yup.boolean(),
+	patientId: Yup.string().required("Paciente é obrigatório."),
+	specialistId: Yup.string().required("Especialista é obrigatório."),
+	date: Yup.string().required("Data é obrigatória."),
+	time: Yup.string().required("Hora é obrigatória."),
+	status: Yup.string().required("Status é obrigatório."),
+	value: Yup.number()
+		.min(0, "O valor não pode ser negativo.")
+		.required("Valor é obrigatório."),
+	treatmentId: Yup.string().nullable(),
+	hasTreatment: Yup.boolean(),
 });
 
 function formatPhone(value: string) {
-  // Remove tudo que não for número
-  const digits = value.replace(/\D/g, "");
+	// Remove tudo que não for número
+	const digits = value.replace(/\D/g, "");
 
-  // Formata conforme o tamanho
-  if (digits.length <= 2) {
-    return `(${digits}`;
-  } else if (digits.length <= 7) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-  } else if (digits.length <= 11) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-  } else {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
-  }
+	// Formata conforme o tamanho
+	if (digits.length <= 2) {
+		return `(${digits}`;
+	} else if (digits.length <= 7) {
+		return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+	} else if (digits.length <= 11) {
+		return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(
+			7
+		)}`;
+	} else {
+		return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(
+			7,
+			11
+		)}`;
+	}
 }
 
 export interface CalendarEvent {
-  id: string;
-  date: string; // só a data (ex: 2025-05-20)
-  time: string; // só a hora (ex: 15:30)
-  patient: string; // id do paciente como string
-  specialist: string; // id do especialista
-  phone: string;
-  status: string;
-  valor: string;
+	id: string;
+	date: string; // só a data (ex: 2025-05-20)
+	time: string; // só a hora (ex: 15:30)
+	patient: string; // id do paciente como string
+	specialist: string; // id do especialista
+	phone: string;
+	status: string;
+	valor: string;
 }
 
 interface EventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onDelete: () => void;
-  onSave: (event: CalendarEvent | Omit<CalendarEvent, "id">) => void;
-  selectedDate: string;
-  selectedEvent: any | null; // aceitando any pois a estrutura pode variar
+	isOpen: boolean;
+	onClose: () => void;
+	onDelete: () => void;
+	onSave: (event: CalendarEvent | Omit<CalendarEvent, "id">) => void;
+	selectedDate: string;
+	selectedEvent: any | null; // aceitando any pois a estrutura pode variar
 }
 
 export default function EventModal({
-  isOpen,
-  onClose,
-  onSave,
-  onDelete,
-  selectedDate,
-  selectedEvent,
+	isOpen,
+	onClose,
+	onSave,
+	onDelete,
+	selectedDate,
+	selectedEvent,
 }: EventModalProps) {
+	const [treatment, setTreatment] = useState("");
+	const [treatmentsList, setTreatmentsList] = useState<any[]>([]);
 
-  const [treatment, setTreatment] = useState("");
-  const [treatmentsList, setTreatmentsList] = useState<any[]>([]);
+	const [date, setDate] = useState(selectedDate);
+	const [time, setTime] = useState("08:00");
+	const [patient, setPatient] = useState(""); // armazenar id do paciente como string
+	const [specialist, setSpecialist] = useState(""); // armazenar id do especialista
+	const [phone, setPhone] = useState("");
+	const [status, setStatus] = useState("");
+	const [isTreatmentConciliated, setIsTreatmentConciliated] = useState(false);
+	const [value, setValue] = useState("");
 
-  const [date, setDate] = useState(selectedDate);
-  const [time, setTime] = useState("08:00");
-  const [patient, setPatient] = useState(""); // armazenar id do paciente como string
-  const [specialist, setSpecialist] = useState(""); // armazenar id do especialista
-  const [phone, setPhone] = useState("");
-  const [status, setStatus] = useState("");
-  const [isTreatmentConciliated, setIsTreatmentConciliated] = useState(false);
-  const [value, setValue] = useState('');
+	const [patientsList, setPatientsList] = useState<any[]>([]);
+	const [specialistsList, setSpecialistsList] = useState<any[]>([]);
 
-  const [patientsList, setPatientsList] = useState<any[]>([]);
-  const [specialistsList, setSpecialistsList] = useState<any[]>([]);
+	const [patientId, setPatientId] = useState<string>("");
+	const [patientName, setPatientName] = useState("");
+	const [specialistId, setSpecialistId] = useState<string>("");
+	const [specialistName, setSpecialistName] = useState("");
+	const [treatmentId, setTreatmentId] = useState<string>(""); // antes era treatment
 
-  const [patientId, setPatientId] = useState<string>('');
-  const [patientName, setPatientName] = useState('');
-  const [specialistId, setSpecialistId] = useState<string>('');
-  const [specialistName, setSpecialistName] = useState('');
-  const [treatmentId, setTreatmentId] = useState<string>(""); // antes era treatment
+	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+	const resetForm = () => {
+		setTreatment("");
+		setTreatmentsList([]);
+		setDate(selectedDate);
+		setTime("08:00");
+		setPatient("");
+		setSpecialist("");
+		setPhone("");
+		setStatus("");
+		setIsTreatmentConciliated(false);
+		setValue("");
+		setPatientId("");
+		setPatientName("");
+		setTreatmentId("");
+		setSpecialistId("");
+		setSpecialistName("");
+		setErrors({}); // Limpa erros de validação
+	};
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+	// Sincroniza dados quando selectedEvent ou selectedDate mudam
+	useEffect(() => {
+		if (selectedEvent) {
+			setTime(selectedEvent.time || "08:00");
 
+			setPhone(selectedEvent.phone || "");
 
-  const resetForm = () => {
-    setTreatment("");
-    setTreatmentsList([]);
-    setDate(selectedDate);
-    setTime("08:00");
-    setPatient("");
-    setSpecialist("");
-    setPhone("");
-    setStatus("");
-    setIsTreatmentConciliated(false);
-    setValue('');
-    setPatientId('');
-    setPatientName('');
-    setTreatmentId('');
-    setSpecialistId('');
-    setSpecialistName('');
-    setErrors({}); // Limpa erros de validação
-  };
+			// Paciente
+			if (
+				selectedEvent.patient &&
+				typeof selectedEvent.patient === "object"
+			) {
+				setPatient(selectedEvent.patient.id?.toString() || "");
+				setPatientId(selectedEvent.patient.id?.toString() || "");
+				setPatientName(selectedEvent.patient.name || "");
+			} else {
+				setPatient(selectedEvent.patient || "");
+				setPatientId(selectedEvent.patient || "");
+				const patientObject = patientsList.find(
+					(p) => p.id.toString() === selectedEvent.patient
+				);
+				setPatientName(patientObject?.name || "");
+			}
 
+			// Especialista
+			if (
+				selectedEvent.specialist &&
+				typeof selectedEvent.specialist === "object"
+			) {
+				setSpecialist(selectedEvent.specialist.id?.toString() || "");
+				setSpecialistId(selectedEvent.specialist.id?.toString() || "");
+				setSpecialistName(selectedEvent.specialist.name || "");
+			} else {
+				setSpecialist(selectedEvent.specialist || "");
+				setSpecialistId(selectedEvent.specialist || "");
+				const specialistObject = specialistsList.find(
+					(s) => s.id.toString() === selectedEvent.specialist
+				);
+				setSpecialistName(specialistObject?.name || "");
+			}
 
-  // Sincroniza dados quando selectedEvent ou selectedDate mudam
-  useEffect(() => {
-    if (selectedEvent) {
-      setTime(selectedEvent.time || "08:00");
+			// Status
+			setStatus(() => {
+				switch (selectedEvent.status.toLowerCase()) {
+					case "confirmado":
+						return "Confirmado";
+					case "pendente":
+						return "Pendente";
+					case "cancelado":
+						return "Cancelado";
+					case "concluído":
+						return "Concluido";
+					default:
+						return "";
+				}
+			});
 
-      setPhone(selectedEvent.phone || "");
+			// Data
+			setDate(selectedEvent.date.split("T")[0]);
+		} else {
+			setTime("08:00");
+			setPatient("");
+			setSpecialist("");
+			setPatientId("");
+			setSpecialistId("");
+			setPatientName("");
+			setSpecialistName("");
+			setStatus("");
+			setDate(selectedDate);
+		}
+	}, [selectedEvent, selectedDate, patientsList, specialistsList]);
 
-      // Paciente
-      if (selectedEvent.patient && typeof selectedEvent.patient === "object") {
-        setPatient(selectedEvent.patient.id?.toString() || "");
-        setPatientId(selectedEvent.patient.id?.toString() || "");
-        setPatientName(selectedEvent.patient.name || "");
-      } else {
-        setPatient(selectedEvent.patient || "");
-        setPatientId(selectedEvent.patient || "");
-        const patientObject = patientsList.find((p) => p.id.toString() === selectedEvent.patient);
-        setPatientName(patientObject?.name || "");
-      }
+	// Buscar pacientes e especialistas quando modal abrir
+	useEffect(() => {
+		if (isOpen) {
+			fetch(`${API_URL}/patient/dto`)
+				.then((res) => res.text())
+				.then((text) => {
+					try {
+						const data = JSON.parse(text);
+						setPatientsList(data);
+					} catch (err) {}
+				})
 
-      // Especialista
-      if (selectedEvent.specialist && typeof selectedEvent.specialist === "object") {
-        setSpecialist(selectedEvent.specialist.id?.toString() || "");
-        setSpecialistId(selectedEvent.specialist.id?.toString() || "");
-        setSpecialistName(selectedEvent.specialist.name || "");
-      } else {
-        setSpecialist(selectedEvent.specialist || "");
-        setSpecialistId(selectedEvent.specialist || "");
-        const specialistObject = specialistsList.find((s) => s.id.toString() === selectedEvent.specialist);
-        setSpecialistName(specialistObject?.name || "");
-      }
+				.catch((err) =>
+					console.error("Erro ao buscar pacientes:", err)
+				);
 
-      // Status
-      setStatus(() => {
-        switch (selectedEvent.status.toLowerCase()) {
-          case "confirmado":
-            return "Confirmado";
-          case "pendente":
-            return "Pendente";
-          case "cancelado":
-            return "Cancelado";
-          case "concluído":
-            return "Concluido";
-          default:
-            return "";
-        }
-      });
+			fetch(`${API_URL}/specialist`)
+				.then((res) => res.json())
+				.then((data) => {
+					setSpecialistsList(data);
+				})
+				.catch((err) =>
+					console.error("Erro ao buscar especialistas:", err)
+				);
 
-      // Data
-      setDate(selectedEvent.date.split("T")[0]);
-    } else {
-      setTime("08:00");
-      setPatient("");
-      setSpecialist("");
-      setPatientId('');
-      setSpecialistId('');
-      setPatientName('');
-      setSpecialistName('');
-      setStatus('');
-      setDate(selectedDate);
-    }
-  }, [selectedEvent, selectedDate, patientsList, specialistsList]);
+			// 🔄 Limpa os tratamentos enquanto não há paciente selecionado
+			setTreatmentsList([]);
+		}
+	}, [isOpen]);
 
-  // Buscar pacientes e especialistas quando modal abrir
-  useEffect(() => {
-    if (isOpen) {
-      fetch(`${API_URL}/patient/dto`)
-        .then((res) => res.text())
-        .then((text) => {
-          try {
-            const data = JSON.parse(text);
-            setPatientsList(data);
-          } catch (err) {
-          }
-        })
+	// Carrega tratamentos quando patientId estiver definido
+	useEffect(() => {
+		if (!patientId) {
+			setTreatmentsList([]);
+			return;
+		}
 
-        .catch((err) => console.error("Erro ao buscar pacientes:", err));
+		let isCurrent = true;
 
-      fetch(`${API_URL}/specialist`)
-        .then((res) => res.json())
-        .then((data) => {
-          setSpecialistsList(data);
-        })
-        .catch((err) => console.error("Erro ao buscar especialistas:", err));
+		async function fetchTreatments() {
+			try {
+				const res = await fetch(
+					`${API_URL}/patient/${patientId}/treatment`
+				);
 
-      // 🔄 Limpa os tratamentos enquanto não há paciente selecionado
-      setTreatmentsList([]);
-    }
-  }, [isOpen]);
+				if (!res.ok) {
+					throw new Error(`HTTP error! status: ${res.status}`);
+				}
 
-  // Carrega tratamentos quando patientId estiver definido
-  useEffect(() => {
-    if (!patientId) {
-      setTreatmentsList([]);
-      return;
-    }
+				const data = await res.json(); // já parseia o JSON
 
-    let isCurrent = true;
+				if (isCurrent) {
+					setTreatmentsList(Array.isArray(data) ? data : []);
+				}
+			} catch (err) {
+				if (isCurrent) {
+					console.error("Erro ao buscar tratamentos:", err);
+					setTreatmentsList([]);
+				}
+			}
+		}
 
-    async function fetchTreatments() {
-      try {
-        const res = await fetch(`${API_URL}/patient/${patientId}/treatment`);
+		fetchTreatments();
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
+		return () => {
+			isCurrent = false;
+		};
+	}, [patientId]);
 
-        const data = await res.json();  // já parseia o JSON
+	useEffect(() => {
+		if (!selectedEvent && isOpen) {
+			resetForm();
+		}
+	}, [selectedEvent, isOpen]);
 
-        if (isCurrent) {
-          setTreatmentsList(Array.isArray(data) ? data : []);
-        }
-      } catch (err) {
-        if (isCurrent) {
-          console.error("Erro ao buscar tratamentos:", err);
-          setTreatmentsList([]);
-        }
-      }
-    }
+	// Atualiza telefone quando paciente mudar
+	useEffect(() => {
+		// Não atualiza o telefone quando estiver editando um evento
+		if (selectedEvent) return;
 
-    fetchTreatments();
+		const selectedPatient = patientsList.find(
+			(p) => p.id.toString() === patient
+		);
+		if (selectedPatient && selectedPatient.phoneNumber) {
+			setPhone(selectedPatient.phoneNumber.toString());
+		} else {
+			setPhone("");
+		}
+	}, [patient, patientsList, selectedEvent]);
 
-    return () => {
-      isCurrent = false;
-    };
-  }, [patientId]);
+	const handleSubmit = async () => {
+		const dateTimeLocal = `${date}T${time}`;
 
-  useEffect(() => {
-    if (!selectedEvent && isOpen) {
-      resetForm();
-    }
-  }, [selectedEvent, isOpen]);
+		const selectedPatient = patientsList.find(
+			(p) => p.id.toString() === patientId
+		);
+		const selectedSpecialist = specialistsList.find(
+			(s) => s.id.toString() === specialistId
+		);
 
-  // Atualiza telefone quando paciente mudar
-  useEffect(() => {
-    // Não atualiza o telefone quando estiver editando um evento
-    if (selectedEvent) return;
+		// 1️⃣ Monta dados para validar
+		const dataToValidate = {
+			patientId,
+			specialistId,
+			date,
+			time,
+			status,
+			value: Number(value) || 0,
+		};
 
-    const selectedPatient = patientsList.find(
-      (p) => p.id.toString() === patient
-    );
-    if (selectedPatient && selectedPatient.phoneNumber) {
-      setPhone(selectedPatient.phoneNumber.toString());
-    } else {
-      setPhone("");
-    }
-  }, [patient, patientsList, selectedEvent]);
+		try {
+			// 2️⃣ Valida dados básicos com Yup
+			await eventSchema.validate(dataToValidate, { abortEarly: false });
 
+			// 3️⃣ Verificação adicional para garantir dados carregados
+			if (!selectedPatient || !selectedSpecialist) {
+				alert("Paciente ou especialista inválido.");
+				return;
+			}
 
-  const handleSubmit = async () => {
-    const dateTimeLocal = `${date}T${time}`;
+			// 4️⃣ Prepara payload para enviar
+			const eventData = {
+				patientId: selectedPatient.id,
+				specialistId: selectedSpecialist.id,
+				date: dateTimeLocal,
+				confirmPhoneNumber: phone,
+				hasTreatment: !!treatmentId,
+				treatmentId: treatmentId ? Number(treatmentId) : null,
+				value: Number(value) || 0,
+				status,
+			};
 
-    const selectedPatient = patientsList.find((p) => p.id.toString() === patientId);
-    const selectedSpecialist = specialistsList.find((s) => s.id.toString() === specialistId);
+			// 5️⃣ Define método e URL
+			const url = selectedEvent
+				? `${API_URL}/appointments/${selectedEvent.id}`
+				: `${API_URL}/appointments/create`;
 
-    // 1️⃣ Monta dados para validar
-    const dataToValidate = {
-      patientId,
-      specialistId,
-      date,
-      time,
-      status,
-      value: Number(value) || 0,
-    };
+			const method = selectedEvent ? "PUT" : "POST";
 
-    try {
-      // 2️⃣ Valida dados básicos com Yup
-      await eventSchema.validate(dataToValidate, { abortEarly: false });
+			// 6️⃣ Dispara requisição
+			const response = await fetch(url, {
+				method,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(eventData),
+			});
 
-      // 3️⃣ Verificação adicional para garantir dados carregados
-      if (!selectedPatient || !selectedSpecialist) {
-        alert("Paciente ou especialista inválido.");
-        return;
-      }
+			console.log("eventdata", eventData);
 
-      // 4️⃣ Prepara payload para enviar
-      const eventData = {
-        patientId: selectedPatient.id,
-        specialistId: selectedSpecialist.id,
-        date: dateTimeLocal,
-        confirmPhoneNumber: phone,
-        hasTreatment: !!treatmentId,
-        treatmentId: treatmentId ? Number(treatmentId) : null,
-        value: Number(value) || 0,
-        status,
-      };
+			if (!response.ok) {
+				const errorText = await response.text();
+				console.error("❌ Erro do servidor:", errorText);
+				throw new Error(
+					`Erro na requisição: ${response.status} - ${errorText}`
+				);
+			}
 
-      // 5️⃣ Define método e URL
-      const url = selectedEvent
-        ? `${API_URL}/appointments/${selectedEvent.id}`
-        : `${API_URL}/appointments/create`;
+			const result = await response.json();
 
-      const method = selectedEvent ? "PUT" : "POST";
+			// 7️⃣ Dispara callback para salvar e atualiza UI
+			onSave(
+				selectedEvent ? { ...eventData, id: selectedEvent.id } : result
+			);
+			resetForm();
+			onClose();
+		} catch (err: any) {
+			// 8️⃣ Trata erros de validação do Yup
+			if (err.inner) {
+				const formattedErrors: { [key: string]: string } = {};
+				err.inner.forEach((error: any) => {
+					formattedErrors[error.path] = error.message;
+				});
+				setErrors(formattedErrors);
+			} else {
+				// 9️⃣ Exibe alert para erros gerais
+				console.error("❌ Erro ao enviar os dados:", err);
+				alert(
+					"Erro ao salvar o agendamento. Verifique os campos e tente novamente."
+				);
+			}
+		}
+	};
 
-      // 6️⃣ Dispara requisição
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(eventData),
-      });
+	const handleClose = () => {
+		resetForm();
+		onClose();
+	};
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("❌ Erro do servidor:", errorText);
-        throw new Error(`Erro na requisição: ${response.status} - ${errorText}`);
-      }
+	return (
+		<Modal isOpen={isOpen} onClose={handleClose} size="SMALL">
+			<div className={styles.card}>
+				<header className={styles.header}>
+					<h2 className={styles.title}>
+						{selectedEvent ? "Editar horário" : "Novo horário"}
+					</h2>
+				</header>
 
-      const result = await response.json();
+				<div className={styles.content}>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							handleSubmit();
+						}}
+					>
+						<div className={styles.formGroup}>
+							<SelectInputPesquisar
+								label="Paciente"
+								elements={patientsList.map((p) => p.name)}
+								selectedOption={patientName}
+								onSelectOption={(name) => {
+									const selected = patientsList.find(
+										(p) => p.name === name
+									);
+									if (selected) {
+										setPatientId(selected.id.toString());
+										setPatientName(selected.name);
+										// Só atualiza telefone aqui se estiver criando, para não sobrescrever telefone de edição
+										if (!selectedEvent) {
+											setPhone(
+												selected.phoneNumber?.toString() ||
+													""
+											);
+										}
+									} else {
+										setPatientId("");
+										setPatientName("");
+										if (!selectedEvent) {
+											setPhone("");
+										}
+									}
+								}}
+								sizeType="G"
+							/>
+							{errors.patientId && (
+								<p className={styles.errorText}>
+									{errors.patientId}
+								</p>
+							)}
+						</div>
 
-      // 7️⃣ Dispara callback para salvar e atualiza UI
-      onSave(selectedEvent ? { ...eventData, id: selectedEvent.id } : result);
-      resetForm();
-      onClose();
+						<div className={styles.formGroup}>
+							<SelectInputPesquisar
+								label="Especialista"
+								elements={specialistsList.map((s) => s.name)}
+								selectedOption={specialistName}
+								onSelectOption={(name) => {
+									const selected = specialistsList.find(
+										(s) => s.name === name
+									);
+									if (selected) {
+										setSpecialistId(selected.id.toString());
+										setSpecialistName(selected.name);
+									}
+								}}
+								sizeType="G"
+							/>
+							{errors.specialistId && (
+								<p className={styles.errorText}>
+									{errors.specialistId}
+								</p>
+							)}
+						</div>
 
-    } catch (err: any) {
-      // 8️⃣ Trata erros de validação do Yup
-      if (err.inner) {
-        const formattedErrors: { [key: string]: string } = {};
-        err.inner.forEach((error: any) => {
-          formattedErrors[error.path] = error.message;
-        });
-        setErrors(formattedErrors);
-      } else {
-        // 9️⃣ Exibe alert para erros gerais
-        console.error("❌ Erro ao enviar os dados:", err);
-        alert("Erro ao salvar o agendamento. Verifique os campos e tente novamente.");
-      }
-    }
-  };
+						<div className={styles.formGroup}>
+							<div style={{ display: "flex", gap: "12px" }}>
+								<div
+									className={styles.dateInputContainer}
+									style={{ flex: 1 }}
+								>
+									<Input
+										label="Data"
+										inputType="date"
+										id="date"
+										value={date}
+										onChange={(e) =>
+											setDate(e.target.value)
+										}
+										sizeType={"G"}
+									/>
+									{errors.date && (
+										<p className={styles.error}>
+											{errors.date}
+										</p>
+									)}
+								</div>
+								<div style={{ flex: 1 }}>
+									<Input
+										label="Hora"
+										inputType="time"
+										id="time"
+										value={time}
+										onChange={(e) =>
+											setTime(e.target.value)
+										}
+										sizeType={"G"}
+									/>
+									{errors.time && (
+										<p className={styles.error}>
+											{errors.time}
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
 
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
+						<div className={styles.formGroup}>
+							<div style={{ display: "flex", gap: "12px" }}>
+								<div style={{ flex: 1 }}>
+									<InputMask
+										mask="(99) 99999-9999"
+										value={phone}
+										onChange={(e) => {
+											const maskedValue = e.target.value;
+											const unmaskedValue =
+												maskedValue.replace(/\D/g, "");
+											setPhone(unmaskedValue);
+										}}
+										alwaysShowMask={false} // ou true se quiser sempre mostrar a máscara
+									>
+										{(inputProps) => (
+											<Input
+												label="Celular do paciente"
+												id="phone"
+												type="text"
+												className={styles.input}
+												placeholder="Celular do paciente"
+												sizeType="G"
+												{...inputProps}
+											/>
+										)}
+									</InputMask>
+								</div>
 
-  return (
-    <Modal isOpen={isOpen} onClose={handleClose} size="SMALL">
-      <div className={styles.card}>
-        <header className={styles.header}>
-          <h2 className={styles.title}>
-            {selectedEvent ? "Editar horário" : "Novo horário"}
-          </h2>
-        </header>
+								<div style={{ flex: 1 }}>
+									<SelectInputPesquisar
+										label="Status"
+										elements={[
+											"Confirmado",
+											"Pendente",
+											"Cancelado",
+											"Concluído",
+										]}
+										selectedOption={status}
+										onSelectOption={(option) =>
+											setStatus(option)
+										}
+										sizeType={"G"}
+									/>
+									{errors.status && (
+										<p className={styles.errorText}>
+											{errors.status}
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
 
-        <div className={styles.content}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
-            <div className={styles.formGroup}>
-              <SelectInputPesquisar
-                label="Paciente"
-                elements={patientsList.map((p) => p.name)}
-                selectedOption={patientName}
-                onSelectOption={(name) => {
-                  const selected = patientsList.find((p) => p.name === name);
-                  if (selected) {
-                    setPatientId(selected.id.toString());
-                    setPatientName(selected.name);
-                    // Só atualiza telefone aqui se estiver criando, para não sobrescrever telefone de edição
-                    if (!selectedEvent) {
-                      setPhone(selected.phoneNumber?.toString() || "");
-                    }
-                  } else {
-                    setPatientId('');
-                    setPatientName('');
-                    if (!selectedEvent) {
-                      setPhone('');
-                    }
-                  }
-                }}
-                sizeType="G"
-              />
-              {errors.patientId && <p className={styles.errorText}>{errors.patientId}</p>}
-            </div>
+						{!selectedEvent && (
+							<>
+								<div className={styles.formGroup}>
+									<label className={styles.label}>
+										<input
+											type="checkbox"
+											checked={isTreatmentConciliated}
+											onChange={(e) =>
+												setIsTreatmentConciliated(
+													e.target.checked
+												)
+											}
+											style={{ marginRight: "8px" }}
+										/>
+										Conciliar tratamento
+									</label>
+								</div>
 
-            <div className={styles.formGroup}>
-              <SelectInputPesquisar
-                label="Especialista"
-                elements={specialistsList.map((s) => s.name)}
-                selectedOption={specialistName}
-                onSelectOption={(name) => {
-                  const selected = specialistsList.find((s) => s.name === name);
-                  if (selected) {
-                    setSpecialistId(selected.id.toString());
-                    setSpecialistName(selected.name);
-                  }
-                }}
-                sizeType="G"
-              />
-              {errors.specialistId && <p className={styles.errorText}>{errors.specialistId}</p>}
-            </div>
+								<div className={styles.formGroup}>
+									<SelectInputPesquisar
+										sizeType="G"
+										label="Tratamento"
+										elements={treatmentsList.map(
+											(t) => t.title
+										)}
+										selectedOption={
+											treatmentsList.find(
+												(t) =>
+													t.id.toString() ===
+													treatmentId
+											)?.title || ""
+										}
+										onSelectOption={(selectedTitle) => {
+											const selectedTreatment =
+												treatmentsList.find(
+													(t) =>
+														t.title ===
+														selectedTitle
+												);
+											if (selectedTreatment) {
+												setTreatmentId(
+													selectedTreatment.id.toString()
+												);
+											} else {
+												setTreatmentId("");
+											}
+										}}
+										canByOpen={isTreatmentConciliated}
+									/>
+								</div>
 
-            <div className={styles.formGroup}>
-              <div style={{ display: "flex", gap: "12px" }}>
-                <div className={styles.dateInputContainer} style={{ flex: 1 }}>
-                  <Input
-                    label="Data"
-                    inputType="date"
-                    id="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    sizeType={"G"}
-                  />
-                  {errors.date && <p className={styles.error}>{errors.date}</p>}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <Input
-                    label="Hora"
-                    inputType="time"
-                    id="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    sizeType={"G"}
-                  />
-                  {errors.time && <p className={styles.error}>{errors.time}</p>}
-                </div>
-              </div>
-            </div>
+								<div className={styles.formGroup}>
+									<Input
+										label="Valor"
+										id="value"
+										placeholder="Valor"
+										type="number"
+										className={styles.input}
+										value={value}
+										onChange={(e) =>
+											setValue(e.target.value)
+										}
+										sizeType={"G"}
+									/>
+									{errors.value && (
+										<p className={styles.error}>
+											{errors.value}
+										</p>
+									)}
+								</div>
+							</>
+						)}
 
-            <div className={styles.formGroup}>
-              <div style={{ display: "flex", gap: "12px" }}>
-                <div style={{ flex: 1 }}>
-                  <InputMask
-                    mask="(99) 99999-9999"
-                    value={phone}
-                    onChange={e => {
-                      const maskedValue = e.target.value;
-                      const unmaskedValue = maskedValue.replace(/\D/g, '');
-                      setPhone(unmaskedValue);
-                    }}
-                    alwaysShowMask={false} // ou true se quiser sempre mostrar a máscara
-                  >
-                    {inputProps => (
-                      <Input
-                        label="Celular do paciente"
-                        id="phone"
-                        type="text"
-                        className={styles.input}
-                        placeholder="Celular do paciente"
-                        sizeType="G"
-                        {...inputProps}
-                      />
-                    )}
-                  </InputMask>
-                </div>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								gap: "12px",
+								marginTop: "1rem",
+							}}
+						>
+							<Button type="submit" size="lg">
+								{selectedEvent ? "Atualizar" : "Salvar"}
+							</Button>
 
-                <div style={{ flex: 1 }}>
-                  <SelectInputPesquisar
-                    label="Status"
-                    elements={["Confirmado", "Pendente", "Cancelado", "Concluído"]}
-                    selectedOption={status}
-                    onSelectOption={(option) => setStatus(option)}
-                    sizeType={"G"}
-                  />
-                  {errors.status && <p className={styles.errorText}>{errors.status}</p>}
-                </div>
-              </div>
-            </div>
-
-            {!selectedEvent && (
-              <>
-                <div className={styles.formGroup}>
-                  <label className={styles.label}>
-                    <input
-                      type="checkbox"
-                      checked={isTreatmentConciliated}
-                      onChange={(e) =>
-                        setIsTreatmentConciliated(e.target.checked)
-                      }
-                      style={{ marginRight: "8px" }}
-                    />
-                    Conciliar tratamento
-                  </label>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <SelectInputPesquisar
-                    sizeType="G"
-                    label="Tratamento"
-                    elements={treatmentsList.map((t) => t.title)}
-                    selectedOption={treatmentsList.find((t) => t.id.toString() === treatmentId)?.title || ""}
-                    onSelectOption={(selectedTitle) => {
-                      const selectedTreatment = treatmentsList.find(
-                        (t) => t.title === selectedTitle
-                      );
-                      if (selectedTreatment) {
-                        setTreatmentId(selectedTreatment.id.toString());
-                      } else {
-                        setTreatmentId("");
-                      }
-                    }}
-                    canByOpen={isTreatmentConciliated}
-                  />
-
-                </div>
-
-                <div className={styles.formGroup}>
-                  <Input
-                    label="Valor"
-                    id="value"
-                    placeholder="Valor"
-                    type="number"
-                    className={styles.input}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    sizeType={"G"}
-                  />
-                  {errors.value && <p className={styles.error}>{errors.value}</p>}
-                </div>
-              </>
-            )}
-
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '1rem' }}>
-              <Button type="submit" size="lg">
-                {selectedEvent ? "Atualizar" : "Salvar"}
-              </Button>
-
-              {selectedEvent && (
-                <Button
-                  type="button"
-                  onClick={onDelete}
-                  size="lg"
-                  variant="secondary"
-                >
-                  Excluir
-                </Button>
-              )}
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </Modal>
-  );
-
+							{selectedEvent && (
+								<Button
+									type="button"
+									onClick={onDelete}
+									size="lg"
+									variant="secondary"
+								>
+									Excluir
+								</Button>
+							)}
+						</div>
+					</form>
+				</div>
+			</div>
+		</Modal>
+	);
 }
