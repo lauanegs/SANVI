@@ -1,146 +1,223 @@
-import { useState } from "react";
-import { Patient, Treatment } from "lib/types";
-import classNames from "./DetalhesPagamento.module.css";
+import { useEffect, useState } from "react";
+import styles from "./DetalhesPagamento.module.css";
+import {
+	PatientDTO,
+	TreatmentDTO,
+	PaymentEntryDTO,
+	getAllTreatments,
+} from "@api/treatments/getAll";
+import { API_URL } from "@api/connection";
+import { PatientInterface } from "@api/patient/types";
+import { NumericFormat } from "react-number-format";
+import toast from "react-hot-toast";
+import { createFixedPayment } from "@api/treatments/createFixedPayment";
 
-// Supondo que você ainda vai passar pacientes e tratamentos disponíveis como props
 interface DetalhesPagamentoProps {
-    patients: Patient[];
-    treatments: Treatment[];
-    onGenerate: (data: {
-        patient: Patient;
-        treatment: Treatment;
-        value: number;
-        installments: number;
-    }) => void;
+	patients: PatientInterface[];
+	onClose: () => void;
 }
 
 export function DetalhesPagamento({
-    patients,
-    treatments,
-    onGenerate,
+	patients,
+	onClose,
 }: DetalhesPagamentoProps) {
-    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
-        null
-    );
-    const [selectedTreatment, setSelectedTreatment] =
-        useState<Treatment | null>(null);
-    const [totalValue, setTotalValue] = useState<number | undefined>(undefined);
-    const [installments, setInstallments] = useState("1");
+	const [selectedPatient, setSelectedPatient] =
+		useState<PatientInterface | null>(null);
+	const [treatmentsList, setTreatmentsList] = useState<TreatmentDTO[]>([]);
+	const [selectedTreatment, setSelectedTreatment] =
+		useState<TreatmentDTO | null>(null);
+	const [totalValue, setTotalValue] = useState<number>(0);
+	const [installments, setInstallments] = useState<number>(1);
+	const [paymentEntries, setPaymentEntries] = useState<PaymentEntryDTO[]>([]);
 
-    const handleGenerate = () => {
-        if (!selectedPatient || !selectedTreatment || !totalValue) {
-            alert("Preencha todos os campos!");
-            return;
-        }
+	useEffect(() => {
+		if (!selectedPatient) return;
 
-        onGenerate({
-            patient: selectedPatient,
-            treatment: selectedTreatment,
-            value: totalValue,
-            installments: parseInt(installments),
-        });
-    };
+		let isCurrent = true;
 
-    return (
-        <div className={classNames.container}>
-            <div className={classNames.card}>
-                <div className={classNames.header}>
-                    <h2 className={classNames.title}>Novo pagamento</h2>
-                </div>
+		async function fetchTreatments() {
+			// try {
+			// 	if (!selectedPatient) return;
+			// 	const res = await fetch(
+			// 		`${API_URL}/patient/${selectedPatient.id}/treatment`
+			// 	);
+			// 	if (!res.ok)
+			// 		throw new Error(`HTTP error! status: ${res.status}`);
+			// 	const data = await res.json();
+			// 	if (isCurrent)
+			// 		setTreatmentsList(Array.isArray(data) ? data : []);
+			// 	console.log()
+			// } catch (err) {
+			// 	if (isCurrent) {
+			// 		console.error("Erro ao buscar tratamentos:", err);
+			// 		setTreatmentsList([]);
+			// 	}
+			// }
 
-                <div className={classNames.content}>
-                    <div className={classNames.formGroup}>
-                        <label className={classNames.label}>Paciente</label>
-                        <select
-                            className={classNames.select}
-                            value={selectedPatient?.id ?? ""}
-                            onChange={(e) => {
-                                const id = parseInt(e.target.value);
-                                const found = patients.find((p) => p.id === id);
-                                setSelectedPatient(found ?? null);
-                            }}
-                        >
-                            <option value="">Selecione um paciente</option>
-                            {patients.map((p) => (
-                                <option key={p.id} value={p.id}>
-                                    {p.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+			let listaTratamentos = await getAllTreatments();
 
-                    <div className={classNames.formGroup}>
-                        <label className={classNames.label}>Tratamento</label>
-                        <select
-                            className={classNames.select}
-                            value={selectedTreatment?.id ?? ""}
-                            onChange={(e) => {
-                                const id = parseInt(e.target.value);
-                                const found = treatments.find(
-                                    (t) => t.id === id
-                                );
-                                setSelectedTreatment(found ?? null);
-                            }}
-                        >
-                            <option value="">Selecione um tratamento</option>
-                            {treatments.map((t) => (
-                                <option key={t.id} value={t.id}>
-                                    {t.title}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+			const filtered = listaTratamentos.filter(
+				(treatment) =>
+					!treatment.paymentEntries ||
+					(treatment.paymentEntries.length === 0 &&
+						treatment.patient.id === selectedPatient?.id)
+			);
+			setTreatmentsList(filtered);
+		}
 
-                    <div className={classNames.formGroup}>
-                        <label className={classNames.label}>
-                            Valor Total (R$)
-                        </label>
-                        <input
-                            type="number"
-                            className={classNames.input}
-                            value={totalValue}
-                            // onChange={(e) =>
-                            //     setTotalValue(parseFloat(e.target.value) || 0)
-                            // }
-                            onChange={(e) =>
-                                setTotalValue(
-                                    e.target.value === ""
-                                        ? undefined
-                                        : Number(e.target.value)
-                                )
-                            }
-                            placeholder="Ex: 2000"
-                            min="0"
-                            step="10.0"
-                        />
-                    </div>
+		fetchTreatments();
+		return () => {
+			isCurrent = false;
+		};
+	}, [selectedPatient]);
 
-                    {/* <div className={classNames.formGroup}>
-                        <label className={classNames.label}>Parcelas</label>
-                        <select
-                            className={classNames.select}
-                            value={installments}
-                            onChange={(e) => setInstallments(e.target.value)}
-                        >
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="12">12</option>
-                        </select>
-                    </div> */}
+	const handleGenerate = async () => {
+		if (
+			!selectedPatient ||
+			!selectedTreatment ||
+			totalValue <= 0 ||
+			installments <= 0
+		) {
+			alert("Preencha todos os campos corretamente!");
+			return;
+		}
 
-                    <button
-                        className={classNames.button}
-                        onClick={handleGenerate}
-                    >
-                        Gerar
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+		const today = new Date();
+
+		const generatedEntries: PaymentEntryDTO[] = Array.from({
+			length: installments,
+		}).map((_, i) => {
+			const dueDate = new Date(today);
+			dueDate.setMonth(today.getMonth() + i);
+			const formattedDate = dueDate.toISOString().split("T")[0];
+
+			return {
+				id: 0,
+				value: Number((totalValue / installments).toFixed(2)),
+				installmentNumber: i + 1,
+				dueDate: formattedDate,
+				paymentDate: undefined,
+			};
+		});
+
+		setPaymentEntries(generatedEntries);
+
+		const treatmentDTO: TreatmentDTO = {
+			...selectedTreatment,
+			paymentEntries: generatedEntries,
+			totalValue: totalValue,
+			amountPaid: 0,
+			paymentStatus: "Pendente",
+			totalInstallments: installments,
+			overdue: false,
+		};
+
+		const toastId = toast.loading("Salvando pagamento...");
+
+		const success = await createFixedPayment(treatmentDTO);
+
+		if (success) {
+			toast.success("Pagamento gerado com sucesso!", { id: toastId });
+			onClose();
+		} else {
+			toast.error("Erro ao gerar pagamento", { id: toastId });
+		}
+	};
+
+	return (
+		<div className={styles.container}>
+			<div className={styles.card}>
+				<div className={styles.header}>
+					<h2 className={styles.title}>Novo pagamento fixo</h2>
+				</div>
+
+				<div className={styles.content}>
+					<div className={styles.formGroup}>
+						<label className={styles.label}>Paciente</label>
+						<select
+							className={styles.select}
+							value={selectedPatient?.id ?? ""}
+							onChange={(e) => {
+								const id = parseInt(e.target.value);
+								const patient =
+									patients.find((p) => p.id === id) || null;
+								setSelectedPatient(patient);
+								setSelectedTreatment(null);
+								setPaymentEntries([]);
+							}}
+						>
+							<option value="">Selecione um paciente</option>
+							{patients.map((p) => (
+								<option key={p.id} value={p.id}>
+									{p.name}
+								</option>
+							))}
+						</select>
+					</div>
+
+					<div className={styles.formGroup}>
+						<label className={styles.label}>Tratamento</label>
+						<select
+							className={styles.select}
+							value={selectedTreatment?.id ?? ""}
+							onChange={(e) => {
+								const id = parseInt(e.target.value);
+								const treatment =
+									treatmentsList.find((t) => t.id === id) ||
+									null;
+								setSelectedTreatment(treatment);
+							}}
+							disabled={!selectedPatient}
+						>
+							<option value="">Selecione um tratamento</option>
+							{treatmentsList.map((t) => (
+								<option key={t.id} value={t.id}>
+									{t.title}
+								</option>
+							))}
+						</select>
+					</div>
+
+					<div className={styles.formGroup}>
+						<label className={styles.label}>Valor Total (R$)</label>
+
+						<NumericFormat
+							value={totalValue}
+							onValueChange={(values) =>
+								setTotalValue(Number(values.value))
+							}
+							thousandSeparator="."
+							decimalSeparator=","
+							decimalScale={2}
+							fixedDecimalScale
+							prefix="R$ "
+							placeholder="Ex: R$ 2000"
+							className={styles.input}
+						/>
+					</div>
+
+					<div className={styles.formGroup}>
+						<label className={styles.label}>
+							Número de parcelas
+						</label>
+						<input
+							className={styles.input}
+							type="number"
+							min={1}
+							value={installments}
+							onChange={(e) =>
+								setInstallments(Number(e.target.value))
+							}
+						/>
+					</div>
+
+					<button className={styles.button} onClick={handleGenerate}>
+						Gerar Pagamento
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default DetalhesPagamento;

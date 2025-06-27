@@ -147,6 +147,15 @@
 	margin-bottom: 8px;
 	width: 100%;
 	color: #fff;
+
+	display: flex;
+	align-self: center;
+	justify-content: space-between;
+}
+
+.parcelaTitle div {
+	display: flex;
+	align-items: center;
 }
 
 .parcelaDetails {
@@ -154,4 +163,14 @@
 	line-height: 1.4;
 	padding: 12px;
 	color: var(--cinza-escuro);
+}
+
+.pay_btn {
+	border-radius: 5px;
+	padding: 2px 5px;
+
+	border: none;
+	background-color: #fff;
+	color: var(--cinza-escuro);
+	cursor: pointer;
 }

@@ -13,34 +13,43 @@ import { TratamentoPacientes } from "@pages/Pacientes/TratamentoPacientes";
 import { ProntuarioPaciente } from "@pages/Pacientes/ProntuarioPaciente";
 import { Toaster } from "react-hot-toast";
 
-
-
 const queryClient = new QueryClient({});
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <Routes>
-          <Route index element={<Login />} />
-          {/* Rotas dentro do layout */}
-          <Route path="/" element={<Layout />}>
-            <Route path="/home" element={<Home />} />
-              <Route path="/agendamentos" element={<Calendario />} />
-            <Route path="/agendamentos" element={<Calendario />} />
-            <Route path="/pacientes" element={<Pacientes />} />
-            <Route path="/especialistas" element={<Especialistas />} />
-            <Route path="/financas" element={<Financas />} />
-            <Route path="/cadastroPaciente" element={<CadastroPaciente />} />
-            <Route path="/jornadaPaciente" element={<TratamentoPacientes />} />
-            <Route path="/prontuarioPaciente" element={<ProntuarioPaciente />} />
-          </Route>
-        </Routes>
-      </Router>
-      <Toaster />
-    </QueryClientProvider>
-  );
-
+	return (
+		<QueryClientProvider client={queryClient}>
+			<Router>
+				<Routes>
+					<Route index element={<Login />} />
+					{/* Rotas dentro do layout */}
+					<Route path="/" element={<Layout />}>
+						<Route path="/home" element={<Home />} />
+						<Route path="/agendamentos" element={<Calendario />} />
+						<Route path="/agendamentos" element={<Calendario />} />
+						<Route path="/pacientes" element={<Pacientes />} />
+						<Route
+							path="/especialistas"
+							element={<Especialistas />}
+						/>
+						<Route path="/financas" element={<Financas />} />
+						<Route
+							path="/cadastroPaciente"
+							element={<CadastroPaciente />}
+						/>
+						<Route
+							path="/jornadaPaciente"
+							element={<TratamentoPacientes />}
+						/>
+						<Route
+							path="/prontuarioPaciente"
+							element={<ProntuarioPaciente />}
+						/>
+					</Route>
+				</Routes>
+			</Router>
+			<Toaster position="bottom-right" />
+		</QueryClientProvider>
+	);
 }
 
 export default App;

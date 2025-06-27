@@ -4,24 +4,13 @@ import "./entradas.css";
 import GenericButton from "@components/GenericButton";
 import Modal from "@components/Modal/Modal";
 import DetalhesPagamento from "@components/DetalhesPagamento";
-import { Patient, Treatment } from "lib/types";
 import GerenciarCobranca from "@components/GerenciarCobranca";
 import { PaymentEntry } from "lib/types";
 import { getAllTreatments, TreatmentDTO } from "@api/treatments/getAll";
 import { PatientInterface, TreatmentInterface } from "@api/patient/types";
 import { findPatient } from "@api/patient";
-import { getPaymentsByTreatmentId } from "@api/treatments/getPaymentsByTreatmentId";
 
 export default function EntradasTab() {
-	const handleGenerate = (data: {
-		patient: Patient;
-		treatment: Treatment;
-		value: number;
-		installments: number;
-	}) => {
-		console.log("Gerando pagamento com dados:", data);
-	};
-
 	const [treatments, setTreatments] = useState<TreatmentDTO[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [patients, setPatients] = useState<PatientInterface[]>([]);
@@ -38,11 +27,14 @@ export default function EntradasTab() {
 	}, []);
 
 	const filteredDados = treatments.filter((treatment) => {
-		return treatment.patient?.name
-			?.toLowerCase()
-			.includes(searchTerm.toLowerCase());
+		return (
+			treatment.totalValue !== null &&
+			treatment.totalValue !== undefined &&
+			treatment.patient?.name
+				?.toLowerCase()
+				.includes(searchTerm.toLowerCase())
+		);
 	});
-
 	const abrirModal_PagamentoFixo = () => {
 		setmodalPagamentoFixoOpen(true);
 	};
@@ -79,10 +71,6 @@ export default function EntradasTab() {
 				<div className="cards-container">
 					{filteredDados.length > 0 ? (
 						filteredDados.map((treatment) => {
-							const payments = treatment.paymentEntries ?? [];
-							const firstPayment =
-								payments.length > 0 ? payments[0] : null;
-
 							return (
 								<div
 									key={treatment.id}
@@ -94,9 +82,16 @@ export default function EntradasTab() {
 									<div className="card-header">
 										<h3>{treatment.title}</h3>
 										<span
-											className={`status ${treatment?.paymentStatus?.toLowerCase()}`}
+											className={`status ${
+												treatment?.paymentStatus ==
+												"Pago"
+													? "pago"
+													: "pendente"
+											}`}
 										>
-											{treatment?.paymentStatus}
+											{treatment?.paymentStatus == "Pago"
+												? "Pago"
+												: "Pendente"}
 										</span>
 									</div>
 									<div className="card-body">
@@ -130,13 +125,10 @@ export default function EntradasTab() {
 				onClose={() => setmodalPagamentoFixoOpen(false)}
 				size="SMALL"
 			>
-				{/* <DetalhesPagamento
-                    patients={[]}
-                    treatments={treatments}
-                    onGenerate={handleGenerate}
-                /> */}
-
-				<div></div>
+				<DetalhesPagamento
+					patients={patients}
+					onClose={() => setmodalPagamentoFixoOpen(false)}
+				/>
 			</Modal>
 
 			<Modal
@@ -144,7 +136,11 @@ export default function EntradasTab() {
 				onClose={() => setModalCombranca(false)}
 				size="BIG"
 			>
-				<GerenciarCobranca treatment={modalTreatment} />
+				{modalTreatment ? (
+					<GerenciarCobranca treatmentProp={modalTreatment} />
+				) : (
+					<div></div>
+				)}
 			</Modal>
 		</div>
 	);
