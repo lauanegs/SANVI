@@ -28,7 +28,7 @@ export default function EntradasTab() {
 
 	const filteredDados = treatments.filter((treatment) => {
 		return (
-			treatment.totalInstallments !== null &&
+			treatment.paymentEntries !== null &&
 			treatment.patient?.name
 				?.toLowerCase()
 				.includes(searchTerm.toLowerCase())
@@ -84,15 +84,16 @@ export default function EntradasTab() {
 											className={`status ${
 												treatment?.paymentStatus ==
 													"Pago" ||
-												treatment?.totalValue <=
-													treatment?.amountPaid
+												(treatment?.totalValue > 0 &&
+													treatment?.totalValue <=
+														treatment?.amountPaid)
 													? "pago"
 													: "pendente"
 											}`}
 										>
 											{treatment?.paymentStatus == "Pago"
-												? "Pago"
-												: "Pendente"}
+												? "pago"
+												: "pendente"}
 										</span>
 									</div>
 									<div className="card-body">
