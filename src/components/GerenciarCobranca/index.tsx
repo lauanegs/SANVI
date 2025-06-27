@@ -2,31 +2,27 @@ import { useEffect, useState } from "react";
 import styles from "./GerenciarCobranca.module.css";
 import { TreatmentDTO } from "@api/treatments/getAll";
 import { PaymentMethod, PaymentStatus } from "lib/types";
+import toast from "react-hot-toast";
+import { payPaymentEntryById } from "@api/payments/payPaymentEntryById"; // ajuste o caminho conforme necessário
 
 interface GerenciarCobrancaProps {
-	treatment?: TreatmentDTO;
+	treatmentProp: TreatmentDTO;
 }
 
-export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
-	const CalcularValorParcela = (): number => {
-		if (
-			treatment &&
-			treatment.totalValue > 0 &&
-			treatment.totalInstallments > 0
-		) {
-			let valorDaParcela =
-				treatment?.totalValue / treatment?.totalInstallments;
-			return valorDaParcela;
-		} else {
-			return 0;
-		}
-	};
+export function GerenciarCobranca({ treatmentProp }: GerenciarCobrancaProps) {
+	const [treatment, setTreatment] = useState<TreatmentDTO>(treatmentProp);
+	const [installmentCount, setInstallmentCount] = useState(0);
 
 	const [totalPaid, setTotalPaid] = useState(0);
-	// const [installments, setInstallments] = useState(0);
+	const [selectedPayment, setSelectedPayment] = useState<
+		(typeof treatment.paymentEntries)[0] | null
+	>(null);
+	const [paymentDate, setPaymentDate] = useState<string>(
+		() => new Date().toISOString().split("T")[0]
+	);
+
 	const [status, setStatus] = useState<PaymentStatus>("Pendente");
-	const [valorParcela, setValorParcela] =
-		useState<number>(CalcularValorParcela);
+	const [valorParcela, setValorParcela] = useState<number>(0);
 
 	const paymentOptions: { label: string; value: PaymentMethod }[] = [
 		{ label: "Dinheiro", value: "Dinheiro" },
@@ -46,7 +42,61 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 		if (treatment?.paymentStatus) {
 			setStatus(treatment.paymentStatus);
 		}
+
+		if (treatment?.paymentEntries) {
+			setInstallmentCount(treatment.paymentEntries.length);
+		}
 	}, [treatment]);
+
+	const handlePaySelected = async () => {
+		if (!selectedPayment || !paymentDate) {
+			toast.error("Selecione uma parcela e defina a data de pagamento.");
+			return;
+		}
+
+		const toastId = toast.loading("Processando pagamento...");
+
+		const success = await payPaymentEntryById(
+			selectedPayment.id,
+			paymentDate
+		);
+
+		if (success) {
+			// Atualiza a parcela paga
+			const updatedEntries = treatment.paymentEntries.map((entry) =>
+				entry.id === selectedPayment.id
+					? { ...entry, paymentDate } // atualiza somente essa parcela
+					: entry
+			);
+
+			// Atualiza o treatment local
+			setTreatment((prev) => ({
+				...prev,
+				paymentEntries: updatedEntries,
+			}));
+
+			// Recalcula total pago
+			const totalPaid = updatedEntries.reduce(
+				(sum, entry) => sum + (entry.paymentDate ? entry.value : 0),
+				0
+			);
+			setTotalPaid(totalPaid);
+
+			toast.success("Parcela paga com sucesso!", {
+				id: toastId,
+				position: "bottom-right",
+				duration: 2000,
+			});
+
+			window.location.reload();
+		} else {
+			toast.error("Falha ao processar o pagamento.", {
+				id: toastId,
+				position: "bottom-right",
+				duration: 2000,
+			});
+		}
+	};
 
 	if (!treatment) {
 		return <p>Tratamento sem pagamentos registrados.</p>;
@@ -65,8 +115,12 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 							<label className={styles.label}>Valor</label>
 							<input
 								className={styles.input}
-								defaultValue={`R$ ${valorParcela.toFixed(2)}`}
-								readOnly
+								type="number"
+								value={
+									selectedPayment
+										? `${selectedPayment.value.toFixed(2)}`
+										: "Selecione uma parcela"
+								}
 							/>
 						</div>
 
@@ -76,8 +130,10 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 							</label>
 							<input
 								className={styles.input}
-								defaultValue="26/02/2024"
-								type="text"
+								type="date"
+								value={paymentDate}
+								onChange={(e) => setPaymentDate(e.target.value)}
+								disabled={!selectedPayment}
 							/>
 						</div>
 
@@ -85,32 +141,30 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 							<label className={styles.label}>Status</label>
 							<select
 								className={styles.select}
-								value={status}
-								onChange={(e) =>
-									setStatus(e.target.value as PaymentStatus)
+								value={
+									selectedPayment?.paymentDate
+										? "Pago"
+										: "Pendente"
 								}
+								disabled
 							>
 								<option value="Pago">Pago</option>
 								<option value="Pendente">Pendente</option>
-								<option value="Parcial">Parcial</option>
-								<option value="Atrasado">Atrasado</option>
 							</select>
 						</div>
 
 						<div className={styles.fileSection}>
-							<span className={styles.fileName}>
-								📎 arquivo.zip
-							</span>
 							<button
 								className={`${styles.button} ${styles.buttonCheck}`}
+								onClick={handlePaySelected}
 							>
 								✓
 							</button>
-							<button
+							{/* <button
 								className={`${styles.button} ${styles.buttonDelete}`}
 							>
 								🗑
-							</button>
+							</button> */}
 						</div>
 					</div>
 				</div>
@@ -137,10 +191,23 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 							</div>
 						</div>
 
+						{treatment.totalInstallments ? (
+							<div className={styles.detailItem}>
+								<label className={styles.label}>
+									Parcelas Esperadas
+								</label>
+								<div className={styles.detailValue}>
+									{treatment.totalInstallments ?? 0}
+								</div>
+							</div>
+						) : undefined}
+
 						<div className={styles.detailItem}>
-							<label className={styles.label}>Parcelas</label>
+							<label className={styles.label}>
+								Parcelas Totais
+							</label>
 							<div className={styles.detailValue}>
-								{treatment.totalInstallments ?? 0}
+								{installmentCount ?? 0}
 							</div>
 						</div>
 
@@ -161,20 +228,6 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 									totalPaid.toFixed(2)}
 							</div>
 						</div>
-
-						<div className={styles.detailItem}>
-							<label className={styles.label}>Status</label>
-							<div className={styles.detailValue}>
-								{treatment.paymentStatus}
-							</div>
-						</div>
-
-						<div className={styles.detailItem}>
-							<label className={styles.label}>Em atraso?</label>
-							<div className={styles.detailValue}>
-								{treatment.overdue ? "Sim" : "Não"}
-							</div>
-						</div>
 					</div>
 				</div>
 
@@ -192,9 +245,16 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 										? styles.parcelaActive
 										: styles.parcelaInactive
 								}`}
+								onClick={() => {
+									if (!entry.paymentDate) {
+										setSelectedPayment(entry);
+									}
+								}}
 							>
 								<div className={styles.parcelaTitle}>
-									{entry.installmentNumber}ª parcela
+									<div>
+										{entry.installmentNumber}ª parcela
+									</div>
 								</div>
 								<div className={styles.parcelaDetails}>
 									<div>
@@ -202,7 +262,7 @@ export function GerenciarCobranca({ treatment }: GerenciarCobrancaProps) {
 									</div>
 									<div>
 										Status:{" "}
-										{entry.paymentDate != null
+										{entry.paymentDate
 											? "Pago"
 											: "Pendente"}
 									</div>

@@ -54,7 +54,6 @@ function Financas() {
 			<main className="fin_ContentAlterContainer">
 				{tabAtual === Tab.DASHBOARD && <DashboardTab></DashboardTab>}
 				{tabAtual === Tab.ENTRADAS && <EntradasTab></EntradasTab>}
-				{tabAtual === Tab.SAIDAS && <SaidasTab></SaidasTab>}
 			</main>
 		</div>
 	);
